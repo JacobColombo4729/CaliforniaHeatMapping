@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>San Francisco Heat Mapping</title>
+<title>San Francisco Heat Indexing</title>
 <style>
   :root {
     color-scheme: light;
@@ -25,6 +25,7 @@
     --ramp-slate:  #e2e1dc,#c2c0b8,#9d9b92,#75736c,#4e4c46;
     --hue-red: #d1402f; --hue-blue: #2a78d6; --hue-green: #2e9a4b;
     --hue-violet: #9c3d93; --hue-amber: #a17000; --hue-slate: #75736c;
+    --hue-violet-soft: #8a6187;
     --div-c3: #e6f0fd; --div-c2: #bcd8f8; --div-c1: #86b3e8;
     --div-mid: #a9a69f;
     --div-w1: #d4796a; --div-w2: #b03d2c; --div-w3: #7d1c12;
@@ -58,6 +59,7 @@
       --ramp-slate:  #ecebe6,#d2d0c9,#b0aea6,#8e8c84,#6e6c65;
       --hue-red: #dd5744; --hue-blue: #4a86d4; --hue-green: #3f9d57;
       --hue-violet: #b866ae; --hue-amber: #b8860f; --hue-slate: #7e7c75;
+      --hue-violet-soft: #9b7398;
       --div-c3: #eaf3fe; --div-c2: #c2dbf9; --div-c1: #8fbaea;
       --div-mid: #b0ada6;
       --div-w1: #dd8271; --div-w2: #c04a37; --div-w3: #9c2b1c;
@@ -83,6 +85,7 @@
     --ramp-slate:  #ecebe6,#d2d0c9,#b0aea6,#8e8c84,#6e6c65;
     --hue-red: #dd5744; --hue-blue: #4a86d4; --hue-green: #3f9d57;
     --hue-violet: #b866ae; --hue-amber: #b8860f; --hue-slate: #7e7c75;
+    --hue-violet-soft: #9b7398;
     --div-c3: #eaf3fe; --div-c2: #c2dbf9; --div-c1: #8fbaea;
     --div-mid: #b0ada6;
     --div-w1: #dd8271; --div-w2: #c04a37; --div-w3: #9c2b1c;
@@ -293,7 +296,7 @@
 <div class="wrap">
 
 <header>
-  <h1>San Francisco Heat Mapping</h1>
+  <h1>San Francisco Heat Indexing</h1>
   <p class="lede">Surface temperature, fog, vegetation and heat vulnerability — measured from
   satellite and census data, with the statistics and the raw table alongside.</p>
   <div class="tiles">
@@ -774,11 +777,21 @@ const gradientOf = ramp => "linear-gradient(to right," + ramp.join(",") + ")";
 // One solid colour standing for a variable's family, for marks that aren't
 // scaled — profile bars, key dots. Heat anomaly is diverging on a map but reads
 // as "heat" here, so it takes red.
+// The variables that make up the index's sensitivity and capacity components
+// ARE the human side of vulnerability, so on solid marks they take the index's
+// own hue rather than a separate census colour — muted, at half the chroma, so
+// a profile full of them does not shout. Maps are unaffected: there each layer
+// keeps a distinct ramp so they stay tellable apart when toggling.
+const SOLID_HUE = {
+  pct_poverty: "violet-soft", pct_65_plus: "violet-soft", pct_under_5: "violet-soft",
+  pct_renter: "violet-soft", pct_limited_english: "violet-soft",
+  median_income: "violet-soft", population: "violet-soft", households: "violet-soft",
+};
 const hueColor = key => {
-  const family = HUE_OF[key];
   // Dedicated solid tokens, not ramp[3]. Yellow is intrinsically the most
   // luminous hue, so the same step made amber roughly twice as bright as red
   // and it dominated everything beside it. These are luminance-matched by hand.
+  const family = SOLID_HUE[key] || HUE_OF[key];
   return css("--hue-" + (!family || family === "diverging" ? "red" : family));
 };
 
