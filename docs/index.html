@@ -195,6 +195,23 @@
 
   .note { font-size: 0.83rem; color: var(--muted); max-width: 68ch; }
   label.pick { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; color: var(--muted); }
+
+  /* Which neighborhoods sit in which measurement tier is a list, not a map —
+     the geography adds nothing the fog map has not already said. */
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 26px; }
+  .tier h4 { margin: 0 0 4px; font-size: 0.95rem; }
+  .tier .cap { color: var(--muted); font-size: 0.78rem; margin-bottom: 10px; display: block; }
+  .tier-list { display: grid; gap: 3px; }
+  .tier-row {
+    display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: baseline;
+    padding: 4px 0; border-bottom: 1px solid var(--grid); cursor: pointer;
+    font-size: 0.86rem;
+  }
+  .tier-row:hover { color: var(--accent); }
+  .tier-row.sel { color: var(--accent); font-weight: 600; }
+  .tier-row b { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tier-row i { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums;
+                font-size: 0.8rem; min-width: 3.4em; text-align: right; }
   .controls select { font-size: 0.85rem; padding: 6px 10px; }
   details > summary { margin-bottom: 6px; }
   .scroll table th { cursor: pointer; }
@@ -252,9 +269,8 @@
   geography explains twenty times as much.</p>
   <p><strong>But the flat line is two forces cancelling, not an absence of one.</strong> Money
   buys canopy, which cools (−0.032 °C per $10,000); income also raises heat directly
-  (+0.041 °C), because wealthy San Francisco holds its densest built ground. For race nothing
-  offsets it — <strong>a tract at 90% residents of color runs about 0.4 °C hotter than one at
-  30%, purely by having less canopy</strong>.</p>
+  (+0.041 °C), because wealthy San Francisco holds its densest built ground. The two nearly
+  annul each other, which is why the total reads as nothing.</p>
   <div class="card">
     <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
     <p class="note" id="cap-income"></p>
@@ -284,8 +300,7 @@
     </div>
   </div>
   <p><strong>Fog is distributed by geography, not wealth or race</strong> — with income
-  <strong id="r-fogincome">—</strong>, with residents of color <strong id="r-fogpoc">—</strong>.
-  It is the one major driver handed out indifferently, and strong enough to flatten the
+  <strong id="r-fogincome">—</strong>. It is the one major driver handed out indifferently, and strong enough to flatten the
   heat–poverty pattern seen in most other cities.</p>
 </section>
 
@@ -293,17 +308,11 @@
   <h2>What the fog hides</h2>
   <h3>The shade people build is not distributed evenly</h3>
   <p>Vegetation cools nearly as strongly as fog — but unlike fog it follows money and race.
-  Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>) and whiter
-  (<strong id="r-ndvipoc">—</strong>). It is the part of the picture a city can change.</p>
-  <div class="grid-2">
-    <div class="card">
-      <svg id="sc-canopy-income" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against income"></svg>
-      <p class="note" id="cap-ci"></p>
-    </div>
-    <div class="card">
-      <svg id="sc-canopy-poc" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against share of residents of color"></svg>
-      <p class="note" id="cap-cp"></p>
-    </div>
+  Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>). It is the part of the
+  picture a city can change.</p>
+  <div class="card">
+    <svg id="sc-canopy-income" viewBox="0 0 900 400" role="img" aria-label="Scatter of vegetation against income"></svg>
+    <p class="note" id="cap-ci"></p>
   </div>
 
   <h3 style="margin-top:44px">But a tree is not worth the same everywhere</h3>
@@ -339,12 +348,25 @@
   <p>A thermal sensor can’t see through fog, so the foggiest neighborhoods are observed almost
   only on their rare clear — and therefore <em>warm</em> — days. A hard limit of the instrument,
   not a bug. Usable scenes run from <strong id="obs-min">—</strong> to
-  <strong id="obs-max">—</strong> out of 63, and the thin end is the west.</p>
+  <strong id="obs-max">—</strong> out of 63 — and since a scene is only usable when it isn’t
+  cloudy, that count is the fog map seen from the other side. The foggiest places are the
+  least-measured places, necessarily.</p>
   <div class="card">
-    <div class="mapbox" style="max-width:560px">
-      <svg id="map-obs" viewBox="0 0 560 580" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
-    </div>
-    <div class="legend" id="lg-obs"></div>
+    <div class="tiers" id="conf-tiers"></div>
+    <details style="margin-top:18px">
+      <summary id="conf-mid-summary">Moderately measured</summary>
+      <div class="tier-list" id="conf-mid" style="margin-top:10px"></div>
+    </details>
+    <p class="note" style="margin-top:18px"><strong>Nothing is excluded for being foggy.</strong>
+    The filter is binary and per-observation, taken from Landsat’s own quality band: a single
+    pixel-reading is dropped if it is flagged cloud, cloud shadow, cirrus or dilated cloud — and
+    those discards are exactly what the fog layer counts. The only quantitative floors are that a
+    scene must cover at least half the window (62 of 125 failed), a pixel needs at least 5 clear
+    looks before it gets a temperature, and pixels reading as water in more than half their clear
+    looks are masked out.</p>
+    <p class="note"><strong>At neighborhood level nothing is filtered at all.</strong> The tiers
+    above are confidence labels, not gates. Lakeshore’s 14 scenes at 74% fog are in every
+    statistic on this page — flagged as least certain, never removed.</p>
   </div>
   <p><strong>So every temperature here understates how much cooler the west really is.</strong>
   The true fog effect exceeds the <strong id="r-fog-2">—</strong> shown earlier, making the
@@ -357,9 +379,9 @@
   <p>Exposure (heat, vegetation, fog), sensitivity (over 65, under 5, poverty) and a capacity
   gap (income, renting, limited English) — each percentile-ranked, then combined by geometric
   mean so strength in one can’t cancel exposure in another.</p>
-  <p><strong>Race is deliberately not an input.</strong> Included, the finding that vulnerability
-  falls hardest on communities of color would be circular. Excluded, it is a result:
-  <strong id="r-poc">—</strong>.</p>
+  <p>This project is <strong>race-agnostic</strong>: no racial or ethnic variable is collected
+  or used anywhere in it. The index correlates <strong id="r-poc">—</strong> with the share of
+  residents below poverty.</p>
   <div class="card">
     <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
     <p class="note">Ranks a few places apart should be read as ties. The index inherits the
@@ -375,10 +397,6 @@
     <div class="controls"><select id="picker" aria-label="Choose a neighborhood"></select></div>
     <div class="prof" id="prof"></div>
     <div id="prof-conf" style="margin-top:18px"></div>
-    <div style="margin-top:26px">
-      <div class="legend" id="lg-race"></div>
-      <svg id="race" viewBox="0 0 680 62" role="img" aria-label="Race and ethnicity composition"></svg>
-    </div>
     <div style="margin-top:22px">
       <svg id="vs-city" viewBox="0 0 680 210" role="img" aria-label="This neighborhood compared with the citywide median"></svg>
     </div>
@@ -457,6 +475,63 @@
   explained: after fog, canopy, terrain and built-up surface, Moran’s I on the residuals is
   still +0.433 at p &lt; 0.0001. And the mediation result reverses if the built-up index joins
   the controls — both specifications are in Explore.</p>
+
+  <details style="margin-top:22px">
+    <summary>What was dropped, and on whose authority</summary>
+    <p class="note" style="margin-top:12px">Every filter in the pipeline, what it removed, and
+    where the number came from. <strong>Most are judgement calls of mine</strong> — only the
+    census reliability bands come from an outside authority, and the cloud flags come from the
+    sensor’s own product definition rather than from me.</p>
+    <div class="scroll" style="max-height:none">
+      <table class="stat-table">
+        <thead><tr><th>Rule</th><th>Removed</th><th>Where the number comes from</th><th>What would change it</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Cloudy observations discarded — QA bits for cloud, cloud shadow, cirrus and dilated cloud</td>
+            <td>varies by pixel</td>
+            <td><strong>USGS</strong> — the Landsat Collection 2 Level-2 <code>QA_PIXEL</code> definition, produced by their CFMask algorithm. Not my classification.</td>
+            <td>A less conservative mask — keeping cirrus, say — would retain more scenes but admit contaminated pixels.</td>
+          </tr>
+          <tr>
+            <td>Scene must cover ≥ 50% of the window</td>
+            <td>62 of 125 scenes</td>
+            <td><strong>My choice.</strong> Each scene is normalised to its own citywide mean, and a sliver of the city gives a mean that isn’t citywide.</td>
+            <td>Normalising against a fixed baseline instead of a per-scene mean would remove the need for this rule entirely.</td>
+          </tr>
+          <tr>
+            <td>Pixel needs ≥ 5 clear looks to get a temperature</td>
+            <td>110,673 px, mostly water</td>
+            <td><strong>My choice</strong>, with no external basis. A floor is necessary; five is not a special number.</td>
+            <td>A longer record would support a higher bar. Raising it trades coverage for stability, and the foggy west pays that cost first.</td>
+          </tr>
+          <tr>
+            <td>Water masked where a pixel reads water in &gt; 50% of clear looks</td>
+            <td>41.7% of the grid</td>
+            <td><strong>My choice</strong> — a majority rule on the QA water flag.</td>
+            <td>Little. Bay and ocean are unambiguous; only the shoreline pixel or two is genuinely borderline.</td>
+          </tr>
+          <tr>
+            <td>Neighborhoods under 500 residents are not scored</td>
+            <td>3 parks; also 1 tract, the Farallones</td>
+            <td><strong>My choice, but the data makes it robust</strong>: the next-smallest neighborhood has 3,901 residents, a 24× jump, so anything between 200 and 2,000 selects exactly the same three.</td>
+            <td>Nothing short of a threshold above 3,901, which would start removing real neighborhoods.</td>
+          </tr>
+          <tr>
+            <td>Confidence tiers at 20 and 30 usable scenes</td>
+            <td>nothing — labels only</td>
+            <td><strong>My choice.</strong> Purely descriptive.</td>
+            <td>Moving them relabels neighborhoods; it changes no number anywhere on this page.</td>
+          </tr>
+          <tr>
+            <td>Census estimates flagged unreliable above a 0.30 coefficient of variation, cautionary above 0.15</td>
+            <td>nothing — flags only</td>
+            <td><strong>US Census Bureau</strong> published reliability guidance. The only threshold here with an outside authority behind it.</td>
+            <td>Nothing, short of the Bureau revising its own guidance.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
 </section>
 
 <footer>
@@ -524,8 +599,6 @@ const HUE_OF = {
   median_income: "amber", pct_poverty: "amber", pct_65_plus: "amber",
   pct_under_5: "amber", pct_renter: "amber", pct_limited_english: "amber",
   population: "amber", households: "amber",
-  pct_poc: "amber", pct_white_nh: "amber", pct_asian_nh: "amber",
-  pct_hispanic: "amber", pct_black_nh: "amber",
   clear_obs: "slate", acs_cv: "slate",
   pixel_coverage: "slate", cooling_local_r2: "slate",
 };
@@ -880,15 +953,37 @@ function writeConfidenceSummary() {
     "Of " + SCORED.length + " scored neighborhoods, " + counts.high + " are well measured, " +
     counts.moderate + " moderately and " + counts.low + " poorly. Usable scenes run from " +
     Math.round(Math.min(...obs)) + " to " + Math.round(Math.max(...obs)) + " of 63.";
+
+  // The tiers, as lists. Each row carries the two numbers that matter — scenes
+  // seen and how foggy the place is — because the whole point is that the
+  // second explains the first.
+  const row = f => {
+    const q = P(f);
+    return '<div class="tier-row' + (q.nhood === selected ? " sel" : "") +
+      '" data-n="' + q.nhood + '"><span>' + q.nhood + "</span><b>" +
+      q.clear_obs.toFixed(0) + "</b><i>" + Math.round(q.fog * 100) + "% fog</i></div>";
+  };
+  const byObs = grade => [...SCORED].filter(f => P(f).heat_confidence === grade)
+    .sort((a, b) => P(b).clear_obs - P(a).clear_obs);
+
+  const high = byObs("high"), low = byObs("low"), mid = byObs("moderate");
+  document.getElementById("conf-tiers").innerHTML =
+    '<div class="tier"><h4>Best measured — ' + high.length + "</h4>" +
+      '<span class="cap">most usable scenes, least fog</span>' +
+      '<div class="tier-list">' + high.map(row).join("") + "</div></div>" +
+    '<div class="tier"><h4>Worst measured — ' + low.length + "</h4>" +
+      '<span class="cap">under 20 usable scenes — read their temperatures with care</span>' +
+      '<div class="tier-list">' + low.map(row).join("") + "</div></div>";
+  document.getElementById("conf-mid-summary").textContent =
+    "Moderately measured — " + mid.length;
+  document.getElementById("conf-mid").innerHTML =
+    '<div class="tier-list">' + mid.map(row).join("") + "</div>";
+
+  document.querySelectorAll(".tier-row").forEach(r =>
+    r.onclick = () => select(r.dataset.n));
 }
 
 /* ---------- neighbourhood profile ---------- */
-const RACE = [
-  ["pct_white_nh", "White", "--cat-1"],
-  ["pct_asian_nh", "Asian", "--cat-2"],
-  ["pct_hispanic", "Hispanic", "--cat-3"],
-  ["pct_black_nh", "Black", "--cat-4"],
-];
 let selected = "Chinatown";
 
 function median(vals) {
@@ -921,29 +1016,6 @@ function drawProfile() {
       (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".") + "</p>";
   }
 
-  // Race composition — the only multi-series mark on the page. Legend plus
-  // in-bar labels where they fit; the table carries the rest.
-  const svg = document.getElementById("race");
-  svg.innerHTML = "";
-  const W = 680, H = 40, GAP = 2;
-  let x = 0;
-  const parts = RACE.map(([k, name, tok]) => ({ v: q[k] || 0, name, c: css(tok) }));
-  const other = Math.max(0, 100 - parts.reduce((s, p) => s + p.v, 0));
-  parts.push({ v: other, name: "Other", c: css("--cat-5") });
-  parts.forEach(p => {
-    const w = p.v / 100 * W;
-    if (w <= 0) return;
-    svg.appendChild(el("rect", { x: x, y: 8, width: Math.max(w - GAP, 1), height: H, rx: 3, fill: p.c }));
-    if (w > 52) {
-      svg.appendChild(el("text", {
-        x: x + w / 2 - GAP / 2, y: 33, "text-anchor": "middle",
-        fill: "#fff", "font-size": 12, "font-weight": 500
-      }, Math.round(p.v) + "%"));
-    }
-    x += w;
-  });
-  document.getElementById("lg-race").innerHTML = parts.map(p =>
-    '<span class="lg-key"><i style="background:' + p.c + '"></i>' + p.name + "</span>").join("");
 
   // Versus the citywide median.
   const cmp = [
@@ -1000,7 +1072,6 @@ function drawTable() {
     ["median_income", "Income", v => v === null ? "—" : money(v)],
     ["pct_poverty", "Poverty", v => v === null ? "—" : v.toFixed(1) + "%"],
     ["pct_65_plus", "65+", v => v === null ? "—" : v.toFixed(1) + "%"],
-    ["pct_poc", "People of colour", v => v === null ? "—" : v.toFixed(1) + "%"],
   ];
   const rows = [...F].sort((a, b) => (P(a).rank ?? 99) - (P(b).rank ?? 99));
   document.getElementById("tbl").innerHTML =
@@ -1024,10 +1095,8 @@ function fillProse() {
   set("r-fog", signed(pearson(SCORED, "heat_anomaly", "fog")));
   set("r-ndvi", signed(pearson(SCORED, "heat_anomaly", "ndvi")));
   set("r-fogincome", signed(pearson(SCORED, "fog", "median_income")));
-  set("r-fogpoc", signed(pearson(SCORED, "fog", "pct_poc")));
   set("r-ndviinc", signed(pearson(SCORED, "ndvi", "median_income")));
-  set("r-ndvipoc", signed(pearson(SCORED, "ndvi", "pct_poc")));
-  set("r-poc", signed(pearson(SCORED, "index", "pct_poc")));
+  set("r-poc", signed(pearson(SCORED, "index", "pct_poverty")));
   set("fog-range", Math.round(fmin * 100) + "% to " + Math.round(fmax * 100) + "%");
   set("obs-min", Math.round(omin));
   set("obs-max", Math.round(omax));
@@ -1069,7 +1138,6 @@ function drawAll() {
   drawLegend("lg-heat", "heat_anomaly",
     drawMap("mini-heat", "heat_anomaly", { pad: 8, hatch: true }), { hatch: true });
   drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
-  drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 8 }));
   drawLegend("lg-cooling", "canopy_cooling",
     drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
   drawBars();
@@ -1105,11 +1173,8 @@ scatter("sc-income", "median_income", "heat_anomaly",
   { xfmt: money, yfmt: v => signed(v), cap: "cap-income",
     label: ["Chinatown", "Lakeshore", "Seacliff"] });
 scatter("sc-canopy-income", "median_income", "ndvi",
-  "Median household income", "Vegetation", { xfmt: money, yfmt: v => v.toFixed(2),
-  cap: "cap-ci" });
-scatter("sc-canopy-poc", "pct_poc", "ndvi",
-  "Residents of color (%)", "Vegetation", { xfmt: v => Math.round(v) + "%",
-  yfmt: v => v.toFixed(2), cap: "cap-cp" });
+  "Median household income", "Vegetation (NDVI)",
+  { xfmt: money, yfmt: v => v.toFixed(2), cap: "cap-ci" });
 scatter("sc-cooling", "index", "canopy_cooling",
   "Heat vulnerability index", "°C per 0.1 NDVI",
   { xfmt: v => v.toFixed(0), yfmt: v => v.toFixed(1), cap: "cap-cooling",
@@ -1140,11 +1205,6 @@ const EXPLORE_VARS = [
   ["pct_renter", "Renters", "Demographics", pctf],
   ["pct_limited_english", "Limited English", "Demographics", pctf],
   ["population", "Population", "Demographics", v => Math.round(v).toLocaleString()],
-  ["pct_poc", "Residents of color", "Race", pctf],
-  ["pct_white_nh", "White", "Race", pctf],
-  ["pct_asian_nh", "Asian", "Race", pctf],
-  ["pct_hispanic", "Hispanic", "Race", pctf],
-  ["pct_black_nh", "Black", "Race", pctf],
   ["clear_obs", "Usable observations", "Quality", v => v.toFixed(0)],
   ["acs_cv", "Census CV", "Quality", v => v.toFixed(2)],
 ];
@@ -1232,8 +1292,7 @@ document.getElementById("x-csv").onclick = () => {
 const MODEL_LABELS = {
   heat: "Heat anomaly", income_10k: "Median income (per $10k)", elevation: "Elevation",
   slope: "Slope", southness: "Southness", ndbi: "Built-up (NDBI)", ndvi: "Vegetation (NDVI)",
-  fog: "Fog frequency", pct_poverty: "Below poverty", pct_poc: "Residents of color",
-  median_income: "Median income",
+  fog: "Fog frequency", pct_poverty: "Below poverty",   median_income: "Median income",
 };
 const mlab = k => MODEL_LABELS[k] || k;
 

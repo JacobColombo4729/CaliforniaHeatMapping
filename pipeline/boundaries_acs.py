@@ -39,7 +39,7 @@ CROSSWALK_URL = (
 # own endpoint does, and the key issued for this project never activated.
 ACS_URL = (
     "https://api.censusreporter.org/1.0/data/show/latest"
-    "?table_ids=B01003,B19013,B17001,B01001,B25003,C16002,B03002"
+    "?table_ids=B01003,B19013,B17001,B01001,B25003,C16002"
     "&geo_ids=140|05000US06075"
 )
 
@@ -78,11 +78,6 @@ RATES: dict[str, tuple[list[str], str]] = {
         ["C16002004", "C16002007", "C16002010", "C16002013"],
         "C16002001",
     ),
-    # Race and ethnicity are a descriptive overlay, deliberately NOT index inputs.
-    "pct_white_nh": (["B03002003"], "B03002001"),
-    "pct_black_nh": (["B03002004"], "B03002001"),
-    "pct_asian_nh": (["B03002006"], "B03002001"),
-    "pct_hispanic": (["B03002012"], "B03002001"),
 }
 
 
@@ -244,7 +239,6 @@ def main() -> None:
     for name in ("pct_poverty", "pct_65_plus", "pct_limited_english"):
         out["cv_" + name.replace("pct_", "")] = cvs[name]
 
-    out["pct_poc"] = 100 - out["pct_white_nh"]
     out["median_income"] = (
         grouped["_income_num"] / grouped["_income_den"]
     ).where(grouped["_income_den"] > 0)
@@ -287,7 +281,7 @@ def main() -> None:
         print(f"    {row['nhood']:<20} {int(row['population']):>6,}")
     print(f"  {int(gdf['has_residents'].sum())} neighborhoods will be scored.\n")
 
-    show = ["nhood", "population", "median_income", "pct_poverty", "pct_65_plus", "pct_poc"]
+    show = ["nhood", "population", "median_income", "pct_poverty", "pct_65_plus", "pct_65_plus"]
     ranked = scored[show].sort_values("pct_poverty", ascending=False)
     pd.set_option("display.width", 120)
     print("Highest poverty:")

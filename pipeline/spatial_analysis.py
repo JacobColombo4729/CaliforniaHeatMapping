@@ -62,12 +62,12 @@ RASTERS = {
 # Each block adds a mechanism. Tracking residual spatial clustering as they go
 # in shows which one was actually holding the missing structure.
 SPECS = {
-    "demographics only": ["income_10k", "pct_poverty", "pct_poc"],
-    "+ canopy": ["income_10k", "pct_poverty", "pct_poc", "ndvi"],
-    "+ fog": ["income_10k", "pct_poverty", "pct_poc", "ndvi", "fog"],
-    "+ terrain": ["income_10k", "pct_poverty", "pct_poc", "ndvi", "fog",
+    "demographics only": ["income_10k", "pct_poverty"],
+    "+ canopy": ["income_10k", "pct_poverty", "ndvi"],
+    "+ fog": ["income_10k", "pct_poverty", "ndvi", "fog"],
+    "+ terrain": ["income_10k", "pct_poverty", "ndvi", "fog",
                   "elevation", "slope", "southness"],
-    "+ built-up": ["income_10k", "pct_poverty", "pct_poc", "ndvi", "fog",
+    "+ built-up": ["income_10k", "pct_poverty", "ndvi", "fog",
                    "elevation", "slope", "southness", "ndbi"],
 }
 
@@ -116,7 +116,6 @@ def tract_acs() -> pd.DataFrame:
         numerator = sum(numeric[c].fillna(0) for c in nums)
         denominator = numeric[den]
         out[name] = (100 * numerator / denominator).where(denominator > 0)
-    out["pct_poc"] = 100 - out["pct_white_nh"]
     return out
 
 
@@ -190,9 +189,9 @@ def main() -> None:
     print(f"\n{'=' * 70}\n  CORRELATIONS AT n = {n}\n{'=' * 70}")
     print(f"{'relationship':<30} {'r':>7}   95% CI              vs n=38")
     pairs = [
-        ("heat", "median_income"), ("heat", "pct_poc"), ("heat", "pct_poverty"),
+        ("heat", "median_income"), ("heat", "pct_poverty"),
         ("heat", "fog"), ("heat", "ndvi"),
-        ("ndvi", "median_income"), ("ndvi", "pct_poc"),
+        ("ndvi", "median_income"), ("ndvi", "pct_poverty"),
     ]
     results["correlations"] = {}
     for a, b in pairs:
@@ -221,7 +220,7 @@ def main() -> None:
 
     print("\n  Moran's I (is each variable spatially clustered?)")
     results["morans_i"] = {}
-    for col in ["heat", "fog", "ndvi", "median_income", "pct_poc"]:
+    for col in ["heat", "fog", "ndvi", "median_income", "pct_poverty"]:
         y = tracts[col].to_numpy(float)
         mi = Moran(y, w, permutations=999)
         print(f"    {col:<16} I = {mi.I:+.3f}   p = {mi.p_sim:.4f}")

@@ -52,8 +52,8 @@ SIMPLIFY_M = 15
 COORD_PRECISION = 5
 
 # The index. Each entry is (column, direction) where +1 means "more is worse"
-# and -1 means "more is better". Race and ethnicity are deliberately absent —
-# they are the overlay the index gets compared against, not an input to it.
+# and -1 means "more is better". The index is deliberately race-agnostic: no
+# racial or ethnic variable enters it, and none is collected.
 COMPONENTS = {
     "exposure": [
         ("heat_anomaly", +1),
@@ -274,7 +274,7 @@ def main() -> None:
         ("heat_anomaly", "median_income"),
         ("heat_anomaly", "ndvi"),
         ("heat_anomaly", "fog"),
-        ("index", "pct_poc"),
+        ("index", "pct_poverty"),
         ("fog", "median_income"),
     ):
         r = ok[a].corr(ok[b])
@@ -289,7 +289,6 @@ def main() -> None:
         "nhood", "population", "households", "has_residents",
         "median_income", "pct_poverty", "pct_65_plus", "pct_under_5",
         "pct_renter", "pct_limited_english",
-        "pct_white_nh", "pct_black_nh", "pct_asian_nh", "pct_hispanic", "pct_poc",
         "heat_anomaly", "heat_p90", "heat_absolute", "ndvi", "fog", "clear_obs",
         "exposure", "sensitivity", "capacity_gap", "index", "rank",
         # Uncertainty travels with the numbers rather than living in a footnote.

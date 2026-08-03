@@ -1,10 +1,10 @@
-"""Does tree canopy carry the effect of income and race onto heat?
+"""Does tree canopy carry the effect of income and poverty onto heat?
 
 The correlational finding is that demographics barely predict heat directly
 (R2 = 0.04) while canopy predicts it strongly, and canopy itself is unevenly
 distributed. That is the shape of a mediated pathway:
 
-    income / race  --a-->  canopy  --b-->  heat
+    income / poverty  --a-->  canopy  --b-->  heat
            \______________ c' _____________/
 
 Total effect c = direct effect c' + indirect effect a*b.
@@ -45,7 +45,7 @@ MEDIATOR = "ndvi"
 OUTCOME = "heat"
 TREATMENTS = {
     "income_10k": "median household income ($10k)",
-    "pct_poc": "residents of color (%)",
+    "pct_poverty": "share below poverty (%)",
 }
 # Two control sets, because one choice here is genuinely arguable and it changes
 # the answer.

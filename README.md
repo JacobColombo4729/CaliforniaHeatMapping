@@ -28,30 +28,28 @@ Computed over the 38 scored neighborhoods (three of the 41 are parks — see *Li
 | heat vs **fog** | **−0.79** | |
 | heat vs **vegetation** | **−0.81** | |
 | heat vs median income | −0.11 | −0.19 |
-| heat vs % residents of color | +0.13 | +0.18 |
 | fog vs median income | +0.15 | +0.17 |
-| fog vs % residents of color | −0.03 | −0.05 |
 | **vegetation vs median income** | **+0.40** | **+0.50** |
-| **vegetation vs % residents of color** | **−0.37** | **−0.52** |
-| **vulnerability index vs % residents of color** | **+0.53** | |
+| **vegetation vs % below poverty** | **−0.36** | |
+| **vulnerability index vs % below poverty** | **+0.61** | |
 
 Three things follow.
 
 **Fog and vegetation govern surface heat almost entirely**, at −0.79 and −0.81. Nothing else
 comes close.
 
-**Fog is equity-blind.** Its correlation with income is +0.15 and with race −0.03. It is a
+**Fog is equity-blind.** Its correlation with income is +0.15. It is a
 physical accident of the coastline, and it is strong enough to flatten the heat-poverty
 relationship that appears almost everywhere else. That is why the heat-versus-income scatter
 on the dashboard is a flat cloud.
 
-**Vegetation is not.** Greener neighborhoods are richer and whiter. The fog gradient is large
-enough to bury this in raw temperature, but canopy is the part of the picture a city can
-actually change — and it is distributed along income and racial lines.
+**Vegetation is not.** Greener neighborhoods are richer. The fog gradient is large enough to
+bury this in raw temperature, but canopy is the part of the picture a city can actually
+change — and it is distributed along economic lines.
 
 The composite vulnerability index, which asks who can *cope* with heat rather than only who is
 hot, ranks Chinatown, the Tenderloin, Japantown, South of Market and the Western Addition at
-the top, and correlates +0.53 with the share of residents of color.
+the top, and correlates +0.61 with the share of residents below poverty.
 
 > Lakeshore ranks 37th of 38 despite 24.8% poverty, because it is among the foggiest and
 > greenest places in the city. Exposure and disadvantage genuinely come apart here.
@@ -101,9 +99,8 @@ cannot fully cancel exposure in another.
 - **Sensitivity** — % over 65, % under 5, % below poverty
 - **Capacity gap** — median income (inverted), % renters, % limited-English households
 
-**Race and ethnicity are deliberately excluded from the index.** Had they been inputs, the
-finding that vulnerability falls hardest on communities of color would be circular. Kept out,
-it is a result.
+**This project is race-agnostic.** No racial or ethnic variable is collected, computed or used
+anywhere in it — not in the index, not in the models, not in the published data.
 
 ---
 
@@ -142,24 +139,29 @@ significant — at a late-morning overpass the sun is too high for orientation t
 
 ### Mediation: the null was two opposing paths
 
-`pipeline/mediation.py` tests income/race → canopy → heat, bootstrapping **blocks of
+`pipeline/mediation.py` tests income and poverty → canopy → heat, bootstrapping **blocks of
 geography** rather than individual tracts — naive resampling assumes an independence this data
 demonstrably lacks, and produces intervals that are far too narrow.
 
-Both treatments show **inconsistent mediation**: a real mediated path cancelled by an opposing
-direct one, which is precisely why the raw correlation looks like nothing.
+Intervals below are the spatial-block ones. Income shows **inconsistent mediation** — a real
+mediated path cancelled by an opposing direct one, which is precisely why its raw correlation
+looks like nothing. Poverty does not clear the bar.
 
-| Path | Income (per $10k) | Race (per point % POC) |
+| Path | Income (per $10k) | Poverty (per point) |
 |---|---|---|
-| a → canopy | +0.0036 [+0.0005, +0.0057] | −0.0008 [−0.0016, −0.0002] |
-| b canopy → heat | −9.04 [−12.67, −5.68] | −8.08 [−12.56, −4.11] |
-| **a×b indirect** | **−0.0323 [−0.0545, −0.0051]** | **+0.0066 [+0.0012, +0.0155]** |
-| c′ direct | +0.0406 [+0.0066, +0.0716] | −0.0022 (n.s.) |
-| c total | +0.0083 (n.s.) | +0.0044 (n.s.) |
+| a → canopy | +0.0036 [+0.0005, +0.0057] | −0.0017 [−0.0030, +0.0004] n.s. |
+| b canopy → heat | −9.04 [−12.67, −5.68] | −8.44 [−12.50, −4.72] |
+| **a×b indirect** | **−0.0323 [−0.0545, −0.0051]** | +0.0143 [−0.0038, +0.0285] n.s. |
+| c′ direct | +0.0406 [+0.0066, +0.0716] | −0.0201 [−0.0375, +0.0037] n.s. |
+| c total | +0.0083 (n.s.) | −0.0058 (n.s.) |
 
 Money buys canopy and canopy cools — but income also raises heat directly, because wealthy San
-Francisco holds its densest, most built-up ground. **A tract at 90% residents of color runs
-about 0.4 °C hotter than one at 30%, entirely through having less canopy.**
+Francisco holds its densest, most built-up ground, and the two nearly annul each other.
+
+**Poverty does not produce a distinguishable mediated path.** Its indirect effect is significant
+under naive resampling ([+0.0037, +0.0278]) and stops being so once blocks of geography are
+resampled instead. That is exactly the kind of result the spatial bootstrap exists to catch, and
+it is reported rather than taken from the naive run.
 
 **The result hinges on one arguable choice.** Adding the built-up index to the controls makes
 every path non-significant. NDBI and NDVI measure opposite sides of the same ground, so
