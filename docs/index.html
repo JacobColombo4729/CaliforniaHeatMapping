@@ -407,15 +407,15 @@
     <div class="defn-body">
       <p class="idx-eq">index = ( exposure · sensitivity · capacity_gap )<sup>1/3</sup></p>
       <div class="idx-parts">
-        <div><b>exposure</b><i>=</i><span>100 · [ pctile(heat_anomaly) + pctile(−ndvi) + pctile(−fog) ] / 3</span></div>
-        <div><b>sensitivity</b><i>=</i><span>100 · [ pctile(pct_65_plus) + pctile(pct_under_5) + pctile(pct_poverty) ] / 3</span></div>
-        <div><b>capacity_gap</b><i>=</i><span>100 · [ pctile(−median_income) + pctile(pct_renter) + pctile(pct_limited_english) ] / 3</span></div>
+        <div><b>exposure</b><i>=</i><span>100 · [ ρ(heat_anomaly) + ρ(−ndvi) + ρ(−fog) ] / 3</span></div>
+        <div><b>sensitivity</b><i>=</i><span>100 · [ ρ(pct_65_plus) + ρ(pct_under_5) + ρ(pct_poverty) ] / 3</span></div>
+        <div><b>capacity_gap</b><i>=</i><span>100 · [ ρ(−median_income) + ρ(pct_renter) + ρ(pct_limited_english) ] / 3</span></div>
       </div>
-      <p class="note"><span class="m">pctile(x)</span> is the percentile rank of
-      <span class="m">x</span> among the <span class="m">n</span> = 38 scored neighborhoods,
-      computed as <span class="m">rank(x, method='average') / n</span>, so it lies in
-      <span class="m">(0, 1]</span> — never 0, which would annihilate the product. Negation
-      orients a variable so that a higher percentile rank always means more vulnerable.</p>
+      <p class="note"><span class="m">ρ(x)</span> is the percentile rank of <span class="m">x</span>
+      among the <span class="m">n</span> = 38 scored neighborhoods, computed as
+      <span class="m">rank(x, method='average') / n</span>, so <span class="m">ρ ∈ (0, 1]</span> —
+      never 0, which would annihilate the product. Negation orients a variable so that higher
+      <span class="m">ρ</span> always means more vulnerable.</p>
     </div>
   </details>
 </header>
