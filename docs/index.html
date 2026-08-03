@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- Pinned dark rather than following the OS: the maps were designed against
+     the dark page, and a reader on a light-mode laptop was getting a palette
+     the ramps were not tuned for. Remove data-theme to follow the system again. -->
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -475,9 +478,6 @@
 <section>
   <h2>Fog</h2>
   <h3>Surface heat and fog frequency</h3>
-  <p>Fog frequency is built from the cloud masks the temperature composite discards, so it uses
-  every observation rather than only the clear ones — <strong id="fog-range">—</strong> of
-  observations obscured.</p>
   <div class="grid-2">
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:0.95rem">Surface heat</h4>
@@ -493,17 +493,14 @@
   <aside class="analysis">
     <div class="tag">Analysis</div>
     <p>The two fields are near mirror images — heat against fog <strong id="r-fog">—</strong>,
-    heat against canopy <strong id="r-ndvi">—</strong>. Fog is the single largest term in every
-    model fitted here, and adding it lifts R² from 0.41 to 0.77.</p>
-    <p><strong>Fog is distributed by geography, not by wealth</strong> — its correlation with
-    income is only <strong id="r-fogincome">—</strong>. That is why the heat–poverty pattern
-    documented in most US cities is flattened here: the dominant driver is handed out
-    indifferently.</p>
-    <p>Income itself carries almost nothing: heat against income is
-    <strong id="r-income">—</strong>, and income and poverty together explain <strong>4%</strong>
-    of heat variance (R² = 0.040 at tract level, n = 232). Physical geography explains roughly
-    twenty times as much. Read the 38-neighborhood figure as underpowered on its own — it can only
-    resolve |r| ≥ 0.32, and the tract-level replication is what carries this.</p>
+    heat against canopy <strong id="r-ndvi">—</strong> — but fog is not working alone: canopy
+    adds <strong id="d-canopy">—</strong> to R², fog <strong id="d-fog">—</strong>. Nor does the
+    model close, explaining <strong id="r2-full">—</strong> of tract-level variance and still
+    leaving residual clustering of <strong id="resid-i">—</strong> at p &lt; 0.0001.
+    <strong>Fog explaining the most is not fog explaining most of it.</strong> And it explains
+    indifferently — fog against income is only <strong id="r-fogincome">—</strong>, heat against
+    income <strong id="r-income">—</strong> — which is why the heat–poverty pattern documented in
+    most US cities is so much weaker here.</p>
   </aside>
 </section>
 
@@ -1308,7 +1305,6 @@ function fillProse() {
   set("r-fogincome", signed(pearson(SCORED, "fog", "median_income")));
   set("r-ndviinc", signed(pearson(SCORED, "ndvi", "median_income")));
   set("r-poc", signed(pearson(SCORED, "index", "pct_poverty")));
-  set("fog-range", Math.round(fmin * 100) + "% to " + Math.round(fmax * 100) + "%");
 
   // Data-quality prose, all measured rather than asserted.
   set("r-fog-2", signed(pearson(SCORED, "heat_anomaly", "fog")));
@@ -1317,6 +1313,23 @@ function fillProse() {
   // claim of perfect correlation rather than a measurement.
   const rObsFog = pearson(SCORED, "clear_obs", "fog");
   set("r-obsfog", "r = " + (rObsFog >= 0 ? "+" : "−") + Math.abs(rObsFog).toFixed(3));
+
+  // The variance ladder, read off the fitted models rather than asserted. Stated
+  // as increments because the headline R² jump flatters whichever mechanism
+  // happens to enter the specification first.
+  const M = (typeof STATS === "undefined" ? {} : STATS).spatial?.models;
+  if (M) {
+    const step = (a, b) => M[a] && M[b] ? M[b].r2 - M[a].r2 : null;
+    const dCanopy = step("demographics only", "+ canopy");
+    const dFog = step("+ canopy", "+ fog");
+    const full = M["+ built-up"] || Object.values(M).pop();
+    if (dCanopy !== null) set("d-canopy", "+" + dCanopy.toFixed(2));
+    if (dFog !== null) set("d-fog", "+" + dFog.toFixed(2));
+    if (full) {
+      set("r2-full", Math.round(full.r2 * 100) + "%");
+      set("resid-i", "Moran’s I = " + signed(full.resid_moran_I));
+    }
+  }
   set("r-biasfog", "r = " + signed(pearson(SCORED, "heat_bias", "fog")));
   const [bmin, bmax] = extent(SCORED, "heat_bias");
   set("bias-range", signed(bmin) + " to " + signed(bmax) + " °C");
