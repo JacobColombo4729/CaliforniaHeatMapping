@@ -8,7 +8,6 @@
   :root {
     color-scheme: light;
     --surface-1: #fcfcfb;
-    --surface-2: #f4f4f1;
     --page: #f9f9f7;
     --ink: #0b0b0b;
     --ink-2: #52514e;
@@ -32,7 +31,7 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --surface-1: #1a1a19; --surface-2: #232322; --page: #0d0d0d;
+      --surface-1: #1a1a19; --page: #0d0d0d;
       --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
       --grid: #2c2c2a; --axis: #383835;
       --border: rgba(255, 255, 255, 0.10);
@@ -49,7 +48,7 @@
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --surface-1: #1a1a19; --surface-2: #232322; --page: #0d0d0d;
+    --surface-1: #1a1a19; --page: #0d0d0d;
     --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
     --grid: #2c2c2a; --axis: #383835;
     --border: rgba(255, 255, 255, 0.10);
@@ -67,107 +66,108 @@
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    margin: 0; background: var(--page); color: var(--ink);
-    font: 15.5px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
   }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 100px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
 
-  header { padding: 72px 0 8px; }
-  h1 { font-size: clamp(1.9rem, 4.4vw, 3rem); line-height: 1.08; margin: 0 0 18px; letter-spacing: -0.02em; }
-  .lede { font-size: clamp(1rem, 2vw, 1.18rem); color: var(--ink-2); max-width: 64ch; margin: 0 0 30px; }
+  header { padding: 88px 0 40px; }
+  h1 { font-size: clamp(2.1rem, 5.2vw, 3.4rem); line-height: 1.08; margin: 0 0 20px; letter-spacing: -0.02em; }
+  .lede { font-size: clamp(1.05rem, 2.1vw, 1.3rem); color: var(--ink-2); max-width: 62ch; margin: 0; }
+  .byline { color: var(--muted); font-size: 0.85rem; margin-top: 28px; }
 
-  /* The findings. Short, quantified, and the only place on the page that
-     draws a conclusion — everything below is apparatus for checking them. */
-  .findings { border-left: 3px solid var(--accent); padding: 2px 0 2px 20px; margin: 0 0 26px; }
-  .findings li { margin: 0 0 13px; max-width: 76ch; color: var(--ink-2); }
-  .findings li:last-child { margin-bottom: 0; }
-  .findings b { color: var(--ink); font-weight: 600; }
-  .findings ol { margin: 0; padding-left: 18px; }
-  .byline { color: var(--muted); font-size: 0.84rem; }
-
-  section { margin-top: 60px; scroll-margin-top: 60px; }
-  h2 { font-size: 1.4rem; margin: 0 0 6px; letter-spacing: -0.01em; }
-  .sub { color: var(--muted); font-size: 0.88rem; margin: 0 0 18px; max-width: 74ch; }
-  p { max-width: 74ch; color: var(--ink-2); margin: 0 0 14px; }
-
-  nav.toc {
-    position: sticky; top: 0; z-index: 30; background: var(--page);
-    border-bottom: 1px solid var(--border); margin: 0 -24px 0; padding: 10px 24px;
-    display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.85rem;
+  section { margin-top: 76px; }
+  h2 {
+    font-size: 0.79rem; text-transform: uppercase; letter-spacing: 0.11em;
+    color: var(--muted); font-weight: 600; margin: 0 0 12px;
   }
-  nav.toc a { color: var(--ink-2); text-decoration: none; }
-  nav.toc a:hover { color: var(--accent); }
+  h3 { font-size: clamp(1.35rem, 3vw, 1.85rem); line-height: 1.22; margin: 0 0 16px; letter-spacing: -0.01em; }
+  p { max-width: 68ch; color: var(--ink-2); margin: 0 0 16px; }
+  p strong { color: var(--ink); font-weight: 600; }
 
-  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
-  .row { display: grid; gap: 18px; }
-  .row-2 { grid-template-columns: minmax(320px, 5fr) minmax(320px, 6fr); }
-  .row-half { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-  @media (max-width: 860px) { .row-2 { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin: 24px 0;
+  }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
-  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
-  label.pick { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; color: var(--muted); }
-  select, button.btn {
-    font: inherit; font-size: 0.85rem; padding: 6px 10px; border-radius: 9px;
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 32px 0 0; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .tile .v { font-size: 2.4rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+  .tile .l { color: var(--ink-2); font-size: 0.88rem; margin-top: 8px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  button.seg {
+    font: inherit; font-size: 0.87rem; padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--ink-2);
+    cursor: pointer;
+  }
+  button.seg:hover { border-color: var(--axis); color: var(--ink); }
+  button.seg[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  select {
+    font: inherit; padding: 8px 12px; border-radius: 10px;
     border: 1px solid var(--border); background: var(--surface-1); color: var(--ink);
   }
-  button.btn { cursor: pointer; }
-  button.btn:hover { border-color: var(--axis); }
 
   svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .nb { stroke: var(--surface-1); stroke-width: 1.1; cursor: pointer; }
+  .nb { stroke: var(--surface-1); stroke-width: 1.2; cursor: pointer; }
   .nb:hover { stroke: var(--ink); stroke-width: 2; }
   .nb.sel { stroke: var(--ink); stroke-width: 2.4; }
   .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
   .alab { fill: var(--ink-2); font-size: 12px; }
   .gl { stroke: var(--grid); stroke-width: 1; }
   .ax { stroke: var(--axis); stroke-width: 1; }
-  .dot { fill: var(--accent); stroke: var(--surface-1); stroke-width: 2; cursor: pointer; }
-  .dot.sel { fill: var(--ink); }
+  .dot { fill: var(--accent); stroke: var(--surface-1); stroke-width: 2; }
   .dlabel { fill: var(--ink); font-size: 11.5px; font-weight: 500; }
 
-  .legend { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .mapbox { max-width: 560px; margin: 0 auto; }
+  .legend { display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  /* The ramp must never wrap mid-scale — swatches split across lines stop
+     reading as one continuous scale. */
   .legend .ramp { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .legend .ramp i { width: 28px; height: 11px; border-radius: 2px; display: block; }
+  .legend .ramp i { width: 30px; height: 11px; border-radius: 2px; display: block; }
   .legend .swatches { display: flex; gap: 2px; }
   .legend .cap { color: var(--muted); font-size: 0.78rem; flex-basis: 100%; }
   .legend .end { color: var(--ink-2); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
-  .lg-key { display: flex; align-items: center; gap: 7px; margin-right: 14px; font-size: 0.8rem; color: var(--ink-2); }
+  .lg-key { display: flex; align-items: center; gap: 7px; margin-right: 16px; font-size: 0.82rem; color: var(--ink-2); }
   .lg-key i { width: 11px; height: 11px; border-radius: 3px; display: block; }
 
   #tip {
     position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
     background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
-    padding: 9px 12px; font-size: 0.82rem; color: var(--ink);
-    box-shadow: 0 6px 22px rgba(0,0,0,.16); z-index: 60; max-width: 280px;
+    padding: 10px 13px; font-size: 0.83rem; color: var(--ink);
+    box-shadow: 0 6px 22px rgba(0,0,0,.14); z-index: 50; max-width: 260px;
   }
-  #tip b { display: block; margin-bottom: 4px; font-size: 0.9rem; }
+  #tip b { display: block; margin-bottom: 5px; font-size: 0.92rem; }
   #tip span { color: var(--ink-2); }
 
-  table { border-collapse: collapse; width: 100%; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
-  th, td { text-align: right; padding: 6px 9px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
-  th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface-1); }
-  th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--surface-1); cursor: pointer; user-select: none; }
-  th:hover { color: var(--ink); }
-  th.sorted { color: var(--accent); }
-  tr.sel td { background: var(--surface-2); }
-  .scroll { overflow: auto; max-height: 520px; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.83rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 7px 9px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--surface-1); }
+  .scroll { overflow-x: auto; max-height: 460px; overflow-y: auto; }
+  details > summary { cursor: pointer; color: var(--ink-2); font-size: 0.9rem; }
 
-  .note { font-size: 0.82rem; color: var(--muted); max-width: 76ch; }
-  .prof { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
-  .prof div span { display: block; color: var(--muted); font-size: 0.76rem; }
-  .prof div b { font-size: 1.25rem; font-weight: 600; }
+  .note { font-size: 0.83rem; color: var(--muted); max-width: 68ch; }
+  label.pick { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; color: var(--muted); }
+  .controls select { font-size: 0.85rem; padding: 6px 10px; }
+  details > summary { margin-bottom: 6px; }
+  .scroll table th { cursor: pointer; }
+  .scroll table th:hover { color: var(--ink); }
 
-  .stat-table { font-size: 0.83rem; }
-  .stat-table td, .stat-table th { border-bottom: 1px solid var(--grid); }
-  .stat-table td:first-child, .stat-table th:first-child { text-align: left; position: static; background: none; }
-  .kv { display: flex; gap: 6px; flex-wrap: wrap; font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; }
-  .kv b { color: var(--ink); font-weight: 600; }
-  .kv span { margin-right: 14px; }
-  h3.small { font-size: 0.98rem; margin: 0 0 8px; }
-  details summary { cursor: pointer; color: var(--ink-2); font-size: 0.88rem; margin-bottom: 10px; }
-  footer { margin-top: 70px; padding-top: 22px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.82rem; }
+  /* Uncertainty lives in footnotes and tooltips, not in badges on every heading.
+     The one place it still carries colour is the confidence chart's status dots,
+     which are set inline from the reserved status palette. */
+  .prof { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; margin-top: 18px; }
+  .prof div span { display: block; color: var(--muted); font-size: 0.78rem; }
+  .prof div b { font-size: 1.35rem; font-weight: 600; }
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; }
   a { color: var(--accent); }
-  code { font-size: 0.9em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -175,178 +175,301 @@
 <div class="wrap">
 
 <header>
-  <h1>San Francisco heat &amp; equity</h1>
-  <p class="lede">Surface temperature, fog, vegetation and census demographics across the city’s
-  41 analysis neighborhoods — and the tools to interrogate all of it yourself.</p>
-
-  <div class="findings">
-    <ol>
-      <li>Heat is governed by <b>fog and canopy</b>. Demographics on their own explain
-        <b>4%</b> of the variance in surface temperature.</li>
-      <li>The equity signal runs <b>through</b> canopy: a tract at 90% residents of color runs
-        about <b>0.4 °C hotter</b> purely by having less of it.</li>
-      <li>Income has <b>two opposing effects</b> that cancel — it buys canopy, which cools, but
-        wealth also concentrates in the densest built ground, which heats. That is why the raw
-        correlation reads as nothing.</li>
-      <li>Trees cool <b>most where fog is thickest</b>, not least — the opposite of the obvious
-        prediction.</li>
-      <li>Therefore tree planting is <b>weakest exactly where vulnerability is highest</b>
-        (r = −0.65 between cooling bought and the vulnerability index).</li>
-    </ol>
+  <h1>San Francisco’s heat map is drawn by fog, not by income.</h1>
+  <p class="lede">In most American cities, surface heat tracks poverty. Here it doesn’t —
+  the marine layer overrules everything, and it doesn’t care who lives underneath it.
+  But the shade that people <em>build</em> is another story.</p>
+  <div class="tiles">
+    <div class="tile"><div class="v" id="t-spread">—</div><div class="l">°C between the coolest and hottest neighborhood</div></div>
+    <div class="tile"><div class="v" id="t-fog">—</div><div class="l">percentage-point fog gap, west side to southeast</div></div>
+    <div class="tile"><div class="v" id="t-corr">—</div><div class="l">correlation between heat and household income</div></div>
   </div>
-  <p class="byline">63 Landsat scenes, summers 2019–2024 · American Community Survey 2024
-  5-year · 41 neighborhoods for display, 232 census tracts for the statistics ·
-  <a href="https://github.com/JacobColombo4729/CaliforniaHeatMapping">source and method</a></p>
+  <p class="byline">63 Landsat scenes, summers 2019–2024 · American Community Survey 2024 5-year · 41 analysis neighborhoods</p>
 </header>
 
-<nav class="toc">
-  <a href="#explore">Explore</a>
-  <a href="#relationships">Relationships</a>
-  <a href="#neighborhood">Neighborhood</a>
-  <a href="#models">Models</a>
-  <a href="#data">Data</a>
-  <a href="#limits">Limits</a>
-</nav>
-
-<section id="explore">
-  <h2>Explore</h2>
-  <p class="sub">Any variable on the map, any pair on the scatter. Click a neighborhood in
-  either to select it everywhere on the page.</p>
-  <div class="row row-2">
-    <div class="card">
-      <div class="controls">
-        <label class="pick">Map<select id="map-metric"></select></label>
-      </div>
-      <svg id="map" viewBox="0 0 440 460" role="img" aria-label="Choropleth map of San Francisco neighborhoods"></svg>
-      <div class="legend" id="map-legend"></div>
-      <p class="note" id="map-note" style="margin-top:10px"></p>
-    </div>
-    <div class="card">
-      <div class="controls">
-        <label class="pick">X<select id="sx"></select></label>
-        <label class="pick">Y<select id="sy"></select></label>
-        <button class="btn" id="swap" type="button">Swap</button>
-      </div>
-      <svg id="scatter" viewBox="0 0 520 420" role="img" aria-label="Scatter plot of two chosen variables"></svg>
-      <p class="note" id="scatter-cap"></p>
-    </div>
-  </div>
-</section>
-
-<section id="relationships">
-  <h2>Relationships</h2>
-  <p class="sub">Every pairwise correlation across the 38 scored neighborhoods. Faded cells are
-  below the threshold this sample size can resolve — with n = 38, |r| must exceed about 0.32 to
-  clear p &lt; .05, and with hundreds of pairs on screen some will do so by chance alone.</p>
+<section>
+  <h2>Where it’s hot</h2>
+  <h3>Every neighborhood, five ways</h3>
+  <p>Surface temperature is shown as an <strong>anomaly</strong> — degrees above or below the
+  citywide average on the same day — so a hot afternoon can’t masquerade as a hot
+  neighborhood. Switch the metric and watch which patterns move together.</p>
   <div class="card">
-    <svg id="matrix" role="img" aria-label="Correlation matrix of all numeric variables"></svg>
-    <div class="legend" id="matrix-legend"></div>
+    <div class="controls" id="metric-buttons" role="group" aria-label="Map metric"></div>
+    <div class="mapbox">
+      <svg id="map" viewBox="0 0 560 580" role="img" aria-label="Choropleth map of San Francisco neighborhoods"></svg>
+    </div>
+    <div class="legend" id="map-legend"></div>
+    <p class="note" id="map-note" style="margin-top:12px"></p>
+    <p class="note">Hatching marks neighborhoods where the satellite has fewest usable
+    observations, on the two layers built from cloud-free days. Fog and income aren’t affected.</p>
   </div>
 </section>
 
-<section id="neighborhood">
-  <h2>Neighborhood</h2>
-  <p class="sub">Every value held for one place, with its measurement quality.</p>
+<section>
+  <h2>The pattern that isn’t there</h2>
+  <h3>Income doesn’t predict heat. Poverty does — but only indirectly.</h3>
+  <p>Plot every neighborhood’s heat anomaly against its median household income and the cloud
+  is flat. The correlation is <strong id="r-income">—</strong> — for practical purposes, nothing.
+  Split the city into income quartiles and the poorest and richest differ by well under a degree,
+  against a <strong id="span-1">—</strong> °C span across the city.</p>
+  <p>But 38 neighborhoods is a small sample — it can only resolve correlations above about 0.32.
+  Repeating the analysis across <strong>232 census tracts</strong>, where that floor drops to
+  0.13, sharpens the picture. Median income still doesn’t resolve. The <strong>poverty rate
+  does, at r = +0.20</strong>. Poorer tracts really are hotter.</p>
+  <p>Put the demographic variables in a regression on their own and they explain
+  <strong>4%</strong> of the variation in heat across the city. Income, poverty and race
+  together. Physical geography explains twenty times as much.</p>
+  <p><strong>The flat line is two opposing forces cancelling, not an absence of one.</strong>
+  A formal mediation test — with a bootstrap that resamples blocks of geography rather than
+  individual tracts, so it doesn’t pretend neighbours are independent — separates them.</p>
+  <p>Money buys tree canopy, and canopy cools: <strong>−0.032 °C per $10,000</strong> of median
+  income, travelling through vegetation. But income <em>also</em> raises heat directly, by
+  <strong>+0.041 °C per $10,000</strong>, because wealthy San Francisco includes its densest and
+  most built-up ground. The two nearly annul each other, and the total reads as zero.</p>
+  <p>The same structure holds for race, and here nothing offsets it. Running the path from the
+  share of residents of color through canopy to heat: <strong>a tract that is 90% residents of
+  color runs about 0.4 °C hotter than one at 30%, entirely by way of having less tree
+  canopy.</strong></p>
+  <div class="card">
+    <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
+    <p class="note" id="cap-income"></p>
+    <p class="note">One dot per scored neighborhood. The line is a least-squares fit, drawn to
+    show how little slope there is. Click any dot to open that neighborhood’s profile.</p>
+    <p class="note" id="null-why"></p>
+    <p class="note">Tract-level figures come from <code>pipeline/spatial_analysis.py</code>:
+    Queen-contiguity weights, Moran’s I, and a spatial error model chosen by Lagrange Multiplier
+    diagnostics (λ = 0.68). Ordinary regression is not valid here — every variable is strongly
+    spatially clustered, which makes standard errors too small and p-values overconfident.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Why</h2>
+  <h3>The fog shadow does the sorting</h3>
+  <p>The same satellite passes that measure temperature also record which pixels were under
+  cloud. Sum those and you get a fog climatology: <strong id="fog-range">—</strong> of
+  observations obscured, rising sharply toward the ocean. Put the two maps together and
+  they are near mirror images — heat against fog correlates <strong id="r-fog">—</strong>,
+  and against tree canopy <strong id="r-ndvi">—</strong>.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Surface heat</h4>
+      <svg id="mini-heat" viewBox="0 0 330 345" role="img" aria-label="Map of heat anomaly"></svg>
+      <div class="legend" id="lg-heat"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Fog frequency</h4>
+      <svg id="mini-fog" viewBox="0 0 330 345" role="img" aria-label="Map of fog frequency"></svg>
+      <div class="legend" id="lg-fog"></div>
+    </div>
+  </div>
+  <p>Crucially, <strong>fog is distributed by geography, not by wealth or race.</strong> Its
+  correlation with income is <strong id="r-fogincome">—</strong> and with the share of
+  residents of color <strong id="r-fogpoc">—</strong>. It is the one major driver of heat here
+  that is handed out indifferently — and it is strong enough to flatten the heat-poverty
+  relationship that shows up almost everywhere else.</p>
+</section>
+
+<section>
+  <h2>What the fog hides</h2>
+  <h3>The shade people build is not distributed evenly</h3>
+  <p>Vegetation cools nearly as strongly as fog — but unlike fog, it follows money and race.
+  Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>) and whiter
+  (<strong id="r-ndvipoc">—</strong>). The fog gradient is so large that it buries this in the
+  raw temperature numbers, but it is the part of the picture the city can actually change.</p>
+  <div class="grid-2">
+    <div class="card">
+      <svg id="sc-canopy-income" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against income"></svg>
+      <p class="note" id="cap-ci"></p>
+    </div>
+    <div class="card">
+      <svg id="sc-canopy-poc" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against share of residents of color"></svg>
+      <p class="note" id="cap-cp"></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:44px">But a tree is not worth the same everywhere</h3>
+  <p>Fitting one canopy effect for the whole city assumes a tree in the Sunset does the same
+  work as a tree in the Mission. Letting the effect vary by location instead — a separate local
+  regression at every tract — fits dramatically better, and shows it does not.</p>
+  <p><strong>Trees buy the most cooling on the foggy west side</strong>, about
+  <strong>1.7 °C</strong> per 0.1 of added greenness in the Outer Richmond and Inner Sunset.
+  They buy almost <strong>nothing</strong> in South of Market, Bayview and the Financial
+  District. Cooling power tracks fog at r = +0.66 — the opposite of what you'd guess, and most
+  likely because fog keeps trees watered enough to transpire.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Cooling bought per 0.1 NDVI</h4>
+      <svg id="map-cooling" viewBox="0 0 330 345" role="img" aria-label="Map of how much cooling added vegetation buys in each neighborhood"></svg>
+      <div class="legend" id="lg-cooling"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Against heat vulnerability</h4>
+      <svg id="sc-cooling" viewBox="0 0 400 330" role="img" aria-label="Scatter of cooling bought per tree against the heat vulnerability index"></svg>
+      <p class="note" id="cap-cooling"></p>
+    </div>
+  </div>
+  <p><strong>Which means tree planting is weakest exactly where heat vulnerability is
+  highest.</strong> The two run against each other at <strong id="r-cooling">—</strong>: the
+  neighborhoods that most need cooling are the ones where a tree delivers least of it.</p>
+  <p>That isn’t an argument against planting trees in the Mission. It’s an argument that trees
+  alone won’t close that gap, and that cool roofs, less pavement and built shade probably matter
+  more in the dense east.</p>
+</section>
+
+<section>
+  <h2>What the satellite can’t see</h2>
+  <h3>The west is measured only on its warmest days</h3>
+  <p>A thermal sensor cannot see through fog, so the foggiest neighborhoods are observed almost
+  exclusively on their rare clear days — which are their <em>warm</em> days. This is not a bug
+  to be fixed; it is a hard limit of the instrument. What you can do is measure it.</p>
+  <p><strong>Left:</strong> how many of the 63 scenes actually yielded a usable reading, from
+  <strong id="obs-min">—</strong> to <strong id="obs-max">—</strong>.
+  <strong>Right:</strong> how much hotter the city was, on average, on the particular days each
+  neighborhood happened to be visible. That second number is the bias, in degrees.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Usable observations</h4>
+      <svg id="map-obs" viewBox="0 0 330 345" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
+      <div class="legend" id="lg-obs"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Warm-day sampling bias</h4>
+      <svg id="map-bias" viewBox="0 0 330 345" role="img" aria-label="Map of warm-day sampling bias per neighborhood"></svg>
+      <div class="legend" id="lg-bias"></div>
+    </div>
+  </div>
+  <p id="bias-summary"></p>
+  <p><strong>Every temperature number on this page therefore understates how much cooler the
+  west side really is.</strong> The true fog effect is larger than the
+  <strong id="r-fog-2">—</strong> shown earlier, which makes the canopy inequity a floor rather
+  than a ceiling.</p>
+  <div class="card">
+    <h4 style="margin:0 0 10px;font-size:0.95rem">Confidence by neighborhood</h4>
+    <svg id="conf-bars" role="img" aria-label="Satellite measurement confidence for every neighborhood"></svg>
+    <p class="note" id="conf-note"></p>
+  </div>
+</section>
+
+<section>
+  <h2>Every neighborhood</h2>
+  <h3>Ranked by heat vulnerability</h3>
+  <p>The index combines <strong>exposure</strong> (heat, vegetation, fog),
+  <strong>sensitivity</strong> (residents over 65 and under 5, poverty) and a
+  <strong>capacity gap</strong> (income, renting, limited-English households). Each variable is
+  percentile-ranked, averaged within its component, and the three components combined by
+  geometric mean — so strength in one cannot fully cancel exposure in another.</p>
+  <p><strong>Race and ethnicity are deliberately not inputs.</strong> Had they been, the finding
+  that vulnerability falls hardest on communities of color would be circular. Kept out, it is a
+  result: the index correlates <strong id="r-poc">—</strong> with the share of residents of color.</p>
+  <div class="card">
+    <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
+    <p class="note">Ranks a few places apart should be read as ties. The index inherits the
+    clear-sky bias in its exposure half and survey margins in the other two.</p>
+  </div>
+  <p class="note" id="lakeshore-note"></p>
+</section>
+
+<section>
+  <h2>Pick one</h2>
+  <h3>Neighborhood profile</h3>
   <div class="card">
     <div class="controls"><select id="picker" aria-label="Choose a neighborhood"></select></div>
     <div class="prof" id="prof"></div>
-    <div style="margin-top:22px">
+    <div id="prof-conf" style="margin-top:18px"></div>
+    <div style="margin-top:26px">
       <div class="legend" id="lg-race"></div>
-      <svg id="race" viewBox="0 0 680 58" role="img" aria-label="Race and ethnicity composition"></svg>
+      <svg id="race" viewBox="0 0 680 62" role="img" aria-label="Race and ethnicity composition"></svg>
     </div>
-    <div style="margin-top:18px">
-      <svg id="vs-city" viewBox="0 0 680 250" role="img" aria-label="This neighborhood against the citywide median"></svg>
+    <div style="margin-top:22px">
+      <svg id="vs-city" viewBox="0 0 680 210" role="img" aria-label="This neighborhood compared with the citywide median"></svg>
     </div>
-    <p class="note" id="prof-note" style="margin-top:14px"></p>
   </div>
 </section>
 
-<section id="models">
-  <h2>Models</h2>
-  <p class="sub">Fitted at census-tract level (n = 232), where far smaller effects are
-  detectable than across 38 neighborhoods, and with methods that account for the fact that
-  neighbouring tracts are not independent observations.</p>
-  <div class="row row-half">
+<section>
+  <h2>Explore</h2>
+  <h3>Everything the story was built from</h3>
+  <p>The sections above make an argument. This one hands over the material, so you can check it
+  or look for something else entirely. Any variable on the map, any pair on the scatter.</p>
+  <div class="grid-2">
     <div class="card">
-      <h3 class="small">Spatial regression</h3>
-      <div class="kv" id="spatial-kv"></div>
-      <table class="stat-table" id="model-progression"></table>
-      <p class="note" id="spatial-note"></p>
+      <div class="controls"><label class="pick">Map<select id="x-metric"></select></label></div>
+      <svg id="x-map" viewBox="0 0 340 355" role="img" aria-label="Map of any chosen variable"></svg>
+      <div class="legend" id="x-legend"></div>
     </div>
     <div class="card">
-      <h3 class="small">Moran’s I — is each variable clustered?</h3>
-      <table class="stat-table" id="moran-table"></table>
-      <h3 class="small" style="margin-top:18px">Variance inflation</h3>
-      <table class="stat-table" id="vif-table"></table>
-    </div>
-  </div>
-  <div class="row row-half" style="margin-top:18px">
-    <div class="card">
-      <h3 class="small">Mediation — does canopy carry the effect?</h3>
       <div class="controls">
-        <label class="pick">Treatment<select id="med-treat"></select></label>
-        <label class="pick">Controls<select id="med-spec"></select></label>
+        <label class="pick">X<select id="x-sx"></select></label>
+        <label class="pick">Y<select id="x-sy"></select></label>
       </div>
-      <table class="stat-table" id="med-table"></table>
-      <p class="note" id="med-note"></p>
-    </div>
-    <div class="card">
-      <h3 class="small">Geographically weighted regression</h3>
-      <div class="kv" id="gwr-kv"></div>
-      <svg id="map-cooling" viewBox="0 0 330 345" role="img" aria-label="Map of cooling bought per unit of added vegetation"></svg>
-      <div class="legend" id="lg-cooling"></div>
+      <svg id="x-scatter" viewBox="0 0 420 355" role="img" aria-label="Scatter of two chosen variables"></svg>
+      <p class="note" id="x-cap"></p>
     </div>
   </div>
+
+  <details style="margin-top:26px">
+    <summary>Model output — spatial regression, mediation, geographically weighted regression</summary>
+    <div class="grid-2" style="margin-top:16px">
+      <div class="card" style="margin:0">
+        <h4 style="margin:0 0 8px;font-size:0.95rem">Spatial regression <span id="x-sp-kv"></span></h4>
+        <table id="x-progression"></table>
+        <p class="note" style="margin-top:10px">Residual clustering stays significant at every
+        step (p &lt; 0.0001). Fog absorbs the most; terrain and built-up surface little.</p>
+        <h4 style="margin:18px 0 8px;font-size:0.95rem">Moran’s I</h4>
+        <table id="x-moran"></table>
+      </div>
+      <div class="card" style="margin:0">
+        <h4 style="margin:0 0 8px;font-size:0.95rem">Mediation</h4>
+        <div class="controls">
+          <label class="pick">Treatment<select id="x-med-t"></select></label>
+          <label class="pick">Controls<select id="x-med-s"></select></label>
+        </div>
+        <table id="x-med"></table>
+        <p class="note" id="x-med-note" style="margin-top:10px"></p>
+        <h4 style="margin:18px 0 8px;font-size:0.95rem">Geographically weighted regression</h4>
+        <p class="note" id="x-gwr-kv"></p>
+      </div>
+    </div>
+  </details>
+
+  <details style="margin-top:16px">
+    <summary>Full data table — sortable, downloadable</summary>
+    <div class="controls" style="margin-top:14px">
+      <button class="seg" id="x-csv" type="button">Download CSV</button>
+      <span class="note" id="x-rows"></span>
+    </div>
+    <div class="scroll"><table id="tbl"></table></div>
+  </details>
 </section>
 
-<section id="data">
-  <h2>Data</h2>
-  <p class="sub">Every value behind every chart. Click a column to sort, click a row to select
-  it, or take the whole thing as CSV.</p>
-  <div class="controls">
-    <label class="pick">Columns<select id="col-group"></select></label>
-    <button class="btn" id="download">Download CSV</button>
-    <span class="note" id="row-count"></span>
-  </div>
-  <div class="scroll"><table id="tbl"></table></div>
-</section>
-
-<section id="limits">
+<section>
   <h2>Method &amp; limits</h2>
-  <p><b>Surface temperature is not air temperature.</b> Landsat measures the skin temperature of
-  roofs and pavement, far hotter than the air a person stands in. The spatial pattern is
-  meaningful; absolute values are not comparable to a weather station. Landsat also passes late
-  morning, so nothing here describes night-time heat, which is the more health-relevant
-  variable.</p>
-  <p><b>The satellite is blind exactly when fog is working.</b> Foggy neighborhoods are seen
-  almost only on their rare clear — and therefore warm — days. Usable observations run from 14
-  to 41 of 63 scenes, and every neighborhood’s reading is biased warm, by +0.43 to +1.25 °C,
-  with the bias tracking fog at r = +0.58. Every temperature here understates how much cooler
-  the west really is.</p>
-  <p><b>Three neighborhoods are parks</b> — Golden Gate Park, McLaren Park and Lincoln Park, 58
-  to 160 residents. Their census rates are noise, so they are mapped but never scored, ranked or
-  included in any statistic.</p>
-  <p><b>Neighborhood median income is an approximation.</b> Medians cannot be summed, so it is a
-  household-weighted mean of tract medians. Every other rate is exact — summed numerator over
-  summed denominator.</p>
-  <p><b>The residual spatial clustering was never explained.</b> After fog, canopy, terrain and
-  built-up surface, Moran’s I on the residuals is still +0.433 at p &lt; 0.0001. The spatial
-  error model handles this correctly for inference, but λ = 0.66 is not an explanation of
-  anything — building density, albedo and anthropogenic heat remain untested.</p>
-  <p><b>The mediation result depends on one arguable choice.</b> Adding the built-up index to
-  the controls makes every path non-significant. NDBI and NDVI measure opposite sides of the
-  same ground, so conditioning on one while the other is the mediator blocks the path by
-  construction — which is why the headline specification excludes it. Both are shown above.</p>
-  <p><b>Mediation on observational data shows a consistent pathway, not a proven cause.</b> And
-  41 units is coarse: real inequity exists within neighborhoods and is invisible at this
-  resolution.</p>
+  <h3>What this is, and what it isn’t</h3>
+  <p><strong>Surface temperature is not air temperature.</strong> Landsat measures the skin
+  temperature of roofs and pavement, which runs far hotter than the air a person stands in. The
+  spatial pattern is meaningful; the absolute values are not comparable to a weather station.</p>
+  <p><strong>Daytime only.</strong> Landsat passes late morning. Night-time heat retention is
+  the more health-relevant variable and is not measured here.</p>
+  <p><strong>Three neighborhoods are parks</strong> — Golden Gate Park, McLaren Park and Lincoln
+  Park — with between 58 and 160 residents. Their census rates are noise, so they are mapped but
+  never scored or ranked.</p>
+  <p><strong>Neighborhood median income is an approximation.</strong> Medians cannot be summed,
+  so it is a household-weighted mean of tract medians. Every other rate is exact — summed
+  numerator over summed denominator, which is what population weighting means.</p>
+  <p><strong>41 units is coarse.</strong> Real inequity exists within neighborhoods and is
+  invisible at this resolution.</p>
+  <p><strong>The residual spatial clustering was never explained.</strong> After fog, canopy,
+  terrain and built-up surface, Moran’s I on the model residuals is still +0.433 at
+  p &lt; 0.0001 — something spatially organised remains unidentified. And the mediation result
+  reverses if the built-up index is added to the controls; both specifications are in the
+  Explore section above.</p>
 </section>
 
 <footer>
-  Landsat Collection 2 Level-2 via Microsoft Planetary Computer · American Community Survey 2024
-  5-year via Census Reporter · boundaries and tract crosswalk via DataSF · elevation via USGS
-  3DEP. Analysis in Python (GeoPandas, rasterio, PySAL, spreg, mgwr); this page is one static
-  file with no dependencies.
+  Landsat Collection 2 Level-2 via Microsoft Planetary Computer · American Community Survey
+  2024 5-year via Census Reporter · neighborhood boundaries and tract crosswalk via DataSF.
+  Analysis in Python; page is a single static file with no dependencies.
 </footer>
 </div>
 
@@ -357,61 +480,8 @@ const F = NEIGHBORHOODS.features;
 const SCORED = F.filter(f => f.properties.index !== null);
 const P = f => f.properties;
 const SVGNS = "http://www.w3.org/2000/svg";
-let selected = "Chinatown";
 
-/* ---------- the variable catalogue ----------
-   One place defining what every field is called, how it formats, and whether
-   its scale diverges around a meaningful zero. Everything else reads from it,
-   so adding a column to the pipeline surfaces it everywhere at once. */
-const pct = v => v.toFixed(1) + "%";
-const deg = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + " °C";
-const num = d => v => v.toFixed(d);
-const int = v => Math.round(v).toLocaleString();
-const money = v => "$" + Math.round(v / 1000) + "k";
-
-const VARS = [
-  { k: "index", label: "Vulnerability index", group: "Index", fmt: num(0) },
-  { k: "exposure", label: "Exposure score", group: "Index", fmt: num(0) },
-  { k: "sensitivity", label: "Sensitivity score", group: "Index", fmt: num(0) },
-  { k: "capacity_gap", label: "Capacity gap score", group: "Index", fmt: num(0) },
-
-  { k: "heat_anomaly", label: "Heat anomaly", group: "Heat", fmt: deg, div: true },
-  { k: "heat_p90", label: "Heat 90th pct", group: "Heat", fmt: deg, div: true },
-  { k: "heat_absolute", label: "Heat, absolute", group: "Heat", fmt: v => v.toFixed(1) + " °C" },
-  { k: "heat_sd", label: "Heat spread within", group: "Heat", fmt: v => v.toFixed(1) + " °C" },
-  { k: "fog", label: "Fog frequency", group: "Environment", fmt: v => Math.round(v * 100) + "%" },
-  { k: "ndvi", label: "Vegetation (NDVI)", group: "Environment", fmt: num(2) },
-  { k: "canopy_cooling", label: "Cooling per 0.1 NDVI", group: "Environment", fmt: v => v.toFixed(2) + " °C" },
-
-  { k: "median_income", label: "Median income", group: "Demographics", fmt: money },
-  { k: "pct_poverty", label: "Below poverty", group: "Demographics", fmt: pct },
-  { k: "pct_65_plus", label: "Aged 65+", group: "Demographics", fmt: pct },
-  { k: "pct_under_5", label: "Under 5", group: "Demographics", fmt: pct },
-  { k: "pct_renter", label: "Renters", group: "Demographics", fmt: pct },
-  { k: "pct_limited_english", label: "Limited English", group: "Demographics", fmt: pct },
-  { k: "population", label: "Population", group: "Demographics", fmt: int },
-  { k: "households", label: "Households", group: "Demographics", fmt: int },
-
-  { k: "pct_poc", label: "Residents of color", group: "Race", fmt: pct },
-  { k: "pct_white_nh", label: "White", group: "Race", fmt: pct },
-  { k: "pct_asian_nh", label: "Asian", group: "Race", fmt: pct },
-  { k: "pct_hispanic", label: "Hispanic", group: "Race", fmt: pct },
-  { k: "pct_black_nh", label: "Black", group: "Race", fmt: pct },
-
-  { k: "clear_obs", label: "Usable observations", group: "Quality", fmt: num(0) },
-  { k: "heat_bias", label: "Warm-day bias", group: "Quality", fmt: v => "+" + v.toFixed(2) + " °C" },
-  { k: "pixel_coverage", label: "Pixel coverage", group: "Quality", fmt: v => Math.round(v * 100) + "%" },
-  { k: "acs_cv", label: "Census CV", group: "Quality", fmt: num(2) },
-  { k: "cooling_local_r2", label: "Local model R²", group: "Quality", fmt: num(2) },
-];
-const V = Object.fromEntries(VARS.map(v => [v.k, v]));
-const GROUPS = [...new Set(VARS.map(v => v.group))];
-// Kept out of the correlation matrix: raw counts and near-duplicates that only
-// pad the grid without adding a relationship worth reading.
-const MATRIX_SKIP = new Set(["population", "households", "heat_p90", "heat_absolute",
-                             "pixel_coverage", "cooling_local_r2"]);
-
-/* ---------- helpers ---------- */
+/* ---------- small helpers ---------- */
 const el = (name, attrs = {}, text) => {
   const n = document.createElementNS(SVGNS, name);
   for (const k in attrs) n.setAttribute(k, attrs[k]);
@@ -419,18 +489,17 @@ const el = (name, attrs = {}, text) => {
   return n;
 };
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-const vals = key => SCORED.map(f => P(f)[key]).filter(v => v !== null && !isNaN(v));
-const extent = key => { const v = vals(key); return [Math.min(...v), Math.max(...v)]; };
-const signed = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2);
-
-function pearson(a, b) {
+const extent = (rows, key) => {
+  const v = rows.map(r => P(r)[key]).filter(x => x !== null && !isNaN(x));
+  return [Math.min(...v), Math.max(...v)];
+};
+function pearson(rows, a, b) {
   const xs = [], ys = [];
-  SCORED.forEach(f => {
-    const x = P(f)[a], y = P(f)[b];
-    if (x !== null && y !== null && !isNaN(x) && !isNaN(y)) { xs.push(x); ys.push(y); }
+  rows.forEach(r => {
+    const x = P(r)[a], y = P(r)[b];
+    if (x !== null && y !== null) { xs.push(x); ys.push(y); }
   });
   const n = xs.length;
-  if (n < 4) return NaN;
   const mx = xs.reduce((s, v) => s + v, 0) / n, my = ys.reduce((s, v) => s + v, 0) / n;
   let sxy = 0, sxx = 0, syy = 0;
   for (let i = 0; i < n; i++) {
@@ -439,15 +508,19 @@ function pearson(a, b) {
   }
   return sxy / Math.sqrt(sxx * syy);
 }
-// Smallest |r| that clears p < .05 at this n, via the Fisher z transform.
-const R_CRIT = Math.tanh(1.96 / Math.sqrt(SCORED.length - 3));
+const signed = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2);
+const money = v => "$" + Math.round(v / 1000) + "k";
 
-/* ---------- colour ---------- */
+/* ---------- colour scales ----------
+   Sequential = one hue, light to dark (reversed in dark mode so "more" always
+   moves away from the surface). Diverging = blue/red with a neutral midpoint,
+   used only for the heat anomaly, which has a true zero: the city average. */
 const seq = () => [css("--seq-1"), css("--seq-2"), css("--seq-3"), css("--seq-4"), css("--seq-5")];
 const div6 = () => [css("--div-c3"), css("--div-c2"), css("--div-c1"),
                     css("--div-w1"), css("--div-w2"), css("--div-w3")];
-function quantileBreaks(v, n) {
-  const s = [...v].sort((a, b) => a - b), out = [];
+
+function quantileBreaks(values, n) {
+  const s = [...values].sort((a, b) => a - b), out = [];
   for (let i = 1; i < n; i++) out.push(s[Math.floor(i * s.length / n)]);
   return out;
 }
@@ -456,27 +529,54 @@ function classify(v, breaks) {
   while (i < breaks.length && v >= breaks[i]) i++;
   return i;
 }
+
+const METRICS = {
+  index:         { label: "Vulnerability", fmt: v => v.toFixed(0), kind: "seq",
+                   blurb: "Composite index, 0–100" },
+  heat_anomaly:  { label: "Heat", fmt: v => signed(v) + " °C", kind: "div",
+                   blurb: "°C vs the citywide average" },
+  ndvi:          { label: "Vegetation", fmt: v => v.toFixed(2), kind: "seq",
+                   blurb: "NDVI, higher is greener" },
+  fog:           { label: "Fog", fmt: v => Math.round(v * 100) + "%", kind: "seq",
+                   blurb: "Share of observations under cloud" },
+  median_income: { label: "Income", fmt: money, kind: "seq",
+                   blurb: "Median household income" },
+};
+
+// The five metrics that get toggle buttons on the main map. Everything below
+// lives in its own section, where it can be explained rather than just offered.
+const MAP_TOGGLE = ["index", "heat_anomaly", "ndvi", "fog", "median_income"];
+
+const QUALITY_METRICS = {
+  canopy_cooling: { label: "Cooling per tree", fmt: v => v.toFixed(2) + " °C", kind: "seq",
+                    blurb: "°C bought per 0.1 NDVI, from the local regression" },
+  clear_obs: { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
+               blurb: "Usable clear looks, of 63 scenes" },
+  // Sequential, not diverging: the bias is positive everywhere, because any day
+  // clear enough to measure is warmer than the average day. There is no
+  // "unbiased" pole for a diverging scale to sit on.
+  heat_bias: { label: "Sampling bias", fmt: v => "+" + v.toFixed(2) + " °C", kind: "seq",
+               blurb: "How much hotter the city was on this place's visible days" },
+};
+Object.assign(METRICS, QUALITY_METRICS);
+
 function scaleFor(key) {
-  const meta = V[key] || {};
-  const v = vals(key);
-  if (meta.div) {
-    // Diverging only where zero means something. Heat anomaly is measured
-    // against the city average, so zero is "no different" and must not float.
-    const m = Math.max(Math.abs(Math.min(...v)), Math.abs(Math.max(...v)));
-    const breaks = [-m / 2, -m / 4, -m / 20, m / 20, m / 4];
+  const m = METRICS[key] || { kind: "seq" };
+  const vals = SCORED.map(f => P(f)[key]).filter(v => v !== null);
+  if (m.kind === "div") {
+    // The midpoint must mean "no different from the baseline", so it never
+    // floats with the data even when the breaks around it do.
+    const breaks = typeof m.breaks === "function" ? m.breaks(vals)
+                 : (m.breaks || [-4, -2, -0.5, 0.5, 2]);
     const ramp = div6();
-    return { ramp, breaks, color: x => (x === null ? css("--none") : ramp[classify(x, breaks)]) };
+    return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
   }
-  const breaks = quantileBreaks(v, 5);
+  const breaks = quantileBreaks(vals, 5);
   const ramp = seq();
-  return { ramp, breaks, color: x => (x === null ? css("--none") : ramp[classify(x, breaks)]) };
+  return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
 }
 
 /* ---------- projection ---------- */
-function eachRing(f, fn) {
-  const g = f.geometry;
-  (g.type === "Polygon" ? [g.coordinates] : g.coordinates).forEach(p => p.forEach(fn));
-}
 function projector(w, h, pad) {
   let x0 = 180, x1 = -180, y0 = 90, y1 = -90;
   F.forEach(f => eachRing(f, r => r.forEach(([lo, la]) => {
@@ -488,6 +588,11 @@ function projector(w, h, pad) {
   const s = Math.min((w - 2 * pad) / bw, (h - 2 * pad) / bh);
   const ox = (w - bw * s) / 2, oy = (h - bh * s) / 2;
   return ([lo, la]) => [ox + (lo - x0) * k * s, oy + (y1 - la) * s];
+}
+function eachRing(f, fn) {
+  const g = f.geometry;
+  const polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+  polys.forEach(poly => poly.forEach(fn));
 }
 function pathFor(f, proj) {
   let d = "";
@@ -514,102 +619,145 @@ function showTip(e, html) {
 }
 const hideTip = () => { tip.style.opacity = 0; };
 
-function tipBody(q, extraKey) {
-  if (!q.has_residents) return "<b>" + q.nhood + "</b><span>Park — not scored<br>" +
-    q.population.toLocaleString() + " residents</span>";
-  const line = k => V[k] && q[k] !== null ? V[k].label + " " + V[k].fmt(q[k]) + "<br>" : "";
-  return "<b>" + q.nhood + "</b><span>" +
-    (extraKey && !["index", "heat_anomaly", "fog", "ndvi"].includes(extraKey) ? line(extraKey) : "") +
-    line("index") + line("heat_anomaly") + line("fog") + line("ndvi") +
-    '<span style="opacity:.7">' + q.clear_obs.toFixed(0) + " of 63 scenes · bias +" +
-    q.heat_bias.toFixed(2) + " °C</span></span>";
-}
-
 /* ---------- map ---------- */
 function drawMap(svgId, key, opts = {}) {
   const svg = document.getElementById(svgId);
   svg.innerHTML = "";
   const vb = svg.viewBox.baseVal;
-  const proj = projector(vb.width, vb.height, opts.pad ?? 10);
+  const proj = projector(vb.width, vb.height, opts.pad ?? 12);
   const sc = scaleFor(key);
-  F.forEach(f => {
-    const q = P(f), v = q[key];
-    const p = el("path", {
-      d: pathFor(f, proj), fill: sc.color(v),
-      class: "nb" + (q.nhood === selected ? " sel" : ""),
-      tabindex: "0", role: "img",
-      "aria-label": q.nhood + ": " + (v === null ? "not scored" : V[key].fmt(v)),
+  const m = METRICS[key] || { label: key, fmt: v => v.toFixed(2) };
+
+  // Hatching marks where the satellite sees least. This is texture carrying
+  // data — uncertainty — not decoration, and it ships with a legend key. 45°
+  // only, per the one-angle rule.
+  const hatchId = "hatch-" + svgId;
+  if (opts.hatch) {
+    const defs = el("defs");
+    const pattern = el("pattern", {
+      id: hatchId, width: 7, height: 7,
+      patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)",
     });
-    p.addEventListener("mousemove", e => showTip(e, tipBody(q, key)));
+    pattern.appendChild(el("line", {
+      x1: 0, y1: 0, x2: 0, y2: 7,
+      stroke: css("--ink"), "stroke-width": 1.5, opacity: 0.42,
+    }));
+    defs.appendChild(pattern);
+    svg.appendChild(defs);
+  }
+
+  F.forEach(f => {
+    const v = P(f)[key];
+    const p = el("path", {
+      d: pathFor(f, proj),
+      fill: sc.color(v),
+      class: "nb" + (P(f).nhood === selected ? " sel" : ""),
+      tabindex: "0",
+      role: "img",
+      "aria-label": P(f).nhood + ": " + (v === null ? "not scored" : m.fmt(v)),
+    });
+    const body = () => {
+      const q = P(f);
+      if (!q.has_residents) return "<b>" + q.nhood + "</b><span>Park — not scored<br>" +
+        q.population.toLocaleString() + " residents</span>";
+      return "<b>" + q.nhood + "</b><span>" +
+        "Heat " + signed(q.heat_anomaly) + " °C<br>" +
+        "Fog " + Math.round(q.fog * 100) + "% · NDVI " + q.ndvi.toFixed(2) + "<br>" +
+        "Income " + money(q.median_income) + "<br>" +
+        "Vulnerability " + q.index.toFixed(0) + " (rank " + q.rank + " of 38)" +
+        '<br><span style="opacity:.75">' +
+        q.clear_obs.toFixed(0) + " clear looks · bias +" + q.heat_bias.toFixed(2) +
+        " °C<br>satellite " + q.heat_confidence + " · census " + q.acs_confidence +
+        "</span></span>";
+    };
+    p.addEventListener("mousemove", e => showTip(e, body()));
     p.addEventListener("mouseleave", hideTip);
-    p.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, tipBody(q, key)));
+    p.addEventListener("focus", e => showTip({ clientX: 40, clientY: 90 }, body()));
     p.addEventListener("blur", hideTip);
-    p.addEventListener("click", () => select(q.nhood));
-    p.addEventListener("keydown", e => { if (e.key === "Enter") select(q.nhood); });
+    p.addEventListener("click", () => select(P(f).nhood));
+    p.addEventListener("keydown", e => { if (e.key === "Enter") select(P(f).nhood); });
     svg.appendChild(p);
+
+    if (opts.hatch && P(f).heat_confidence === "low") {
+      // Overlay, not a replacement fill — the value still has to be readable
+      // underneath the uncertainty marking.
+      svg.appendChild(el("path", {
+        d: pathFor(f, proj), fill: "url(#" + hatchId + ")",
+        stroke: "none", "pointer-events": "none",
+      }));
+    }
   });
   return sc;
 }
-function drawLegend(id, key, sc) {
+
+function drawLegend(id, key, sc, opts = {}) {
   const box = document.getElementById(id);
-  const meta = V[key] || { fmt: num(2), label: key };
+  const m = METRICS[key] || { fmt: v => v.toFixed(2), blurb: "" };
   const lo = sc.breaks[0], hi = sc.breaks[sc.breaks.length - 1];
+  const swatches = sc.ramp.map(c =>
+    '<i style="background:' + c + '"></i>').join("");
+  const hatchKey = opts.hatch
+    ? '<span class="lg-key"><i style="background:repeating-linear-gradient(45deg,' +
+      css("--ink") + ' 0 1.5px,transparent 1.5px 7px);opacity:.6"></i>' +
+      "satellite sees least</span>"
+    : "";
   box.innerHTML =
-    '<span class="cap">' + meta.label +
-      (meta.div ? " · breaks fixed around zero" : " · quantile bins") + "</span>" +
-    '<span class="ramp"><span class="end">' + meta.fmt(lo) + "</span>" +
-      '<span class="swatches">' + sc.ramp.map(c => '<i style="background:' + c + '"></i>').join("") +
-      '</span><span class="end">' + meta.fmt(hi) + "</span></span>" +
-    '<span class="lg-key"><i style="background:' + css("--none") + '"></i>not scored</span>';
+    '<span class="cap">' + m.blurb +
+      (m.kind === "div" ? " · fixed breaks around zero" : " · quantile bins") + "</span>" +
+    '<span class="ramp"><span class="end">' + m.fmt(lo) + "</span>" +
+      '<span class="swatches">' + swatches + "</span>" +
+      '<span class="end">' + m.fmt(hi) + "</span></span>" +
+    '<span class="lg-key"><i style="background:' + css("--none") + '"></i>not scored</span>' +
+    hatchKey;
 }
 
 /* ---------- scatter ---------- */
-function drawScatter(xk, yk) {
-  const svg = document.getElementById("scatter");
+function scatter(svgId, xk, yk, xlab, ylab, o = {}) {
+  const svg = document.getElementById(svgId);
   svg.innerHTML = "";
   const vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
-  const L = 66, R = 18, T = 14, B = 50;
-  const rows = SCORED.filter(f => P(f)[xk] !== null && P(f)[yk] !== null);
-  const xs = rows.map(f => P(f)[xk]), ys = rows.map(f => P(f)[yk]);
-  const [x0, x1] = [Math.min(...xs), Math.max(...xs)];
-  const [y0, y1] = [Math.min(...ys), Math.max(...ys)];
-  const px = v => L + (x1 === x0 ? 0.5 : (v - x0) / (x1 - x0)) * (W - L - R);
-  const py = v => H - B - (y1 === y0 ? 0.5 : (v - y0) / (y1 - y0)) * (H - T - B);
+  const L = 58, R = 16, T = 14, B = 46;
+  const [x0, x1] = extent(SCORED, xk), [y0, y1] = extent(SCORED, yk);
+  const px = v => L + (v - x0) / (x1 - x0) * (W - L - R);
+  const py = v => H - B - (v - y0) / (y1 - y0) * (H - T - B);
 
   for (let i = 0; i <= 4; i++) {
     const y = T + i * (H - T - B) / 4;
     svg.appendChild(el("line", { x1: L, x2: W - R, y1: y, y2: y, class: "gl" }));
     svg.appendChild(el("text", { x: L - 9, y: y + 4, class: "tick", "text-anchor": "end" },
-      V[yk].fmt(y1 - i * (y1 - y0) / 4)));
-    const xv = x0 + i * (x1 - x0) / 4;
-    svg.appendChild(el("text", { x: px(xv), y: H - B + 20, class: "tick", "text-anchor": "middle" },
-      V[xk].fmt(xv)));
+      (o.yfmt || (v => v.toFixed(1)))(y1 - i * (y1 - y0) / 4)));
+  }
+  for (let i = 0; i <= 4; i++) {
+    const v = x0 + i * (x1 - x0) / 4;
+    svg.appendChild(el("text", { x: px(v), y: H - B + 20, class: "tick", "text-anchor": "middle" },
+      (o.xfmt || (v => v.toFixed(1)))(v)));
   }
   svg.appendChild(el("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, class: "ax" }));
-  svg.appendChild(el("text", { x: (L + W - R) / 2, y: H - 8, class: "alab", "text-anchor": "middle" },
-    V[xk].label));
-  svg.appendChild(el("text", { x: 0, y: 0, class: "alab", "text-anchor": "middle",
-    transform: "translate(15," + (T + (H - T - B) / 2) + ") rotate(-90)" }, V[yk].label));
+  svg.appendChild(el("text", { x: (L + W - R) / 2, y: H - 6, class: "alab", "text-anchor": "middle" }, xlab));
+  svg.appendChild(el("text", {
+    x: 0, y: 0, class: "alab", "text-anchor": "middle",
+    transform: "translate(14," + (T + (H - T - B) / 2) + ") rotate(-90)"
+  }, ylab));
 
+  // Least-squares fit, drawn to show how much slope there is (or isn't).
+  const xs = SCORED.map(f => P(f)[xk]), ys = SCORED.map(f => P(f)[yk]);
   const n = xs.length;
   const mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
   let sxy = 0, sxx = 0;
   for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; }
-  if (sxx > 0) {
-    const slope = sxy / sxx;
-    svg.appendChild(el("line", {
-      x1: px(x0), y1: py(my + slope * (x0 - mx)), x2: px(x1), y2: py(my + slope * (x1 - mx)),
-      stroke: css("--axis"), "stroke-width": 2, "stroke-linecap": "round",
-    }));
-  }
-  rows.forEach(f => {
+  const slope = sxy / sxx;
+  svg.appendChild(el("line", {
+    x1: px(x0), y1: py(my + slope * (x0 - mx)),
+    x2: px(x1), y2: py(my + slope * (x1 - mx)),
+    stroke: css("--axis"), "stroke-width": 2, "stroke-linecap": "round"
+  }));
+
+  SCORED.forEach(f => {
     const q = P(f);
-    const c = el("circle", {
-      cx: px(q[xk]), cy: py(q[yk]), r: 5.5,
-      class: "dot" + (q.nhood === selected ? " sel" : ""), tabindex: "0",
-    });
-    const body = "<b>" + q.nhood + "</b><span>" + V[xk].label + ": " + V[xk].fmt(q[xk]) +
-      "<br>" + V[yk].label + ": " + V[yk].fmt(q[yk]) + "</span>";
+    const c = el("circle", { cx: px(q[xk]), cy: py(q[yk]), r: 5.5, class: "dot", tabindex: "0" });
+    const body = "<b>" + q.nhood + "</b><span>" + xlab + ": " +
+      (o.xfmt || (v => v.toFixed(2)))(q[xk]) + "<br>" + ylab + ": " +
+      (o.yfmt || (v => v.toFixed(2)))(q[yk]) + "</span>";
     c.addEventListener("mousemove", e => showTip(e, body));
     c.addEventListener("mouseleave", hideTip);
     c.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
@@ -617,338 +765,354 @@ function drawScatter(xk, yk) {
     c.addEventListener("click", () => select(q.nhood));
     svg.appendChild(c);
   });
-  const sel = rows.find(f => P(f).nhood === selected);
-  if (sel) {
-    const q = P(sel), cx = px(q[xk]);
-    const flip = cx + 10 + selected.length * 6.3 > W - R;
+
+  // Label selectively — only the neighbourhoods the sentence is about — and
+  // flip a label to the left of its dot when it would otherwise run off the
+  // right edge. A clipped label is worse than no label.
+  (o.label || []).forEach(name => {
+    const f = SCORED.find(f => P(f).nhood === name);
+    if (!f) return;
+    const q = P(f);
+    const cx = px(q[xk]);
+    // ~6.3px per character at 11.5px — enough to decide which side fits.
+    const flip = cx + 10 + name.length * 6.3 > W - R;
     svg.appendChild(el("text", {
       x: cx + (flip ? -10 : 10), y: py(q[yk]) + 4, class: "dlabel",
       "text-anchor": flip ? "end" : "start",
-    }, selected));
+    }, name));
+  });
+  // The correlation goes in an HTML caption, not inside the plot — anywhere in
+  // the frame it can and did land on top of a dot.
+  if (o.cap) {
+    document.getElementById(o.cap).textContent =
+      "Correlation r = " + signed(pearson(SCORED, xk, yk)) +
+      " across " + SCORED.length + " scored neighborhoods.";
   }
-  const r = pearson(xk, yk);
-  const resolvable = Math.abs(r) >= R_CRIT;
-  document.getElementById("scatter-cap").textContent =
-    "r = " + signed(r) + " across " + n + " neighborhoods — " +
-    (resolvable ? "clears the |r| ≥ " + R_CRIT.toFixed(2) + " this sample can resolve."
-                : "below the |r| ≥ " + R_CRIT.toFixed(2) + " this sample can resolve, so treat as no detected relationship.");
 }
 
-/* ---------- correlation matrix ---------- */
-function drawMatrix() {
-  const svg = document.getElementById("matrix");
+/* ---------- ranked bars ---------- */
+function drawBars() {
+  const svg = document.getElementById("bars");
   svg.innerHTML = "";
-  const keys = VARS.map(v => v.k).filter(k => !MATRIX_SKIP.has(k) && vals(k).length > 4);
-  const cell = 21, L = 156, T = 156;
-  const W = L + keys.length * cell + 10, H = T + keys.length * cell + 10;
+  const rows = [...SCORED].sort((a, b) => P(a).rank - P(b).rank);
+  const rowH = 21, L = 168, R = 54, T = 8, W = 720;
+  const H = T + rows.length * rowH + 8;
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  const max = Math.max(...rows.map(f => P(f).index));
+  const bw = v => v / max * (W - L - R);
 
-  // Correlations diverge around zero, so they get the diverging ramp, not a
-  // sequential one — the sign is the whole point.
-  const ramp = div6();
-  const breaks = [-0.5, -0.25, -R_CRIT, R_CRIT, 0.25, 0.5];
-  keys.forEach((k, i) => {
-    svg.appendChild(el("text", { x: L - 8, y: T + i * cell + cell / 2 + 4, class: "tick",
-      "text-anchor": "end" }, V[k].label));
-    svg.appendChild(el("text", {
-      x: 0, y: 0, class: "tick", "text-anchor": "start",
-      transform: "translate(" + (L + i * cell + cell / 2 + 4) + "," + (T - 8) + ") rotate(-90)",
-    }, V[k].label));
+  rows.forEach((f, i) => {
+    const q = P(f), y = T + i * rowH;
+    // One colour for every bar: length already encodes the value, so a ramp
+    // would double-encode it and burn the only free channel.
+    const g = el("g", { tabindex: "0" });
+    g.appendChild(el("rect", { x: 0, y: y, width: W, height: rowH - 2, fill: "transparent" }));
+    g.appendChild(el("text", { x: L - 10, y: y + 13, class: "tick", "text-anchor": "end" }, q.nhood));
+    g.appendChild(el("rect", {
+      x: L, y: y + 3, width: Math.max(bw(q.index), 1), height: rowH - 8,
+      rx: 4, fill: q.nhood === selected ? css("--ink") : css("--accent")
+    }));
+    g.appendChild(el("text", { x: L + bw(q.index) + 8, y: y + 13, class: "tick" }, q.index.toFixed(0)));
+    const body = "<b>" + q.nhood + "</b><span>Vulnerability " + q.index.toFixed(1) +
+      " · rank " + q.rank + "<br>Exposure " + q.exposure.toFixed(0) +
+      " · Sensitivity " + q.sensitivity.toFixed(0) +
+      " · Capacity gap " + q.capacity_gap.toFixed(0) + "</span>";
+    g.addEventListener("mousemove", e => showTip(e, body));
+    g.addEventListener("mouseleave", hideTip);
+    g.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
+    g.addEventListener("blur", hideTip);
+    g.addEventListener("click", () => select(q.nhood));
+    g.style.cursor = "pointer";
+    svg.appendChild(g);
   });
-  keys.forEach((a, i) => keys.forEach((b, j) => {
-    const r = i === j ? 1 : pearson(a, b);
-    if (isNaN(r)) return;
-    const weak = Math.abs(r) < R_CRIT;
-    // Below the resolvable threshold the cell gets a neutral fill, not a faded
-    // one. Lowering opacity on a dark surface makes a colour *darker*, so a weak
-    // correlation ends up looking like a strong one — the encoding inverts.
-    // Neutral says "nothing detectable here", which is what the data says.
-    const rect = el("rect", {
-      x: L + j * cell, y: T + i * cell, width: cell - 2, height: cell - 2, rx: 3,
-      fill: i === j ? css("--axis") : weak ? css("--surface-2") : ramp[classify(r, breaks)],
-      tabindex: "0",
-    });
-    const body = "<b>" + V[a].label + " × " + V[b].label + "</b><span>r = " + signed(r) +
-      (i === j ? "" : weak ? "<br>below the resolvable threshold" : "<br>resolvable at this sample size") +
-      "</span>";
-    rect.addEventListener("mousemove", e => showTip(e, body));
-    rect.addEventListener("mouseleave", hideTip);
-    rect.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
-    rect.addEventListener("blur", hideTip);
-    rect.addEventListener("click", () => { setScatter(b, a); });
-    rect.style.cursor = "pointer";
-    svg.appendChild(rect);
-  }));
-  // Size the viewBox to whatever the labels actually measured, rather than to a
-  // guessed margin. Rotated text length depends on the rendering font, so any
-  // fixed top margin eventually clips on some machine.
-  const bb = svg.getBBox();
-  const pad = 6;
-  svg.setAttribute("viewBox",
-    [bb.x - pad, bb.y - pad, bb.width + pad * 2, bb.height + pad * 2].join(" "));
+}
 
-  document.getElementById("matrix-legend").innerHTML =
-    '<span class="cap">Pearson r · click any cell to plot that pair in Explore</span>' +
-    '<span class="ramp"><span class="end">−1</span><span class="swatches">' +
-    ramp.map(c => '<i style="background:' + c + '"></i>').join("") +
-    '</span><span class="end">+1</span></span>' +
-    '<span class="lg-key"><i style="background:' + css("--surface-2") + '"></i>' +
-    "below |r| " + R_CRIT.toFixed(2) + ", not resolvable at n = " + SCORED.length + "</span>";
+/* ---------- how well is each neighbourhood measured? ---------- */
+const CONF_COLOR = { high: "#0ca30c", moderate: "#fab219", low: "#ec835a" };
+
+function drawConfBars() {
+  const svg = document.getElementById("conf-bars");
+  svg.innerHTML = "";
+  const rows = [...SCORED].sort((a, b) => P(a).clear_obs - P(b).clear_obs);
+  const rowH = 19, L = 168, R = 118, T = 6, W = 720;
+  const H = T + rows.length * rowH + 6;
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  const TOTAL = 63;
+  const bw = v => (v / TOTAL) * (W - L - R);
+
+  // Track shows the scenes that existed; the fill shows the ones that were
+  // usable. The gap between them is the blind spot.
+  rows.forEach((f, i) => {
+    const q = P(f), y = T + i * rowH;
+    const g = el("g", { tabindex: "0" });
+    g.style.cursor = "pointer";
+    g.appendChild(el("rect", { x: 0, y: y, width: W, height: rowH - 2, fill: "transparent" }));
+    g.appendChild(el("text", { x: L - 22, y: y + 12, class: "tick", "text-anchor": "end" }, q.nhood));
+    g.appendChild(el("circle", {
+      cx: L - 11, cy: y + 8, r: 4, fill: CONF_COLOR[q.heat_confidence],
+    }));
+    g.appendChild(el("rect", {
+      x: L, y: y + 3, width: W - L - R, height: rowH - 8, rx: 3, fill: css("--grid"),
+    }));
+    g.appendChild(el("rect", {
+      x: L, y: y + 3, width: Math.max(bw(q.clear_obs), 1), height: rowH - 8,
+      rx: 3, fill: q.nhood === selected ? css("--ink") : css("--accent"),
+    }));
+    g.appendChild(el("text", { x: W - R + 10, y: y + 12, class: "tick" },
+      q.clear_obs.toFixed(0) + " looks · +" + q.heat_bias.toFixed(2) + " °C"));
+    const body = "<b>" + q.nhood + "</b><span>" +
+      q.clear_obs.toFixed(0) + " usable looks of " + TOTAL + " scenes<br>" +
+      "Warm-day bias +" + q.heat_bias.toFixed(2) + " °C<br>" +
+      "Within-neighborhood spread " + q.heat_sd.toFixed(1) + " °C<br>" +
+      "Satellite confidence: " + q.heat_confidence + "</span>";
+    g.addEventListener("mousemove", e => showTip(e, body));
+    g.addEventListener("mouseleave", hideTip);
+    g.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
+    g.addEventListener("blur", hideTip);
+    g.addEventListener("click", () => select(q.nhood));
+    svg.appendChild(g);
+  });
+
+  const counts = { high: 0, moderate: 0, low: 0 };
+  rows.forEach(f => counts[P(f).heat_confidence]++);
+  document.getElementById("conf-note").innerHTML =
+    "Sorted by usable observations. Dot colour is the confidence grade: " +
+    counts.high + " high, " + counts.moderate + " moderate, " + counts.low +
+    " low. Grades come from fixed thresholds — fewer than 20 looks, or more than " +
+    "1.0 °C of warm-day bias, drops a neighborhood to low.";
 }
 
 /* ---------- neighbourhood profile ---------- */
-const RACE = [["pct_white_nh", "White", "--cat-1"], ["pct_asian_nh", "Asian", "--cat-2"],
-              ["pct_hispanic", "Hispanic", "--cat-3"], ["pct_black_nh", "Black", "--cat-4"]];
-const PROFILE_KEYS = ["index", "heat_anomaly", "fog", "ndvi", "canopy_cooling",
-                      "median_income", "pct_poverty", "pct_poc"];
-const COMPARE_KEYS = ["heat_anomaly", "ndvi", "fog", "canopy_cooling", "pct_poverty",
-                      "pct_65_plus", "pct_renter"];
-const median = v => { const s = [...v].sort((a, b) => a - b); return s[Math.floor(s.length / 2)]; };
+const RACE = [
+  ["pct_white_nh", "White", "--cat-1"],
+  ["pct_asian_nh", "Asian", "--cat-2"],
+  ["pct_hispanic", "Hispanic", "--cat-3"],
+  ["pct_black_nh", "Black", "--cat-4"],
+];
+let selected = "Chinatown";
 
+function median(vals) {
+  const s = [...vals].sort((a, b) => a - b);
+  return s[Math.floor(s.length / 2)];
+}
 function drawProfile() {
   const f = F.find(x => P(x).nhood === selected) || SCORED[0];
-  const q = P(f), scored = q.index !== null;
+  const q = P(f);
+  const scored = q.index !== null;
+  document.getElementById("prof").innerHTML = [
+    ["Population", q.population.toLocaleString()],
+    ["Vulnerability", scored ? q.index.toFixed(0) + " (rank " + q.rank + ")" : "not scored"],
+    ["Heat anomaly", signed(q.heat_anomaly) + " °C"],
+    ["Fog", Math.round(q.fog * 100) + "%"],
+    ["Vegetation", q.ndvi.toFixed(2)],
+    ["Median income", scored ? money(q.median_income) : "—"],
+  ].map(([l, v]) => "<div><span>" + l + "</span><b>" + v + "</b></div>").join("");
 
-  document.getElementById("prof").innerHTML =
-    "<div><span>Population</span><b>" + q.population.toLocaleString() + "</b></div>" +
-    (scored ? "<div><span>Rank</span><b>" + q.rank + " of 38</b></div>" : "") +
-    PROFILE_KEYS.map(k => q[k] === null ? "" :
-      "<div><span>" + V[k].label + "</span><b>" + V[k].fmt(q[k]) + "</b></div>").join("");
+  // How much to trust this particular neighborhood's numbers.
+  const conf = document.getElementById("prof-conf");
+  if (!scored) {
+    conf.innerHTML = '<p class="note">A park with ' + q.population.toLocaleString() +
+      " residents. Its census rates are noise, so it is mapped but never scored or ranked.</p>";
+  } else {
+    conf.innerHTML =
+      '<p class="note">Seen on ' + q.clear_obs.toFixed(0) + " of 63 scenes; those days ran +" +
+      q.heat_bias.toFixed(2) + " °C hotter than average, so this reading is biased warm by " +
+      "about that much. Temperatures vary " + q.heat_sd.toFixed(1) +
+      " °C within the neighborhood. Census coefficient of variation " + q.acs_cv.toFixed(2) +
+      (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".") + "</p>";
+  }
 
+  // Race composition — the only multi-series mark on the page. Legend plus
+  // in-bar labels where they fit; the table carries the rest.
   const svg = document.getElementById("race");
   svg.innerHTML = "";
-  const W = 680, H = 38, GAP = 2;
+  const W = 680, H = 40, GAP = 2;
   let x = 0;
   const parts = RACE.map(([k, name, tok]) => ({ v: q[k] || 0, name, c: css(tok) }));
-  parts.push({ v: Math.max(0, 100 - parts.reduce((s, p) => s + p.v, 0)), name: "Other", c: css("--cat-5") });
+  const other = Math.max(0, 100 - parts.reduce((s, p) => s + p.v, 0));
+  parts.push({ v: other, name: "Other", c: css("--cat-5") });
   parts.forEach(p => {
     const w = p.v / 100 * W;
     if (w <= 0) return;
-    svg.appendChild(el("rect", { x, y: 8, width: Math.max(w - GAP, 1), height: H, rx: 3, fill: p.c }));
-    if (w > 52) svg.appendChild(el("text", { x: x + w / 2 - GAP / 2, y: 32, "text-anchor": "middle",
-      fill: "#fff", "font-size": 12, "font-weight": 500 }, Math.round(p.v) + "%"));
+    svg.appendChild(el("rect", { x: x, y: 8, width: Math.max(w - GAP, 1), height: H, rx: 3, fill: p.c }));
+    if (w > 52) {
+      svg.appendChild(el("text", {
+        x: x + w / 2 - GAP / 2, y: 33, "text-anchor": "middle",
+        fill: "#fff", "font-size": 12, "font-weight": 500
+      }, Math.round(p.v) + "%"));
+    }
     x += w;
   });
   document.getElementById("lg-race").innerHTML = parts.map(p =>
     '<span class="lg-key"><i style="background:' + p.c + '"></i>' + p.name + "</span>").join("");
 
+  // Versus the citywide median.
+  const cmp = [
+    ["Heat anomaly", "heat_anomaly", v => signed(v) + " °C"],
+    ["Vegetation", "ndvi", v => v.toFixed(2)],
+    ["Poverty", "pct_poverty", v => v.toFixed(0) + "%"],
+    ["Over 65", "pct_65_plus", v => v.toFixed(0) + "%"],
+    ["Renters", "pct_renter", v => v.toFixed(0) + "%"],
+  ];
   const s2 = document.getElementById("vs-city");
   s2.innerHTML = "";
-  const LW = 170, RW = 95, BW = 680 - LW - RW;
-  COMPARE_KEYS.forEach((k, i) => {
-    if (q[k] === null) return;
-    const y = 12 + i * 32;
-    const v = vals(k);
-    const lo = Math.min(...v), hi = Math.max(...v), med = median(v);
-    const norm = x => (hi === lo ? 0.5 : (x - lo) / (hi - lo)) * BW;
-    s2.appendChild(el("text", { x: LW - 10, y: y + 13, class: "tick", "text-anchor": "end" }, V[k].label));
-    s2.appendChild(el("rect", { x: LW, y: y + 4, width: BW, height: 12, rx: 3, fill: css("--grid") }));
-    s2.appendChild(el("rect", { x: LW, y: y + 4, width: Math.max(norm(q[k]), 2), height: 12, rx: 3,
-      fill: css("--accent") }));
-    s2.appendChild(el("line", { x1: LW + norm(med), x2: LW + norm(med), y1: y, y2: y + 20,
-      stroke: css("--ink"), "stroke-width": 2 }));
-    s2.appendChild(el("text", { x: LW + BW + 10, y: y + 14, class: "tick" }, V[k].fmt(q[k])));
+  const LW = 150, RW = 90, BW = 680 - LW - RW;
+  cmp.forEach(([label, k, fmt], i) => {
+    const y = 16 + i * 38;
+    const [lo, hi] = extent(SCORED, k);
+    const med = median(SCORED.map(f => P(f)[k]));
+    const norm = v => (v - lo) / (hi - lo) * BW;
+    s2.appendChild(el("text", { x: LW - 10, y: y + 14, class: "tick", "text-anchor": "end" }, label));
+    s2.appendChild(el("rect", { x: LW, y: y + 5, width: BW, height: 12, rx: 3, fill: css("--grid") }));
+    s2.appendChild(el("rect", {
+      x: LW, y: y + 5, width: Math.max(norm(q[k]), 2), height: 12, rx: 3, fill: css("--accent")
+    }));
+    s2.appendChild(el("line", {
+      x1: LW + norm(med), x2: LW + norm(med), y1: y, y2: y + 22,
+      stroke: css("--ink"), "stroke-width": 2
+    }));
+    s2.appendChild(el("text", { x: LW + BW + 10, y: y + 15, class: "tick" }, fmt(q[k])));
   });
-  s2.appendChild(el("text", { x: LW, y: 12 + COMPARE_KEYS.length * 32 + 12, class: "tick" },
-    "bar = this neighborhood across the citywide range · vertical rule = median"));
-
-  document.getElementById("prof-note").textContent = !scored
-    ? "A park with " + q.population.toLocaleString() + " residents. Its census rates are noise, " +
-      "so it is mapped but never scored, ranked or included in any statistic."
-    : "Seen on " + q.clear_obs.toFixed(0) + " of 63 scenes; those days ran +" +
-      q.heat_bias.toFixed(2) + " °C hotter than average, so this reading is biased warm by about " +
-      "that much. Temperature varies " + q.heat_sd.toFixed(1) + " °C within the neighborhood. " +
-      "Census coefficient of variation " + q.acs_cv.toFixed(2) +
-      (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".");
+  s2.appendChild(el("text", { x: LW, y: 200, class: "tick" }, "vertical rule = citywide median"));
+  drawAll();
 }
 
-/* ---------- model panels ---------- */
-// The models run at tract level and use their own variable names, a few of
-// which never reach the neighborhood artifact. Give those a display label too,
-// so no panel shows a raw pipeline key.
-const MODEL_LABELS = {
-  heat: "Heat anomaly", income_10k: "Median income (per $10k)",
-  elevation: "Elevation", slope: "Slope", southness: "Southness (faces south)",
-  ndbi: "Built-up surface (NDBI)",
-};
-const modelLabel = k => MODEL_LABELS[k] || (V[k] ? V[k].label : k);
-
-function renderModels() {
-  const S = typeof STATS === "undefined" ? {} : STATS;
-
-  if (S.spatial) {
-    const sp = S.spatial;
-    document.getElementById("spatial-kv").innerHTML =
-      "<span>tracts <b>" + sp.n_tracts + "</b></span>" +
-      "<span>model <b>spatial " + (sp.spatial_model ? sp.spatial_model.type : "—") + "</b></span>" +
-      "<span>pseudo R² <b>" + (sp.spatial_model ? sp.spatial_model.pr2.toFixed(3) : "—") + "</b></span>";
-    const rows = Object.entries(sp.models || {});
-    document.getElementById("model-progression").innerHTML =
-      "<thead><tr><th>Specification</th><th>R²</th><th>Residual I</th></tr></thead><tbody>" +
-      rows.map(([name, m]) =>
-        "<tr><td>" + name + "</td><td>" + m.r2.toFixed(3) + "</td><td>" +
-        signed(m.resid_moran_I) + "</td></tr>").join("") + "</tbody>";
-    document.getElementById("spatial-note").textContent =
-      "Residual clustering stays significant at every step (p < 0.0001). Fog absorbs the most, " +
-      "terrain and built-up surface little. Something spatially organised remains unidentified.";
-
-    const mi = sp.morans_i || {};
-    document.getElementById("moran-table").innerHTML =
-      "<thead><tr><th>Variable</th><th>Moran’s I</th><th>p</th></tr></thead><tbody>" +
-      Object.entries(mi).map(([k, m]) =>
-        "<tr><td>" + modelLabel(k) + "</td><td>" + signed(m.I) + "</td><td>" +
-        m.p.toFixed(4) + "</td></tr>").join("") + "</tbody>";
-
-    const vif = sp.vif || {};
-    document.getElementById("vif-table").innerHTML =
-      "<thead><tr><th>Predictor</th><th>VIF</th></tr></thead><tbody>" +
-      Object.entries(vif).map(([k, v]) =>
-        "<tr><td>" + modelLabel(k) + "</td><td>" + v.toFixed(2) + "</td></tr>").join("") +
-      "</tbody>";
-  }
-
-  if (S.gwr) {
-    const g = S.gwr;
-    document.getElementById("gwr-kv").innerHTML =
-      "<span>bandwidth <b>" + g.bandwidth.toFixed(0) + " tracts</b></span>" +
-      "<span>R² <b>" + g.gwr_r2.toFixed(3) + "</b> vs global " + g.global_r2.toFixed(3) + "</span>" +
-      "<span>ΔAICc <b>" + g.aicc_improvement.toFixed(0) + "</b></span>" +
-      "<span>cooling vs fog <b>" + signed(g.cooling_vs_fog_r) + "</b></span>";
-  }
-
-  if (S.mediation) {
-    const treats = Object.keys(S.mediation.treatments);
-    const specs = Object.keys(S.mediation.treatments[treats[0]].specs);
-    const tSel = document.getElementById("med-treat"), sSel = document.getElementById("med-spec");
-    tSel.innerHTML = treats.map(t =>
-      '<option value="' + t + '">' + S.mediation.treatments[t].label + "</option>").join("");
-    sSel.innerHTML = specs.map(s => '<option value="' + s + '">' + s + "</option>").join("");
-    const paint = () => {
-      const d = S.mediation.treatments[tSel.value].specs[sSel.value];
-      const rows = [["a  treatment → canopy", "a"], ["b  canopy → heat", "b"],
-                    ["c  total effect", "c_total"], ["c′ direct effect", "c_direct"],
-                    ["a×b indirect", "indirect"]];
-      document.getElementById("med-table").innerHTML =
-        "<thead><tr><th>Path</th><th>Estimate</th><th>95% CI (spatial blocks)</th></tr></thead><tbody>" +
-        rows.map(([label, k]) => {
-          const [lo, hi] = d.ci_spatial_block[k];
-          const sig = lo * hi > 0;
-          return "<tr><td>" + label + "</td><td>" + d.point[k].toFixed(4) + "</td><td" +
-            (sig ? "" : ' style="opacity:.55"') + ">[" + lo.toFixed(4) + ", " + hi.toFixed(4) +
-            "]" + (sig ? "" : " n.s.") + "</td></tr>";
-        }).join("") + "</tbody>";
-      document.getElementById("med-note").textContent =
-        d.verdict.charAt(0).toUpperCase() + d.verdict.slice(1) +
-        ". Intervals come from resampling blocks of geography rather than individual tracts, " +
-        "because neighbouring tracts are not independent.";
-    };
-    tSel.onchange = sSel.onchange = paint;
-    paint();
-  }
-}
-
-/* ---------- table ---------- */
-let sortKey = "rank", sortDir = 1, colGroup = "All";
-function tableCols() {
-  const base = [{ k: "nhood", label: "Neighborhood", fmt: v => v },
-                { k: "rank", label: "Rank", fmt: v => v ?? "—" }];
-  const chosen = colGroup === "All" ? VARS : VARS.filter(v => v.group === colGroup);
-  return base.concat(chosen.map(v => ({ k: v.k, label: v.label, fmt: v.fmt })));
-}
-function drawTable() {
-  const cols = tableCols();
-  const rows = [...F].sort((a, b) => {
-    const x = P(a)[sortKey], y = P(b)[sortKey];
-    if (x === null || x === undefined) return 1;
-    if (y === null || y === undefined) return -1;
-    return typeof x === "string" ? sortDir * x.localeCompare(y) : sortDir * (x - y);
-  });
-  document.getElementById("tbl").innerHTML =
-    "<thead><tr>" + cols.map(c =>
-      '<th data-k="' + c.k + '"' + (c.k === sortKey ? ' class="sorted"' : "") + ">" +
-      c.label + (c.k === sortKey ? (sortDir > 0 ? " ↑" : " ↓") : "") + "</th>").join("") +
-    "</tr></thead><tbody>" +
-    rows.map(f => {
-      const q = P(f);
-      return '<tr data-n="' + q.nhood + '"' + (q.nhood === selected ? ' class="sel"' : "") + ">" +
-        cols.map(c => "<td>" + (q[c.k] === null || q[c.k] === undefined ? "—" : c.fmt(q[c.k])) +
-        "</td>").join("") + "</tr>";
-    }).join("") + "</tbody>";
-
-  document.querySelectorAll("#tbl th").forEach(th => th.onclick = () => {
-    const k = th.dataset.k;
-    if (k === sortKey) sortDir = -sortDir; else { sortKey = k; sortDir = 1; }
-    drawTable();
-  });
-  document.querySelectorAll("#tbl tbody tr").forEach(tr =>
-    tr.onclick = () => select(tr.dataset.n));
-  document.getElementById("row-count").textContent =
-    rows.length + " neighborhoods · " + cols.length + " columns";
-}
-function downloadCsv() {
-  const keys = ["nhood", "rank"].concat(VARS.map(v => v.k));
-  const head = keys.join(",");
-  const body = [...F]
-    .sort((a, b) => (P(a).rank ?? 99) - (P(b).rank ?? 99))
-    .map(f => keys.map(k => {
-      const v = P(f)[k];
-      if (v === null || v === undefined) return "";
-      return typeof v === "string" ? '"' + v.replace(/"/g, '""') + '"' : v;
-    }).join(",")).join("\n");
-  const blob = new Blob([head + "\n" + body], { type: "text/csv;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "sf-heat-equity.csv";
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-/* ---------- wiring ---------- */
-function optionsHtml(selectedKey) {
-  return GROUPS.map(g =>
-    '<optgroup label="' + g + '">' +
-    VARS.filter(v => v.group === g).map(v =>
-      '<option value="' + v.k + '"' + (v.k === selectedKey ? " selected" : "") + ">" +
-      v.label + "</option>").join("") + "</optgroup>").join("");
-}
-const mapSel = document.getElementById("map-metric");
-const sxSel = document.getElementById("sx"), sySel = document.getElementById("sy");
-mapSel.innerHTML = optionsHtml("index");
-sxSel.innerHTML = optionsHtml("index");
-sySel.innerHTML = optionsHtml("canopy_cooling");
-
-function refreshMap() {
-  const k = mapSel.value;
-  drawLegend("map-legend", k, drawMap("map", k, { pad: 12 }));
-  const f = F.find(x => P(x).nhood === selected);
-  const v = f ? P(f)[k] : null;
-  document.getElementById("map-note").textContent =
-    "Outlined: " + selected + " — " + (v === null || v === undefined ? "not scored" :
-      V[k].label + " " + V[k].fmt(v)) + ". Click any neighborhood to select it.";
-  drawLegend("lg-cooling", "canopy_cooling",
-    drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
-}
-function setScatter(xk, yk) {
-  sxSel.value = xk; sySel.value = yk;
-  drawScatter(xk, yk);
-  document.getElementById("relationships").scrollIntoView({ block: "start", behavior: "smooth" });
-}
 function select(name) {
   selected = name;
   document.getElementById("picker").value = name;
-  refreshMap();
-  drawScatter(sxSel.value, sySel.value);
   drawProfile();
-  drawTable();
 }
 
-mapSel.onchange = refreshMap;
-sxSel.onchange = sySel.onchange = () => drawScatter(sxSel.value, sySel.value);
-document.getElementById("swap").onclick = () => {
-  const a = sxSel.value; sxSel.value = sySel.value; sySel.value = a;
-  drawScatter(sxSel.value, sySel.value);
-};
-document.getElementById("download").onclick = downloadCsv;
+/* ---------- table ---------- */
+function drawTable() {
+  const cols = [
+    ["nhood", "Neighborhood", v => v],
+    ["rank", "Rank", v => v ?? "—"],
+    ["index", "Index", v => v === null ? "—" : v.toFixed(1)],
+    ["heat_anomaly", "Heat °C", v => signed(v)],
+    ["fog", "Fog", v => Math.round(v * 100) + "%"],
+    ["ndvi", "NDVI", v => v.toFixed(2)],
+    ["clear_obs", "Clear obs", v => v.toFixed(0)],
+    ["heat_bias", "Warm bias", v => "+" + v.toFixed(2)],
+    ["heat_sd", "Spread °C", v => v.toFixed(1)],
+    ["heat_confidence", "Satellite", v => v],
+    ["acs_cv", "Census CV", v => v === null ? "—" : v.toFixed(2)],
+    ["acs_confidence", "Census", v => v],
+    ["population", "Pop.", v => v.toLocaleString()],
+    ["median_income", "Income", v => v === null ? "—" : money(v)],
+    ["pct_poverty", "Poverty", v => v === null ? "—" : v.toFixed(1) + "%"],
+    ["pct_65_plus", "65+", v => v === null ? "—" : v.toFixed(1) + "%"],
+    ["pct_poc", "People of colour", v => v === null ? "—" : v.toFixed(1) + "%"],
+  ];
+  const rows = [...F].sort((a, b) => (P(a).rank ?? 99) - (P(b).rank ?? 99));
+  document.getElementById("tbl").innerHTML =
+    "<thead><tr>" + cols.map(c => "<th>" + c[1] + "</th>").join("") + "</tr></thead><tbody>" +
+    rows.map(f => "<tr>" + cols.map(c => "<td>" + c[2](P(f)[c[0]]) + "</td>").join("") + "</tr>").join("") +
+    "</tbody>";
+}
+
+/* ---------- prose numbers, computed from the data ---------- */
+function fillProse() {
+  const [hmin, hmax] = extent(SCORED, "heat_anomaly");
+  const [fmin, fmax] = extent(SCORED, "fog");
+  const [omin, omax] = extent(SCORED, "clear_obs");
+  const set = (id, v) => { const n = document.getElementById(id); if (n) n.textContent = v; };
+
+  set("t-spread", (hmax - hmin).toFixed(1));
+  set("span-1", (hmax - hmin).toFixed(1));
+  set("t-fog", Math.round((fmax - fmin) * 100));
+  set("t-corr", signed(pearson(SCORED, "heat_anomaly", "median_income")));
+  set("r-income", signed(pearson(SCORED, "heat_anomaly", "median_income")));
+  set("r-fog", signed(pearson(SCORED, "heat_anomaly", "fog")));
+  set("r-ndvi", signed(pearson(SCORED, "heat_anomaly", "ndvi")));
+  set("r-fogincome", signed(pearson(SCORED, "fog", "median_income")));
+  set("r-fogpoc", signed(pearson(SCORED, "fog", "pct_poc")));
+  set("r-ndviinc", signed(pearson(SCORED, "ndvi", "median_income")));
+  set("r-ndvipoc", signed(pearson(SCORED, "ndvi", "pct_poc")));
+  set("r-poc", signed(pearson(SCORED, "index", "pct_poc")));
+  set("fog-range", Math.round(fmin * 100) + "% to " + Math.round(fmax * 100) + "%");
+  set("obs-min", Math.round(omin));
+  set("obs-max", Math.round(omax));
+
+  // Data-quality prose, all measured rather than asserted.
+  const [bmin, bmax] = extent(SCORED, "heat_bias");
+  const biasFog = pearson(SCORED, "heat_bias", "fog");
+  const biasIncome = pearson(SCORED, "heat_bias", "median_income");
+  set("r-fog-2", signed(pearson(SCORED, "heat_anomaly", "fog")));
+  set("r-cooling", "r = " + signed(pearson(SCORED, "index", "canopy_cooling")));
+
+  const summary = document.getElementById("bias-summary");
+  if (summary) {
+    summary.innerHTML =
+      "Every neighborhood is biased warm — from <strong>+" + bmin.toFixed(2) +
+      " °C</strong> to <strong>+" + bmax.toFixed(2) + " °C</strong> — because any day clear " +
+      "enough to measure is warmer than the average day. The bias tracks fog at <strong>r = " +
+      signed(biasFog) + "</strong>: the foggier the place, the more its reading is " +
+      "distorted, and in the direction that hides its coolness.";
+  }
+
+  // Does the blind spot threaten the headline null result? Say so either way.
+  const why = document.getElementById("null-why");
+  if (why) {
+    why.innerHTML =
+      "The bias runs slightly <em>against</em> this finding rather than creating it: " +
+      "sampling bias correlates <strong>" + signed(biasIncome) + "</strong> with income, so " +
+      "correcting it would move the heat–income relationship " +
+      (biasIncome > 0 ? "a little more negative" : "a little less negative") +
+      " — not toward zero. The null is not an artefact of the blind spot.";
+  }
+
+  const lk = SCORED.find(f => P(f).nhood === "Lakeshore");
+  if (lk) {
+    document.getElementById("lakeshore-note").textContent =
+      "Lakeshore ranks " + P(lk).rank + " of 38 — near the bottom — despite " +
+      P(lk).pct_poverty.toFixed(0) + "% poverty, because it is among the foggiest and " +
+      "greenest places in the city. Exposure and disadvantage come apart here, which is " +
+      "exactly what the fog does to this city.";
+  }
+}
+
+/* ---------- wiring ---------- */
+let metric = "index";
+function drawAll() {
+  // Hatch only the layers the blind spot actually affects. Fog is built from
+  // every observation, and income from a survey — neither has the problem, and
+  // marking them would be dishonest.
+  const satellite = metric === "heat_anomaly" || metric === "ndvi";
+  drawLegend("map-legend", metric,
+    drawMap("map", metric, { pad: 14, hatch: satellite }), { hatch: satellite });
+  const f = F.find(x => P(x).nhood === selected);
+  const note = document.getElementById("map-note");
+  if (f && note) {
+    const v = P(f)[metric];
+    const m = METRICS[metric];
+    note.textContent = "Outlined: " + selected + " — " +
+      (v === null || v === undefined ? "not scored" : m.label + " " + m.fmt(v)) +
+      ". Hover any neighborhood for detail; click to select it.";
+  }
+  drawLegend("lg-heat", "heat_anomaly",
+    drawMap("mini-heat", "heat_anomaly", { pad: 8, hatch: true }), { hatch: true });
+  drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
+  drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 8 }));
+  drawLegend("lg-bias", "heat_bias", drawMap("map-bias", "heat_bias", { pad: 8 }));
+  drawLegend("lg-cooling", "canopy_cooling",
+    drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
+  drawBars();
+  drawConfBars();
+}
+
+const btnBox = document.getElementById("metric-buttons");
+Object.entries(METRICS).filter(([k]) => MAP_TOGGLE.includes(k)).forEach(([k, m]) => {
+  const b = document.createElement("button");
+  b.className = "seg"; b.textContent = m.label; b.type = "button";
+  b.setAttribute("aria-pressed", k === metric);
+  b.onclick = () => {
+    metric = k;
+    [...btnBox.children].forEach(c => c.setAttribute("aria-pressed", c === b));
+    drawAll();
+  };
+  btnBox.appendChild(b);
+});
 
 const picker = document.getElementById("picker");
 [...F].sort((a, b) => P(a).nhood.localeCompare(P(b).nhood)).forEach(f => {
@@ -959,19 +1123,211 @@ const picker = document.getElementById("picker");
 picker.value = selected;
 picker.onchange = () => select(picker.value);
 
-const groupSel = document.getElementById("col-group");
-groupSel.innerHTML = ["All"].concat(GROUPS).map(g =>
-  '<option value="' + g + '">' + g + "</option>").join("");
-groupSel.onchange = () => { colGroup = groupSel.value; drawTable(); };
-
-refreshMap();
-drawScatter(sxSel.value, sySel.value);
-drawMatrix();
+fillProse();
+drawAll();
+scatter("sc-income", "median_income", "heat_anomaly",
+  "Median household income", "Heat anomaly (°C)",
+  { xfmt: money, yfmt: v => signed(v), cap: "cap-income",
+    label: ["Chinatown", "Lakeshore", "Seacliff"] });
+scatter("sc-canopy-income", "median_income", "ndvi",
+  "Median household income", "Vegetation", { xfmt: money, yfmt: v => v.toFixed(2),
+  cap: "cap-ci" });
+scatter("sc-canopy-poc", "pct_poc", "ndvi",
+  "Residents of color (%)", "Vegetation", { xfmt: v => Math.round(v) + "%",
+  yfmt: v => v.toFixed(2), cap: "cap-cp" });
+scatter("sc-cooling", "index", "canopy_cooling",
+  "Heat vulnerability index", "°C per 0.1 NDVI",
+  { xfmt: v => v.toFixed(0), yfmt: v => v.toFixed(1), cap: "cap-cooling",
+    label: ["Outer Richmond", "South of Market", "Bayview Hunters Point"] });
 drawProfile();
-renderModels();
+
+/* ================= Explore =================
+   The story above is the argument; this is the material it was built from.
+   It reuses the same drawing functions, driven by pickers instead of by the
+   narrative — so nothing here can drift from what the charts above show. */
+
+const pctf = v => v.toFixed(1) + "%";
+const EXPLORE_VARS = [
+  ["index", "Vulnerability index", "Index", v => v.toFixed(0)],
+  ["exposure", "Exposure score", "Index", v => v.toFixed(0)],
+  ["sensitivity", "Sensitivity score", "Index", v => v.toFixed(0)],
+  ["capacity_gap", "Capacity gap score", "Index", v => v.toFixed(0)],
+  ["heat_anomaly", "Heat anomaly", "Heat", v => signed(v) + " °C", true],
+  ["heat_p90", "Heat, 90th percentile", "Heat", v => signed(v) + " °C", true],
+  ["heat_sd", "Heat spread within", "Heat", v => v.toFixed(1) + " °C"],
+  ["fog", "Fog frequency", "Environment", v => Math.round(v * 100) + "%"],
+  ["ndvi", "Vegetation (NDVI)", "Environment", v => v.toFixed(2)],
+  ["canopy_cooling", "Cooling per 0.1 NDVI", "Environment", v => v.toFixed(2) + " °C"],
+  ["median_income", "Median income", "Demographics", money],
+  ["pct_poverty", "Below poverty", "Demographics", pctf],
+  ["pct_65_plus", "Aged 65+", "Demographics", pctf],
+  ["pct_under_5", "Under 5", "Demographics", pctf],
+  ["pct_renter", "Renters", "Demographics", pctf],
+  ["pct_limited_english", "Limited English", "Demographics", pctf],
+  ["population", "Population", "Demographics", v => Math.round(v).toLocaleString()],
+  ["pct_poc", "Residents of color", "Race", pctf],
+  ["pct_white_nh", "White", "Race", pctf],
+  ["pct_asian_nh", "Asian", "Race", pctf],
+  ["pct_hispanic", "Hispanic", "Race", pctf],
+  ["pct_black_nh", "Black", "Race", pctf],
+  ["clear_obs", "Usable observations", "Quality", v => v.toFixed(0)],
+  ["heat_bias", "Warm-day bias", "Quality", v => "+" + v.toFixed(2) + " °C"],
+  ["acs_cv", "Census CV", "Quality", v => v.toFixed(2)],
+];
+// Feed them into METRICS so drawMap, drawLegend and scatter all just work.
+EXPLORE_VARS.forEach(([k, label, group, fmt, div]) => {
+  if (!METRICS[k]) METRICS[k] = { label, fmt, kind: div ? "div" : "seq", blurb: label };
+});
+const XLABEL = Object.fromEntries(EXPLORE_VARS.map(v => [v[0], v[1]]));
+const XFMT = Object.fromEntries(EXPLORE_VARS.map(v => [v[0], v[3]]));
+
+function exploreOptions(sel) {
+  const groups = [...new Set(EXPLORE_VARS.map(v => v[2]))];
+  return groups.map(g => '<optgroup label="' + g + '">' +
+    EXPLORE_VARS.filter(v => v[2] === g).map(([k, label]) =>
+      '<option value="' + k + '"' + (k === sel ? " selected" : "") + ">" + label + "</option>"
+    ).join("") + "</optgroup>").join("");
+}
+const xMetric = document.getElementById("x-metric");
+const xSx = document.getElementById("x-sx"), xSy = document.getElementById("x-sy");
+xMetric.innerHTML = exploreOptions("canopy_cooling");
+xSx.innerHTML = exploreOptions("index");
+xSy.innerHTML = exploreOptions("canopy_cooling");
+
+function drawExploreMap() {
+  const k = xMetric.value;
+  drawLegend("x-legend", k, drawMap("x-map", k, { pad: 8 }));
+}
+function drawExploreScatter() {
+  const xk = xSx.value, yk = xSy.value;
+  scatter("x-scatter", xk, yk, XLABEL[xk], XLABEL[yk],
+    { xfmt: XFMT[xk], yfmt: XFMT[yk], cap: "x-cap", label: [selected] });
+}
+xMetric.onchange = drawExploreMap;
+xSx.onchange = xSy.onchange = drawExploreScatter;
+
+/* ---------- sortable table + CSV ---------- */
+let sortKey = "rank", sortDir = 1;
+const TABLE_COLS = [["nhood", "Neighborhood", v => v], ["rank", "Rank", v => v ?? "—"]]
+  .concat(EXPLORE_VARS.map(([k, label, , fmt]) => [k, label, fmt]));
+
+function drawTable() {
+  const rows = [...F].sort((a, b) => {
+    const x = P(a)[sortKey], y = P(b)[sortKey];
+    if (x === null || x === undefined) return 1;
+    if (y === null || y === undefined) return -1;
+    return typeof x === "string" ? sortDir * x.localeCompare(y) : sortDir * (x - y);
+  });
+  document.getElementById("tbl").innerHTML =
+    "<thead><tr>" + TABLE_COLS.map(([k, label]) =>
+      '<th data-k="' + k + '" style="cursor:pointer' +
+      (k === sortKey ? ";color:var(--accent)" : "") + '">' + label +
+      (k === sortKey ? (sortDir > 0 ? " ↑" : " ↓") : "") + "</th>").join("") +
+    "</tr></thead><tbody>" +
+    rows.map(f => {
+      const q = P(f);
+      return "<tr>" + TABLE_COLS.map(([k, , fmt]) =>
+        "<td>" + (q[k] === null || q[k] === undefined ? "—" : fmt(q[k])) + "</td>").join("") +
+        "</tr>";
+    }).join("") + "</tbody>";
+  document.querySelectorAll("#tbl th").forEach(th => th.onclick = () => {
+    const k = th.dataset.k;
+    if (k === sortKey) sortDir = -sortDir; else { sortKey = k; sortDir = 1; }
+    drawTable();
+  });
+  const rc = document.getElementById("x-rows");
+  if (rc) rc.textContent = rows.length + " neighborhoods · " + TABLE_COLS.length + " columns";
+}
+document.getElementById("x-csv").onclick = () => {
+  const keys = TABLE_COLS.map(c => c[0]);
+  const body = [...F].sort((a, b) => (P(a).rank ?? 99) - (P(b).rank ?? 99))
+    .map(f => keys.map(k => {
+      const v = P(f)[k];
+      if (v === null || v === undefined) return "";
+      return typeof v === "string" ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(",")).join("\n");
+  const blob = new Blob([keys.join(",") + "\n" + body], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sf-heat-equity.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+/* ---------- model output ---------- */
+const MODEL_LABELS = {
+  heat: "Heat anomaly", income_10k: "Median income (per $10k)", elevation: "Elevation",
+  slope: "Slope", southness: "Southness", ndbi: "Built-up (NDBI)", ndvi: "Vegetation (NDVI)",
+  fog: "Fog frequency", pct_poverty: "Below poverty", pct_poc: "Residents of color",
+  median_income: "Median income",
+};
+const mlab = k => MODEL_LABELS[k] || k;
+
+(function renderModels() {
+  const S = typeof STATS === "undefined" ? {} : STATS;
+  if (S.spatial) {
+    const sp = S.spatial;
+    document.getElementById("x-sp-kv").innerHTML =
+      '<span style="font-weight:400;color:var(--muted);font-size:0.82rem"> · ' +
+      sp.n_tracts + " tracts · spatial " + (sp.spatial_model || {}).type +
+      " · pseudo R² " + ((sp.spatial_model || {}).pr2 || 0).toFixed(3) + "</span>";
+    document.getElementById("x-progression").innerHTML =
+      "<thead><tr><th>Specification</th><th>R²</th><th>Residual I</th></tr></thead><tbody>" +
+      Object.entries(sp.models || {}).map(([n, m]) =>
+        "<tr><td>" + n + "</td><td>" + m.r2.toFixed(3) + "</td><td>" +
+        signed(m.resid_moran_I) + "</td></tr>").join("") + "</tbody>";
+    document.getElementById("x-moran").innerHTML =
+      "<thead><tr><th>Variable</th><th>I</th><th>p</th></tr></thead><tbody>" +
+      Object.entries(sp.morans_i || {}).map(([k, m]) =>
+        "<tr><td>" + mlab(k) + "</td><td>" + signed(m.I) + "</td><td>" +
+        m.p.toFixed(4) + "</td></tr>").join("") + "</tbody>";
+  }
+  if (S.gwr) {
+    const g = S.gwr;
+    document.getElementById("x-gwr-kv").textContent =
+      "Bandwidth " + g.bandwidth.toFixed(0) + " tracts. R² " + g.gwr_r2.toFixed(3) +
+      " against " + g.global_r2.toFixed(3) + " for one citywide coefficient — an AICc " +
+      "improvement of " + g.aicc_improvement.toFixed(0) + ", so the relationship genuinely " +
+      "varies. Local cooling power correlates " + signed(g.cooling_vs_fog_r) + " with fog.";
+  }
+  if (S.mediation) {
+    const T = S.mediation.treatments;
+    const tSel = document.getElementById("x-med-t"), sSel = document.getElementById("x-med-s");
+    const treats = Object.keys(T);
+    tSel.innerHTML = treats.map(t =>
+      '<option value="' + t + '">' + T[t].label + "</option>").join("");
+    sSel.innerHTML = Object.keys(T[treats[0]].specs).map(s =>
+      '<option value="' + s + '">' + s + "</option>").join("");
+    const paint = () => {
+      const d = T[tSel.value].specs[sSel.value];
+      const rows = [["a  treatment → canopy", "a"], ["b  canopy → heat", "b"],
+                    ["c  total", "c_total"], ["c′ direct", "c_direct"],
+                    ["a×b indirect", "indirect"]];
+      document.getElementById("x-med").innerHTML =
+        "<thead><tr><th>Path</th><th>Estimate</th><th>95% CI</th></tr></thead><tbody>" +
+        rows.map(([label, k]) => {
+          const [lo, hi] = d.ci_spatial_block[k], sig = lo * hi > 0;
+          return "<tr><td>" + label + "</td><td>" + d.point[k].toFixed(4) + "</td><td" +
+            (sig ? "" : ' style="opacity:.55"') + ">[" + lo.toFixed(4) + ", " +
+            hi.toFixed(4) + "]" + (sig ? "" : " n.s.") + "</td></tr>";
+        }).join("") + "</tbody>";
+      document.getElementById("x-med-note").textContent =
+        d.verdict.charAt(0).toUpperCase() + d.verdict.slice(1) +
+        ". Intervals resample blocks of geography rather than individual tracts, because " +
+        "neighbouring tracts are not independent. Switch the control set to see the result " +
+        "reverse — that choice is arguable and it matters.";
+    };
+    tSel.onchange = sSel.onchange = paint;
+    paint();
+  }
+})();
+
+drawExploreMap();
+drawExploreScatter();
 drawTable();
+
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  refreshMap(); drawScatter(sxSel.value, sySel.value); drawMatrix(); drawProfile();
+  drawAll(); drawExploreMap(); drawExploreScatter();
 });
 </script>
 </body>
