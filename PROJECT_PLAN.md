@@ -447,6 +447,40 @@ limitations, and one command to rebuild.
 
 ---
 
+## Uncertainty, made visible
+
+Added after the first build, because "surface temperature is not air temperature" as a footnote
+is much weaker than a number attached to every neighborhood.
+
+**The satellite's blind spot, measured.** For every pixel: the average citywide temperature on
+the days that pixel was visible, minus the average across all 63 scenes. Written as
+`sampling_bias.tif`, zonal-averaged to `heat_bias`. Every neighborhood is biased **warm**
+(+0.43 to +1.25 °C) — because any day clear enough to measure is warmer than average — and the
+bias correlates **r = +0.58 with fog**. There is no unbiased pole, so it maps on a *sequential*
+ramp, not a diverging one.
+
+**Census margins, propagated properly.** Margins of error combine in quadrature across tracts,
+then through the ACS ratio formula, giving a coefficient of variation per rate. Summarised by
+the **median** across rates, not the max — the max is always `pct_under_5`, whose margin is
+inherently enormous, and using it would flag two thirds of the city as unreliable on the
+strength of one of nine index inputs. The worst-case value is published alongside it.
+
+**Three more per-neighborhood quality columns:** `heat_sd` (internal spread — is one number
+even a fair summary?), `pixel_coverage`, and graded `heat_confidence` / `acs_confidence` from
+thresholds stated as named constants rather than buried in conditionals.
+
+**In the dashboard:** a confidence chip on every section header with a one-line reason; 45°
+hatching on neighborhoods where the satellite sees least, applied *only* to satellite-derived
+layers (fog and income don't have the problem, and marking them would be dishonest); paired
+observation-count and bias maps; a per-neighborhood confidence chart; and uncertainty in every
+tooltip, profile and table row.
+
+> The most important line on the page: the bias runs *against* the headline null result rather
+> than creating it. Correcting it would make heat-vs-income slightly more negative, not closer
+> to zero. Say that, or someone will reasonably ask.
+
+---
+
 ## Limitations — write these down, don't discover them in an interview
 
 - **Surface temperature is not air temperature.** Landsat measures the skin temperature of

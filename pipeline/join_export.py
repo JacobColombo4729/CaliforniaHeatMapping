@@ -38,6 +38,9 @@ RASTERS = {
     "ndvi_median": "ndvi",
     "fog_frequency": "fog",
     "clear_obs_count": "clear_obs",
+    # How much warmer the city was, on average, on the days this place happened
+    # to be visible. The satellite's blind spot, in degrees.
+    "sampling_bias": "heat_bias",
 }
 
 # Simplify in metres before reprojecting. 15 m is invisible at city zoom and
@@ -95,7 +98,7 @@ def zonal_means(gdf: gpd.GeoDataFrame) -> pd.DataFrame:
         with rasterio.open(DATA / f"{stem}.tif") as src:
             stacks[column] = src.read(1)
 
-    p90 = []
+    p90, spread, coverage = [], [], []
     for i in range(len(aligned)):
         mask = labels == i + 1
         for column, array in stacks.items():
@@ -104,12 +107,21 @@ def zonal_means(gdf: gpd.GeoDataFrame) -> pd.DataFrame:
                 warnings.simplefilter("ignore", RuntimeWarning)
                 results[column].append(np.nanmean(values))
         heat = stacks["heat_anomaly"][mask]
-        heat = heat[~np.isnan(heat)]
-        p90.append(np.percentile(heat, 90) if heat.size else np.nan)
+        measured = heat[~np.isnan(heat)]
+        p90.append(np.percentile(measured, 90) if measured.size else np.nan)
+        # How much the neighborhood varies internally. A large spread means one
+        # number is a poor summary of the place, regardless of how well measured
+        # that number is.
+        spread.append(float(measured.std()) if measured.size else np.nan)
+        # What share of the neighborhood's pixels produced any usable reading at
+        # all — water and permanently-clouded pixels drop out.
+        coverage.append(float(measured.size / mask.sum()) if mask.sum() else np.nan)
         results["pixels"].append(int(mask.sum()))
 
     out = pd.DataFrame(results)
     out["heat_p90"] = p90
+    out["heat_sd"] = spread
+    out["pixel_coverage"] = coverage
     return out
 
 
@@ -139,6 +151,37 @@ def build_index(df: pd.DataFrame) -> pd.DataFrame:
     df.loc[scored, "index"] = np.exp(np.log(parts).mean(axis=1))
     df.loc[scored, "rank"] = df.loc[scored, "index"].rank(ascending=False).astype(int)
     return df
+
+
+# Thresholds are stated here rather than buried in a conditional, because they
+# are judgement calls and a reader is entitled to disagree with them.
+MIN_OBS_GOOD = 30  # clear satellite looks for a confident reading
+MIN_OBS_FAIR = 20
+MAX_BIAS_GOOD = 0.5  # °C of warm-day sampling bias
+MAX_BIAS_FAIR = 1.0
+# Census Bureau's own reliability bands for a coefficient of variation.
+CV_GOOD = 0.15
+CV_FAIR = 0.30
+
+
+def grade_measurement(row) -> str:
+    """How much to trust this neighborhood's temperature reading."""
+    obs, bias = row["clear_obs"], abs(row["heat_bias"])
+    if obs < MIN_OBS_FAIR or bias > MAX_BIAS_FAIR:
+        return "low"
+    if obs < MIN_OBS_GOOD or bias > MAX_BIAS_GOOD:
+        return "moderate"
+    return "high"
+
+
+def grade_census(cv: float) -> str:
+    if pd.isna(cv):
+        return "low"
+    if cv >= CV_FAIR:
+        return "low"
+    if cv >= CV_GOOD:
+        return "moderate"
+    return "high"
 
 
 def round_coords(obj, precision: int = COORD_PRECISION):
@@ -186,9 +229,24 @@ def main() -> None:
     print(f"  heat anomaly {gdf['heat_anomaly'].min():+.1f} to "
           f"{gdf['heat_anomaly'].max():+.1f} C")
 
+    gdf["heat_confidence"] = gdf.apply(grade_measurement, axis=1)
+    gdf["acs_confidence"] = gdf["acs_cv"].apply(grade_census)
+
     gdf = build_index(gdf)
     scored = gdf["index"].notna()
     print(f"\n  scored {int(scored.sum())} of {len(gdf)} neighborhoods")
+
+    ok = gdf[scored]
+    print("\nData quality:")
+    print(f"  clear observations   {ok['clear_obs'].min():.0f} to "
+          f"{ok['clear_obs'].max():.0f} of 63 scenes")
+    print(f"  warm-day sampling bias {ok['heat_bias'].min():+.2f} to "
+          f"{ok['heat_bias'].max():+.2f} C")
+    print(f"  bias vs fog          r = {ok['heat_bias'].corr(ok['fog']):+.2f}")
+    for label, col in (("satellite", "heat_confidence"), ("census", "acs_confidence")):
+        counts = ok[col].value_counts()
+        parts = ", ".join(f"{counts.get(k, 0)} {k}" for k in ("high", "moderate", "low"))
+        print(f"  {label:<20} {parts}")
 
     # --- Does the story hold up? ------------------------------------------
     ok = gdf[scored]
@@ -215,6 +273,10 @@ def main() -> None:
         "pct_white_nh", "pct_black_nh", "pct_asian_nh", "pct_hispanic", "pct_poc",
         "heat_anomaly", "heat_p90", "heat_absolute", "ndvi", "fog", "clear_obs",
         "exposure", "sensitivity", "capacity_gap", "index", "rank",
+        # Uncertainty travels with the numbers rather than living in a footnote.
+        "heat_bias", "heat_sd", "pixel_coverage", "heat_confidence",
+        "acs_cv", "acs_cv_worst", "cv_poverty", "cv_65_plus",
+        "cv_limited_english", "acs_confidence",
     ]
 
     geojson = to_geojson(export, columns)

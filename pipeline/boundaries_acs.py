@@ -20,6 +20,7 @@ import urllib.request
 from pathlib import Path
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -122,6 +123,12 @@ def load_crosswalk() -> pd.DataFrame:
 
 
 def load_acs() -> tuple[pd.DataFrame, str]:
+    """Tract estimates plus their margins of error.
+
+    The margins are the whole basis for saying how much any of this can be
+    trusted at tract level, where small populations produce very wide intervals.
+    Error columns are prefixed `moe_`.
+    """
     payload = json.loads(fetch(ACS_URL, "acs_tracts.json"))
     records = []
     for geo_id, tables in payload["data"].items():
@@ -129,6 +136,7 @@ def load_acs() -> tuple[pd.DataFrame, str]:
         row: dict[str, object] = {"geoid": geo_id[-11:]}
         for table in tables.values():
             row.update(table["estimate"])
+            row.update({"moe_" + k: v for k, v in table.get("error", {}).items()})
         records.append(row)
     return pd.DataFrame(records), payload["release"]["name"]
 
@@ -177,8 +185,20 @@ def main() -> None:
     tracts["_income_num"] = (tracts[MEDIAN_INCOME] * tracts[HOUSEHOLDS]).where(has_income, 0)
     tracts["_income_den"] = tracts[HOUSEHOLDS].where(has_income, 0)
 
+    # Margins of error add in quadrature across tracts, not linearly — summing
+    # them would badly overstate the uncertainty of an aggregate.
+    moe_cols = []
+    for col in count_cols:
+        source = "moe_" + col
+        target = "_var_" + col
+        if source in tracts.columns:
+            tracts[target] = pd.to_numeric(tracts[source], errors="coerce").fillna(0) ** 2
+        else:
+            tracts[target] = 0.0
+        moe_cols.append(target)
+
     grouped = tracts.groupby("nhood", as_index=False)[
-        count_cols + ["_income_num", "_income_den"]
+        count_cols + moe_cols + ["_income_num", "_income_den"]
     ].sum()
     grouped["tract_count"] = tracts.groupby("nhood").size().values
 
@@ -189,9 +209,40 @@ def main() -> None:
         "households": grouped[HOUSEHOLDS].astype(int),
     })
 
+    # Each rate carries its own coefficient of variation, so the dashboard can
+    # say how much to trust it rather than presenting every number as equally
+    # solid. The Census Bureau's own thresholds: CV under 0.15 is reliable,
+    # 0.15-0.30 use with caution, above 0.30 unreliable.
+    cvs = pd.DataFrame(index=grouped.index)
     for name, (nums, den) in RATES.items():
         numerator = grouped[nums].sum(axis=1)
-        out[name] = (100 * numerator / grouped[den]).where(grouped[den] > 0)
+        denominator = grouped[den]
+        proportion = (numerator / denominator).where(denominator > 0)
+        out[name] = 100 * proportion
+
+        moe_num_sq = grouped[["_var_" + c for c in nums]].sum(axis=1)
+        moe_den_sq = grouped["_var_" + den]
+        radicand = moe_num_sq - (proportion**2) * moe_den_sq
+        # The standard ACS ratio formula goes imaginary when the numerator is a
+        # large share of the denominator; the Bureau's documented fallback is to
+        # add rather than subtract, which is conservative.
+        safe = np.where(
+            radicand >= 0,
+            np.sqrt(radicand.clip(lower=0)),
+            np.sqrt(moe_num_sq + (proportion**2) * moe_den_sq),
+        )
+        moe_p = pd.Series(safe, index=grouped.index) / denominator
+        cvs[name] = ((moe_p / 1.645) / proportion).where(proportion > 0)
+
+    # Summarise with the median rather than the max. The max is always
+    # pct_under_5 — a 1-6% population share whose margin is inherently enormous
+    # — so a max-based flag would call two thirds of the city "unreliable" on the
+    # strength of one of nine index inputs. Both are published, plus the
+    # per-variable margins, so nothing is buried.
+    out["acs_cv"] = cvs.median(axis=1)
+    out["acs_cv_worst"] = cvs.max(axis=1)
+    for name in ("pct_poverty", "pct_65_plus", "pct_limited_english"):
+        out["cv_" + name.replace("pct_", "")] = cvs[name]
 
     out["pct_poc"] = 100 - out["pct_white_nh"]
     out["median_income"] = (

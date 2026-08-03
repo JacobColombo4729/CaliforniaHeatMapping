@@ -342,10 +342,25 @@ def main() -> None:
         warnings.simplefilter("ignore", RuntimeWarning)
         ndvi_median = np.nanmedian(np.where(clear, ndvi, np.nan), axis=0)
 
+    # --- How biased is each pixel's sample of days? ----------------------
+    # A foggy pixel is only ever seen on its rare clear days, and those are its
+    # warm days. Measure that directly: the average citywide temperature on the
+    # days this pixel was clear, minus the average across every scene. Positive
+    # means "we only get to look at this place when the city is hot", so its
+    # reading is biased warm and its true coolness is understated.
+    usable = np.isfinite(scene_means)
+    overall_mean = float(np.nanmean(scene_means))
+    weights = clear & usable[:, None, None]
+    seen_sum = (weights * np.nan_to_num(scene_means)[:, None, None]).sum(axis=0)
+    seen_n = weights.sum(axis=0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        sampling_bias = np.where(seen_n > 0, seen_sum / seen_n - overall_mean, np.nan)
+
     thin = clear_count < MIN_CLEAR_OBS
     lst_anomaly[thin] = np.nan
     lst_absolute[thin] = np.nan
     ndvi_median[thin] = np.nan
+    sampling_bias[thin] = np.nan
     print(f"  dropped {thin.sum():,} px with fewer than {MIN_CLEAR_OBS} clear looks")
     print(f"  anomaly range: {np.nanmin(lst_anomaly):+.1f} to "
           f"{np.nanmax(lst_anomaly):+.1f} C")
@@ -375,6 +390,7 @@ def main() -> None:
     write_raster(ROOT / "data" / "fog_frequency.tif", fog, transform, width, height)
     write_raster(ROOT / "data" / "clear_obs_count.tif", clear_count.astype(np.float32),
                  transform, width, height)
+    write_raster(ROOT / "data" / "sampling_bias.tif", sampling_bias, transform, width, height)
 
     # --- Eyeball it --------------------------------------------------------
     fig, axes = plt.subplots(1, 3, figsize=(16, 6))

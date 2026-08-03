@@ -123,11 +123,29 @@ meaningful; absolute values are not comparable to a weather station.
 **Daytime only.** Landsat passes late morning. Night-time heat retention is the more
 health-relevant variable and is not measured here.
 
-**Clear-sky bias — the important one.** A thermal sensor cannot see through fog, so the
-foggiest neighborhoods are observed almost exclusively on their rare clear days, which are
-their warm days. The west side yields as few as 13 usable observations against 41 in parts of
-the east. **Every temperature number here therefore understates how much cooler the west side
-really is**, which makes the canopy inequity a floor rather than a ceiling.
+**Clear-sky bias — the important one, and it is measured rather than asserted.** A thermal
+sensor cannot see through fog, so the foggiest neighborhoods are observed almost exclusively on
+their rare clear days, which are their warm days. Usable observations run from **14 to 41** of
+63 scenes.
+
+The pipeline quantifies the distortion directly: for every pixel it computes the average
+citywide temperature on the days that pixel was visible, minus the average across all scenes.
+**Every neighborhood comes out biased warm, from +0.43 °C to +1.25 °C, and the bias correlates
+r = +0.58 with fog** — the foggier the place, the more its coolness is hidden. Lakeshore, the
+foggiest scored neighborhood, is seen on 14 of 63 scenes with a +1.25 °C bias.
+
+So every temperature number here understates how much cooler the west really is, which makes
+the canopy inequity a floor rather than a ceiling. The dashboard hatches the affected
+neighborhoods, maps the bias, and grades every neighborhood's measurement confidence.
+
+Worth stating explicitly: **this bias does not manufacture the headline null result.** Sampling
+bias correlates only weakly with income, and in the direction that would make the heat–income
+relationship *more* negative if corrected — not closer to zero.
+
+**Census estimates carry margins, and they are propagated.** Margins of error are combined in
+quadrature across tracts and through the ratio formula, giving each neighborhood a coefficient
+of variation. Against the Census Bureau's own thresholds, 28 of 38 scored neighborhoods are
+reliable, 8 warrant caution and 2 are unreliable. Per-variable margins are in the data table.
 
 **Three neighborhoods are parks.** Golden Gate Park (58 residents), McLaren Park (146) and
 Lincoln Park (160, and zero households) produce census rates that are pure noise — McLaren Park

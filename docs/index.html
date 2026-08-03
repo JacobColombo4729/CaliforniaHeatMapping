@@ -154,6 +154,24 @@
   details > summary { cursor: pointer; color: var(--ink-2); font-size: 0.9rem; }
 
   .note { font-size: 0.83rem; color: var(--muted); max-width: 68ch; }
+
+  /* Confidence is a status, not a series — it uses the reserved status colours
+     and always ships as dot + word, never colour alone. */
+  .conf {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase;
+    font-weight: 600; color: var(--ink-2);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 4px 11px 4px 9px; background: var(--surface-1);
+    vertical-align: middle;
+  }
+  .conf i { width: 9px; height: 9px; border-radius: 50%; display: block; flex: none; }
+  .conf-high i { background: #0ca30c; }
+  .conf-moderate i { background: #fab219; }
+  .conf-low i { background: #ec835a; }
+  .conf-why { font-size: 0.83rem; color: var(--muted); max-width: 68ch; margin: 10px 0 0; }
+  .hgroup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .hgroup h3 { margin: 0; }
   .prof { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; margin-top: 18px; }
   .prof div span { display: block; color: var(--muted); font-size: 0.78rem; }
   .prof div b { font-size: 1.35rem; font-weight: 600; }
@@ -180,7 +198,14 @@
 
 <section>
   <h2>Where it’s hot</h2>
-  <h3>Every neighborhood, five ways</h3>
+  <div class="hgroup">
+    <h3>Every neighborhood, five ways</h3>
+    <span class="conf conf-moderate"><i></i>Moderate confidence</span>
+  </div>
+  <p class="conf-why">Temperature and vegetation are measured only on cloud-free days, and the
+  west side gets far fewer of them. Hatched neighborhoods are the ones where the satellite sees
+  least — their readings are the least trustworthy on the page. Fog and census metrics do not
+  carry that problem.</p>
   <p>Surface temperature is shown as an <strong>anomaly</strong> — degrees above or below the
   citywide average on the same day — so a hot afternoon can’t masquerade as a hot
   neighborhood. Switch the metric and watch which patterns move together.</p>
@@ -196,7 +221,11 @@
 
 <section>
   <h2>The pattern that isn’t there</h2>
-  <h3>Heat and income barely relate</h3>
+  <div class="hgroup">
+    <h3>Heat and income barely relate</h3>
+    <span class="conf conf-high"><i></i>High confidence</span>
+  </div>
+  <p class="conf-why" id="null-why"></p>
   <p>Plot every neighborhood’s heat anomaly against its median household income and the cloud
   is flat. The correlation is <strong id="r-income">—</strong> — for practical purposes, nothing.
   Split the city into income quartiles and the poorest and richest differ by well under a degree,
@@ -211,7 +240,13 @@
 
 <section>
   <h2>Why</h2>
-  <h3>The fog shadow does the sorting</h3>
+  <div class="hgroup">
+    <h3>The fog shadow does the sorting</h3>
+    <span class="conf conf-high"><i></i>High confidence</span>
+  </div>
+  <p class="conf-why">The best-measured layer here. Fog frequency is built from
+  <em>every</em> observation, cloudy ones included — a scene useless for temperature is a data
+  point for fog — so it is the one product on this page with no clear-sky blind spot.</p>
   <p>The same satellite passes that measure temperature also record which pixels were under
   cloud. Sum those and you get a fog climatology: <strong id="fog-range">—</strong> of
   observations obscured, rising sharply toward the ocean. Put the two maps together and
@@ -238,7 +273,13 @@
 
 <section>
   <h2>What the fog hides</h2>
-  <h3>The shade people build is not distributed evenly</h3>
+  <div class="hgroup">
+    <h3>The shade people build is not distributed evenly</h3>
+    <span class="conf conf-moderate"><i></i>Moderate confidence</span>
+  </div>
+  <p class="conf-why">NDVI shares the clear-sky sampling problem, though vegetation changes far
+  more slowly than temperature, so a biased sample of days matters much less. Income comes from
+  survey estimates with their own margins — see the neighborhood profiles.</p>
   <p>Vegetation cools nearly as strongly as fog — but unlike fog, it follows money and race.
   Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>) and whiter
   (<strong id="r-ndvipoc">—</strong>). The fog gradient is so large that it buries this in the
@@ -257,25 +298,50 @@
 
 <section>
   <h2>What the satellite can’t see</h2>
-  <h3>The west is measured only on its warmest days</h3>
-  <p>A thermal sensor cannot see through fog. So the foggiest neighborhoods are observed
-  almost exclusively on their rare clear days — which are their <em>warm</em> days. The west
-  side yields as few as <strong id="obs-min">—</strong> usable observations where parts of the
-  east give <strong id="obs-max">—</strong>.</p>
-  <p><strong>Every temperature number on this page therefore understates how much cooler the
-  west side really is.</strong> The true fog effect is larger than what’s mapped, which makes
-  the canopy inequity above a floor rather than a ceiling.</p>
-  <div class="card">
-    <div class="mapbox">
-      <svg id="map-obs" viewBox="0 0 560 580" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
+  <div class="hgroup">
+    <h3>The west is measured only on its warmest days</h3>
+    <span class="conf conf-low"><i></i>Known bias, quantified</span>
+  </div>
+  <p>A thermal sensor cannot see through fog, so the foggiest neighborhoods are observed almost
+  exclusively on their rare clear days — which are their <em>warm</em> days. This is not a bug
+  to be fixed; it is a hard limit of the instrument. What you can do is measure it.</p>
+  <p><strong>Left:</strong> how many of the 63 scenes actually yielded a usable reading, from
+  <strong id="obs-min">—</strong> to <strong id="obs-max">—</strong>.
+  <strong>Right:</strong> how much hotter the city was, on average, on the particular days each
+  neighborhood happened to be visible. That second number is the bias, in degrees.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Usable observations</h4>
+      <svg id="map-obs" viewBox="0 0 330 345" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
+      <div class="legend" id="lg-obs"></div>
     </div>
-    <div class="legend" id="lg-obs"></div>
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Warm-day sampling bias</h4>
+      <svg id="map-bias" viewBox="0 0 330 345" role="img" aria-label="Map of warm-day sampling bias per neighborhood"></svg>
+      <div class="legend" id="lg-bias"></div>
+    </div>
+  </div>
+  <p id="bias-summary"></p>
+  <p><strong>Every temperature number on this page therefore understates how much cooler the
+  west side really is.</strong> The true fog effect is larger than the
+  <strong id="r-fog-2">—</strong> shown earlier, which makes the canopy inequity a floor rather
+  than a ceiling.</p>
+  <div class="card">
+    <h4 style="margin:0 0 10px;font-size:0.95rem">Confidence by neighborhood</h4>
+    <svg id="conf-bars" role="img" aria-label="Satellite measurement confidence for every neighborhood"></svg>
+    <p class="note" id="conf-note"></p>
   </div>
 </section>
 
 <section>
   <h2>Every neighborhood</h2>
-  <h3>Ranked by heat vulnerability</h3>
+  <div class="hgroup">
+    <h3>Ranked by heat vulnerability</h3>
+    <span class="conf conf-moderate"><i></i>Moderate confidence</span>
+  </div>
+  <p class="conf-why">The index inherits every uncertainty above — clear-sky bias in its
+  exposure half, survey margins in its sensitivity and capacity halves. Ranks near each other
+  should be read as ties, not as an order. Ranks 20 places apart are real.</p>
   <p>The index combines <strong>exposure</strong> (heat, vegetation, fog),
   <strong>sensitivity</strong> (residents over 65 and under 5, poverty) and a
   <strong>capacity gap</strong> (income, renting, limited-English households). Each variable is
@@ -296,6 +362,7 @@
   <div class="card">
     <div class="controls"><select id="picker" aria-label="Choose a neighborhood"></select></div>
     <div class="prof" id="prof"></div>
+    <div id="prof-conf" style="margin-top:18px"></div>
     <div style="margin-top:26px">
       <div class="legend" id="lg-race"></div>
       <svg id="race" viewBox="0 0 680 62" role="img" aria-label="Race and ethnicity composition"></svg>
@@ -404,13 +471,27 @@ const METRICS = {
                    blurb: "Median household income" },
 };
 
+// Not offered as a map toggle — it has its own section — but it needs a scale
+// and a legend like any other layer.
+const QUALITY_METRICS = {
+  clear_obs: { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
+               blurb: "Usable clear looks, of 63 scenes" },
+  // Sequential, not diverging: the bias is positive everywhere, because any day
+  // clear enough to measure is warmer than the average day. There is no
+  // "unbiased" pole for a diverging scale to sit on.
+  heat_bias: { label: "Sampling bias", fmt: v => "+" + v.toFixed(2) + " °C", kind: "seq",
+               blurb: "How much hotter the city was on this place's visible days" },
+};
+Object.assign(METRICS, QUALITY_METRICS);
+
 function scaleFor(key) {
   const m = METRICS[key] || { kind: "seq" };
   const vals = SCORED.map(f => P(f)[key]).filter(v => v !== null);
   if (m.kind === "div") {
-    // Fixed breaks around zero: the midpoint must mean "no different from the
-    // city average", so it cannot float with the data.
-    const breaks = [-4, -2, -0.5, 0.5, 2];
+    // The midpoint must mean "no different from the baseline", so it never
+    // floats with the data even when the breaks around it do.
+    const breaks = typeof m.breaks === "function" ? m.breaks(vals)
+                 : (m.breaks || [-4, -2, -0.5, 0.5, 2]);
     const ramp = div6();
     return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
   }
@@ -471,6 +552,24 @@ function drawMap(svgId, key, opts = {}) {
   const sc = scaleFor(key);
   const m = METRICS[key] || { label: key, fmt: v => v.toFixed(2) };
 
+  // Hatching marks where the satellite sees least. This is texture carrying
+  // data — uncertainty — not decoration, and it ships with a legend key. 45°
+  // only, per the one-angle rule.
+  const hatchId = "hatch-" + svgId;
+  if (opts.hatch) {
+    const defs = el("defs");
+    const pattern = el("pattern", {
+      id: hatchId, width: 7, height: 7,
+      patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)",
+    });
+    pattern.appendChild(el("line", {
+      x1: 0, y1: 0, x2: 0, y2: 7,
+      stroke: css("--ink"), "stroke-width": 1.5, opacity: 0.42,
+    }));
+    defs.appendChild(pattern);
+    svg.appendChild(defs);
+  }
+
   F.forEach(f => {
     const v = P(f)[key];
     const p = el("path", {
@@ -489,7 +588,11 @@ function drawMap(svgId, key, opts = {}) {
         "Heat " + signed(q.heat_anomaly) + " °C<br>" +
         "Fog " + Math.round(q.fog * 100) + "% · NDVI " + q.ndvi.toFixed(2) + "<br>" +
         "Income " + money(q.median_income) + "<br>" +
-        "Vulnerability " + q.index.toFixed(0) + " (rank " + q.rank + " of 38)</span>";
+        "Vulnerability " + q.index.toFixed(0) + " (rank " + q.rank + " of 38)" +
+        '<br><span style="opacity:.75">' +
+        q.clear_obs.toFixed(0) + " clear looks · bias +" + q.heat_bias.toFixed(2) +
+        " °C<br>satellite " + q.heat_confidence + " · census " + q.acs_confidence +
+        "</span></span>";
     };
     p.addEventListener("mousemove", e => showTip(e, body()));
     p.addEventListener("mouseleave", hideTip);
@@ -498,23 +601,38 @@ function drawMap(svgId, key, opts = {}) {
     p.addEventListener("click", () => select(P(f).nhood));
     p.addEventListener("keydown", e => { if (e.key === "Enter") select(P(f).nhood); });
     svg.appendChild(p);
+
+    if (opts.hatch && P(f).heat_confidence === "low") {
+      // Overlay, not a replacement fill — the value still has to be readable
+      // underneath the uncertainty marking.
+      svg.appendChild(el("path", {
+        d: pathFor(f, proj), fill: "url(#" + hatchId + ")",
+        stroke: "none", "pointer-events": "none",
+      }));
+    }
   });
   return sc;
 }
 
-function drawLegend(id, key, sc) {
+function drawLegend(id, key, sc, opts = {}) {
   const box = document.getElementById(id);
   const m = METRICS[key] || { fmt: v => v.toFixed(2), blurb: "" };
   const lo = sc.breaks[0], hi = sc.breaks[sc.breaks.length - 1];
   const swatches = sc.ramp.map(c =>
     '<i style="background:' + c + '"></i>').join("");
+  const hatchKey = opts.hatch
+    ? '<span class="lg-key"><i style="background:repeating-linear-gradient(45deg,' +
+      css("--ink") + ' 0 1.5px,transparent 1.5px 7px);opacity:.6"></i>' +
+      "satellite sees least</span>"
+    : "";
   box.innerHTML =
     '<span class="cap">' + m.blurb +
       (m.kind === "div" ? " · fixed breaks around zero" : " · quantile bins") + "</span>" +
     '<span class="ramp"><span class="end">' + m.fmt(lo) + "</span>" +
       '<span class="swatches">' + swatches + "</span>" +
       '<span class="end">' + m.fmt(hi) + "</span></span>" +
-    '<span class="lg-key"><i style="background:' + css("--none") + '"></i>not scored</span>';
+    '<span class="lg-key"><i style="background:' + css("--none") + '"></i>not scored</span>' +
+    hatchKey;
 }
 
 /* ---------- scatter ---------- */
@@ -627,6 +745,61 @@ function drawBars() {
   });
 }
 
+/* ---------- how well is each neighbourhood measured? ---------- */
+const CONF_COLOR = { high: "#0ca30c", moderate: "#fab219", low: "#ec835a" };
+
+function drawConfBars() {
+  const svg = document.getElementById("conf-bars");
+  svg.innerHTML = "";
+  const rows = [...SCORED].sort((a, b) => P(a).clear_obs - P(b).clear_obs);
+  const rowH = 19, L = 168, R = 118, T = 6, W = 720;
+  const H = T + rows.length * rowH + 6;
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  const TOTAL = 63;
+  const bw = v => (v / TOTAL) * (W - L - R);
+
+  // Track shows the scenes that existed; the fill shows the ones that were
+  // usable. The gap between them is the blind spot.
+  rows.forEach((f, i) => {
+    const q = P(f), y = T + i * rowH;
+    const g = el("g", { tabindex: "0" });
+    g.style.cursor = "pointer";
+    g.appendChild(el("rect", { x: 0, y: y, width: W, height: rowH - 2, fill: "transparent" }));
+    g.appendChild(el("text", { x: L - 22, y: y + 12, class: "tick", "text-anchor": "end" }, q.nhood));
+    g.appendChild(el("circle", {
+      cx: L - 11, cy: y + 8, r: 4, fill: CONF_COLOR[q.heat_confidence],
+    }));
+    g.appendChild(el("rect", {
+      x: L, y: y + 3, width: W - L - R, height: rowH - 8, rx: 3, fill: css("--grid"),
+    }));
+    g.appendChild(el("rect", {
+      x: L, y: y + 3, width: Math.max(bw(q.clear_obs), 1), height: rowH - 8,
+      rx: 3, fill: q.nhood === selected ? css("--ink") : css("--accent"),
+    }));
+    g.appendChild(el("text", { x: W - R + 10, y: y + 12, class: "tick" },
+      q.clear_obs.toFixed(0) + " looks · +" + q.heat_bias.toFixed(2) + " °C"));
+    const body = "<b>" + q.nhood + "</b><span>" +
+      q.clear_obs.toFixed(0) + " usable looks of " + TOTAL + " scenes<br>" +
+      "Warm-day bias +" + q.heat_bias.toFixed(2) + " °C<br>" +
+      "Within-neighborhood spread " + q.heat_sd.toFixed(1) + " °C<br>" +
+      "Satellite confidence: " + q.heat_confidence + "</span>";
+    g.addEventListener("mousemove", e => showTip(e, body));
+    g.addEventListener("mouseleave", hideTip);
+    g.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
+    g.addEventListener("blur", hideTip);
+    g.addEventListener("click", () => select(q.nhood));
+    svg.appendChild(g);
+  });
+
+  const counts = { high: 0, moderate: 0, low: 0 };
+  rows.forEach(f => counts[P(f).heat_confidence]++);
+  document.getElementById("conf-note").innerHTML =
+    "Sorted by usable observations. Dot colour is the confidence grade: " +
+    counts.high + " high, " + counts.moderate + " moderate, " + counts.low +
+    " low. Grades come from fixed thresholds — fewer than 20 looks, or more than " +
+    "1.0 °C of warm-day bias, drops a neighborhood to low.";
+}
+
 /* ---------- neighbourhood profile ---------- */
 const RACE = [
   ["pct_white_nh", "White", "--cat-1"],
@@ -652,6 +825,29 @@ function drawProfile() {
     ["Vegetation", q.ndvi.toFixed(2)],
     ["Median income", scored ? money(q.median_income) : "—"],
   ].map(([l, v]) => "<div><span>" + l + "</span><b>" + v + "</b></div>").join("");
+
+  // How much to trust this particular neighborhood's numbers.
+  const conf = document.getElementById("prof-conf");
+  if (!scored) {
+    conf.innerHTML = '<p class="conf-why">This is a park with ' +
+      q.population.toLocaleString() + " residents. Its census rates are noise, so it is " +
+      "mapped but never scored or ranked.</p>";
+  } else {
+    const chip = (grade, label) =>
+      '<span class="conf conf-' + grade + '"><i></i>' + label + " " + grade + "</span>";
+    conf.innerHTML =
+      '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+      chip(q.heat_confidence, "Satellite") + chip(q.acs_confidence, "Census") + "</div>" +
+      '<p class="conf-why">Seen on <strong>' + q.clear_obs.toFixed(0) +
+      " of 63</strong> scenes. On those days the city ran <strong>+" +
+      q.heat_bias.toFixed(2) + " °C</strong> hotter than average, so this reading is " +
+      "biased warm by about that much. Temperatures vary by <strong>" +
+      q.heat_sd.toFixed(1) + " °C</strong> within the neighborhood itself. " +
+      "Census margins give a typical coefficient of variation of <strong>" +
+      q.acs_cv.toFixed(2) + "</strong>" +
+      (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".") +
+      "</p>";
+  }
 
   // Race composition — the only multi-series mark on the page. Legend plus
   // in-bar labels where they fit; the table carries the rest.
@@ -724,6 +920,11 @@ function drawTable() {
     ["fog", "Fog", v => Math.round(v * 100) + "%"],
     ["ndvi", "NDVI", v => v.toFixed(2)],
     ["clear_obs", "Clear obs", v => v.toFixed(0)],
+    ["heat_bias", "Warm bias", v => "+" + v.toFixed(2)],
+    ["heat_sd", "Spread °C", v => v.toFixed(1)],
+    ["heat_confidence", "Satellite", v => v],
+    ["acs_cv", "Census CV", v => v === null ? "—" : v.toFixed(2)],
+    ["acs_confidence", "Census", v => v],
     ["population", "Pop.", v => v.toLocaleString()],
     ["median_income", "Income", v => v === null ? "—" : money(v)],
     ["pct_poverty", "Poverty", v => v === null ? "—" : v.toFixed(1) + "%"],
@@ -760,6 +961,33 @@ function fillProse() {
   set("obs-min", Math.round(omin));
   set("obs-max", Math.round(omax));
 
+  // Data-quality prose, all measured rather than asserted.
+  const [bmin, bmax] = extent(SCORED, "heat_bias");
+  const biasFog = pearson(SCORED, "heat_bias", "fog");
+  const biasIncome = pearson(SCORED, "heat_bias", "median_income");
+  set("r-fog-2", signed(pearson(SCORED, "heat_anomaly", "fog")));
+
+  const summary = document.getElementById("bias-summary");
+  if (summary) {
+    summary.innerHTML =
+      "Every neighborhood is biased warm — from <strong>+" + bmin.toFixed(2) +
+      " °C</strong> to <strong>+" + bmax.toFixed(2) + " °C</strong> — because any day clear " +
+      "enough to measure is warmer than the average day. The bias tracks fog at <strong>r = " +
+      signed(biasFog) + "</strong>: the foggier the place, the more its reading is " +
+      "distorted, and in the direction that hides its coolness.";
+  }
+
+  // Does the blind spot threaten the headline null result? Say so either way.
+  const why = document.getElementById("null-why");
+  if (why) {
+    why.innerHTML =
+      "The bias runs slightly <em>against</em> this finding rather than creating it: " +
+      "sampling bias correlates <strong>" + signed(biasIncome) + "</strong> with income, so " +
+      "correcting it would move the heat–income relationship " +
+      (biasIncome > 0 ? "a little more negative" : "a little less negative") +
+      " — not toward zero. The null is not an artefact of the blind spot.";
+  }
+
   const lk = SCORED.find(f => P(f).nhood === "Lakeshore");
   if (lk) {
     document.getElementById("lakeshore-note").textContent =
@@ -773,7 +1001,12 @@ function fillProse() {
 /* ---------- wiring ---------- */
 let metric = "index";
 function drawAll() {
-  drawLegend("map-legend", metric, drawMap("map", metric, { pad: 14 }));
+  // Hatch only the layers the blind spot actually affects. Fog is built from
+  // every observation, and income from a survey — neither has the problem, and
+  // marking them would be dishonest.
+  const satellite = metric === "heat_anomaly" || metric === "ndvi";
+  drawLegend("map-legend", metric,
+    drawMap("map", metric, { pad: 14, hatch: satellite }), { hatch: satellite });
   const f = F.find(x => P(x).nhood === selected);
   const note = document.getElementById("map-note");
   if (f && note) {
@@ -783,14 +1016,19 @@ function drawAll() {
       (v === null || v === undefined ? "not scored" : m.label + " " + m.fmt(v)) +
       ". Hover any neighborhood for detail; click to select it.";
   }
-  drawLegend("lg-heat", "heat_anomaly", drawMap("mini-heat", "heat_anomaly", { pad: 8 }));
+  drawLegend("lg-heat", "heat_anomaly",
+    drawMap("mini-heat", "heat_anomaly", { pad: 8, hatch: true }), { hatch: true });
   drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
-  drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 12 }));
+  drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 8 }));
+  drawLegend("lg-bias", "heat_bias", drawMap("map-bias", "heat_bias", { pad: 8 }));
   drawBars();
+  drawConfBars();
 }
 
+// Only the five story metrics get toggle buttons. The quality layers live in
+// their own section, where they can be explained rather than just offered.
 const btnBox = document.getElementById("metric-buttons");
-Object.entries(METRICS).forEach(([k, m]) => {
+Object.entries(METRICS).filter(([k]) => !(k in QUALITY_METRICS)).forEach(([k, m]) => {
   const b = document.createElement("button");
   b.className = "seg"; b.textContent = m.label; b.type = "button";
   b.setAttribute("aria-pressed", k === metric);
@@ -801,9 +1039,6 @@ Object.entries(METRICS).forEach(([k, m]) => {
   };
   btnBox.appendChild(b);
 });
-
-METRICS.clear_obs = { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
-                      blurb: "Usable clear satellite looks" };
 
 const picker = document.getElementById("picker");
 [...F].sort((a, b) => P(a).nhood.localeCompare(P(b).nhood)).forEach(f => {
