@@ -156,7 +156,9 @@
   .gl { stroke: var(--grid); stroke-width: 1; }
   .ax { stroke: var(--axis); stroke-width: 1; }
   .dot { fill: var(--accent); stroke: var(--surface-1); stroke-width: 2; }
-  .dlabel { fill: var(--ink); font-size: 11.5px; font-weight: 500; }
+  /* A label sits on top of the plot, so without this it swallows clicks and
+     hovers meant for whatever dot is underneath it. */
+  .dlabel { fill: var(--ink); font-size: 11.5px; font-weight: 500; pointer-events: none; }
 
   /* Interactive figures get room. A map you can re-point deserves more space
      than one that only ever shows a single thing. */
@@ -1428,8 +1430,7 @@ fillProse();
 drawAll();
 scatter("sc-income", "median_income", "heat_anomaly",
   "Median household income", "Heat anomaly (°C)",
-  { xfmt: money, yfmt: v => signed(v), cap: "cap-income",
-    label: ["Chinatown", "Lakeshore", "Seacliff"] });
+  { xfmt: money, yfmt: v => signed(v), cap: "cap-income" });
 scatter("sc-canopy-income", "median_income", "ndvi",
   "Median household income", "Vegetation (NDVI)",
   { xfmt: money, yfmt: v => v.toFixed(2), cap: "cap-ci" });
