@@ -1,0 +1,34 @@
+# Conda half of the environment.
+#
+# rasterio, rioxarray, pyogrio and pyarrow are deliberately NOT here. On the
+# machine this was built on, Windows Smart App Control blocks those conda-forge
+# binaries at import while allowing the PyPI wheels — and blocks the PyPI pandas
+# wheel while allowing conda's. Neither channel alone works, so they are
+# installed from pip afterwards:
+#
+#   conda env create -f environment.yml
+#   conda activate sfheat
+#   python -m pip install --force-reinstall --no-deps rasterio rioxarray pyogrio pyarrow
+#
+# --no-deps is load-bearing: without it pip replaces the working conda pandas and
+# numpy with wheels that will not import. --force-reinstall is too: without it
+# pip sees conda's copy and silently does nothing.
+#
+# On Linux, macOS, or Windows without Smart App Control, adding those four to the
+# conda list below works fine and the pip step can be skipped.
+name: sfheat
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - geopandas
+  - pandas
+  - shapely
+  - pyproj
+  - numpy
+  - matplotlib
+  - requests
+  - pystac-client
+  - planetary-computer
+  - exactextract
+  - pip

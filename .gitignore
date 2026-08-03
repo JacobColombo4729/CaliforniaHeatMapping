@@ -1,0 +1,15 @@
+# Cached Landsat scene stack — 85 MB, and rebuildable by rerunning landsat.py.
+data/interim/
+
+# Raw API downloads — cached only to keep re-runs off the network.
+data/raw/
+
+# Secrets. Nothing in this project needs a key any more, but don't tempt fate.
+.env
+
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+.DS_Store

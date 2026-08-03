@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SF Heat &amp; Equity</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11, 11, 11, 0.10);
+    --accent: #2a78d6;
+
+    --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #5598e7;
+    --seq-4: #2a78d6; --seq-5: #184f95;
+
+    --div-c3: #1c5cab; --div-c2: #3987e5; --div-c1: #9ec5f4;
+    --div-mid: #e8e7e3;
+    --div-w1: #f0a9a8; --div-w2: #e34948; --div-w3: #a32e2d;
+
+    --cat-1: #2a78d6; --cat-2: #eb6834; --cat-3: #1baf7a;
+    --cat-4: #eda100; --cat-5: #e87ba4;
+    --none: #dedcd5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-1: #1a1a19; --page: #0d0d0d;
+      --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835;
+      --border: rgba(255, 255, 255, 0.10);
+      --accent: #3987e5;
+      --seq-1: #184f95; --seq-2: #2a78d6; --seq-3: #5598e7;
+      --seq-4: #9ec5f4; --seq-5: #cde2fb;
+      --div-c3: #9ec5f4; --div-c2: #5598e7; --div-c1: #2a5f9e;
+      --div-mid: #383835;
+      --div-w1: #7a3130; --div-w2: #e34948; --div-w3: #f3a9a8;
+      --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70;
+      --cat-4: #c98500; --cat-5: #d55181;
+      --none: #35342f;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1: #1a1a19; --page: #0d0d0d;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --accent: #3987e5;
+    --seq-1: #184f95; --seq-2: #2a78d6; --seq-3: #5598e7;
+    --seq-4: #9ec5f4; --seq-5: #cde2fb;
+    --div-c3: #9ec5f4; --div-c2: #5598e7; --div-c1: #2a5f9e;
+    --div-mid: #383835;
+    --div-w1: #7a3130; --div-w2: #e34948; --div-w3: #f3a9a8;
+    --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70;
+    --cat-4: #c98500; --cat-5: #d55181;
+    --none: #35342f;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+
+  header { padding: 88px 0 40px; }
+  h1 { font-size: clamp(2.1rem, 5.2vw, 3.4rem); line-height: 1.08; margin: 0 0 20px; letter-spacing: -0.02em; }
+  .lede { font-size: clamp(1.05rem, 2.1vw, 1.3rem); color: var(--ink-2); max-width: 62ch; margin: 0; }
+  .byline { color: var(--muted); font-size: 0.85rem; margin-top: 28px; }
+
+  section { margin-top: 76px; }
+  h2 {
+    font-size: 0.79rem; text-transform: uppercase; letter-spacing: 0.11em;
+    color: var(--muted); font-weight: 600; margin: 0 0 12px;
+  }
+  h3 { font-size: clamp(1.35rem, 3vw, 1.85rem); line-height: 1.22; margin: 0 0 16px; letter-spacing: -0.01em; }
+  p { max-width: 68ch; color: var(--ink-2); margin: 0 0 16px; }
+  p strong { color: var(--ink); font-weight: 600; }
+
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin: 24px 0;
+  }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 32px 0 0; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .tile .v { font-size: 2.4rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+  .tile .l { color: var(--ink-2); font-size: 0.88rem; margin-top: 8px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  button.seg {
+    font: inherit; font-size: 0.87rem; padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--ink-2);
+    cursor: pointer;
+  }
+  button.seg:hover { border-color: var(--axis); color: var(--ink); }
+  button.seg[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  select {
+    font: inherit; padding: 8px 12px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--ink);
+  }
+
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .nb { stroke: var(--surface-1); stroke-width: 1.2; cursor: pointer; }
+  .nb:hover { stroke: var(--ink); stroke-width: 2; }
+  .nb.sel { stroke: var(--ink); stroke-width: 2.4; }
+  .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .alab { fill: var(--ink-2); font-size: 12px; }
+  .gl { stroke: var(--grid); stroke-width: 1; }
+  .ax { stroke: var(--axis); stroke-width: 1; }
+  .dot { fill: var(--accent); stroke: var(--surface-1); stroke-width: 2; }
+  .dlabel { fill: var(--ink); font-size: 11.5px; font-weight: 500; }
+
+  .mapbox { max-width: 560px; margin: 0 auto; }
+  .legend { display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  /* The ramp must never wrap mid-scale — swatches split across lines stop
+     reading as one continuous scale. */
+  .legend .ramp { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .legend .ramp i { width: 30px; height: 11px; border-radius: 2px; display: block; }
+  .legend .swatches { display: flex; gap: 2px; }
+  .legend .cap { color: var(--muted); font-size: 0.78rem; flex-basis: 100%; }
+  .legend .end { color: var(--ink-2); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
+  .lg-key { display: flex; align-items: center; gap: 7px; margin-right: 16px; font-size: 0.82rem; color: var(--ink-2); }
+  .lg-key i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+
+  #tip {
+    position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 13px; font-size: 0.83rem; color: var(--ink);
+    box-shadow: 0 6px 22px rgba(0,0,0,.14); z-index: 50; max-width: 260px;
+  }
+  #tip b { display: block; margin-bottom: 5px; font-size: 0.92rem; }
+  #tip span { color: var(--ink-2); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.83rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 7px 9px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--surface-1); }
+  .scroll { overflow-x: auto; max-height: 460px; overflow-y: auto; }
+  details > summary { cursor: pointer; color: var(--ink-2); font-size: 0.9rem; }
+
+  .note { font-size: 0.83rem; color: var(--muted); max-width: 68ch; }
+  .prof { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; margin-top: 18px; }
+  .prof div span { display: block; color: var(--muted); font-size: 0.78rem; }
+  .prof div b { font-size: 1.35rem; font-weight: 600; }
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div id="tip" role="status" aria-live="polite"></div>
+<div class="wrap">
+
+<header>
+  <h1>San Francisco’s heat map is drawn by fog, not by income.</h1>
+  <p class="lede">In most American cities, surface heat tracks poverty. Here it doesn’t —
+  the marine layer overrules everything, and it doesn’t care who lives underneath it.
+  But the shade that people <em>build</em> is another story.</p>
+  <div class="tiles">
+    <div class="tile"><div class="v" id="t-spread">—</div><div class="l">°C between the coolest and hottest neighborhood</div></div>
+    <div class="tile"><div class="v" id="t-fog">—</div><div class="l">percentage-point fog gap, west side to southeast</div></div>
+    <div class="tile"><div class="v" id="t-corr">—</div><div class="l">correlation between heat and household income</div></div>
+  </div>
+  <p class="byline">63 Landsat scenes, summers 2019–2024 · American Community Survey 2024 5-year · 41 analysis neighborhoods</p>
+</header>
+
+<section>
+  <h2>Where it’s hot</h2>
+  <h3>Every neighborhood, five ways</h3>
+  <p>Surface temperature is shown as an <strong>anomaly</strong> — degrees above or below the
+  citywide average on the same day — so a hot afternoon can’t masquerade as a hot
+  neighborhood. Switch the metric and watch which patterns move together.</p>
+  <div class="card">
+    <div class="controls" id="metric-buttons" role="group" aria-label="Map metric"></div>
+    <div class="mapbox">
+      <svg id="map" viewBox="0 0 560 580" role="img" aria-label="Choropleth map of San Francisco neighborhoods"></svg>
+    </div>
+    <div class="legend" id="map-legend"></div>
+    <p class="note" id="map-note" style="margin-top:12px"></p>
+  </div>
+</section>
+
+<section>
+  <h2>The pattern that isn’t there</h2>
+  <h3>Heat and income barely relate</h3>
+  <p>Plot every neighborhood’s heat anomaly against its median household income and the cloud
+  is flat. The correlation is <strong id="r-income">—</strong> — for practical purposes, nothing.
+  Split the city into income quartiles and the poorest and richest differ by well under a degree,
+  against a <strong id="span-1">—</strong> °C span across the city.</p>
+  <div class="card">
+    <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
+    <p class="note" id="cap-income"></p>
+    <p class="note">One dot per scored neighborhood. The line is a least-squares fit, drawn to
+    show how little slope there is. Click any dot to open that neighborhood’s profile.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Why</h2>
+  <h3>The fog shadow does the sorting</h3>
+  <p>The same satellite passes that measure temperature also record which pixels were under
+  cloud. Sum those and you get a fog climatology: <strong id="fog-range">—</strong> of
+  observations obscured, rising sharply toward the ocean. Put the two maps together and
+  they are near mirror images — heat against fog correlates <strong id="r-fog">—</strong>,
+  and against tree canopy <strong id="r-ndvi">—</strong>.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Surface heat</h4>
+      <svg id="mini-heat" viewBox="0 0 330 345" role="img" aria-label="Map of heat anomaly"></svg>
+      <div class="legend" id="lg-heat"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Fog frequency</h4>
+      <svg id="mini-fog" viewBox="0 0 330 345" role="img" aria-label="Map of fog frequency"></svg>
+      <div class="legend" id="lg-fog"></div>
+    </div>
+  </div>
+  <p>Crucially, <strong>fog is distributed by geography, not by wealth or race.</strong> Its
+  correlation with income is <strong id="r-fogincome">—</strong> and with the share of
+  residents of color <strong id="r-fogpoc">—</strong>. It is the one major driver of heat here
+  that is handed out indifferently — and it is strong enough to flatten the heat-poverty
+  relationship that shows up almost everywhere else.</p>
+</section>
+
+<section>
+  <h2>What the fog hides</h2>
+  <h3>The shade people build is not distributed evenly</h3>
+  <p>Vegetation cools nearly as strongly as fog — but unlike fog, it follows money and race.
+  Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>) and whiter
+  (<strong id="r-ndvipoc">—</strong>). The fog gradient is so large that it buries this in the
+  raw temperature numbers, but it is the part of the picture the city can actually change.</p>
+  <div class="grid-2">
+    <div class="card">
+      <svg id="sc-canopy-income" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against income"></svg>
+      <p class="note" id="cap-ci"></p>
+    </div>
+    <div class="card">
+      <svg id="sc-canopy-poc" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against share of residents of color"></svg>
+      <p class="note" id="cap-cp"></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>What the satellite can’t see</h2>
+  <h3>The west is measured only on its warmest days</h3>
+  <p>A thermal sensor cannot see through fog. So the foggiest neighborhoods are observed
+  almost exclusively on their rare clear days — which are their <em>warm</em> days. The west
+  side yields as few as <strong id="obs-min">—</strong> usable observations where parts of the
+  east give <strong id="obs-max">—</strong>.</p>
+  <p><strong>Every temperature number on this page therefore understates how much cooler the
+  west side really is.</strong> The true fog effect is larger than what’s mapped, which makes
+  the canopy inequity above a floor rather than a ceiling.</p>
+  <div class="card">
+    <div class="mapbox">
+      <svg id="map-obs" viewBox="0 0 560 580" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
+    </div>
+    <div class="legend" id="lg-obs"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Every neighborhood</h2>
+  <h3>Ranked by heat vulnerability</h3>
+  <p>The index combines <strong>exposure</strong> (heat, vegetation, fog),
+  <strong>sensitivity</strong> (residents over 65 and under 5, poverty) and a
+  <strong>capacity gap</strong> (income, renting, limited-English households). Each variable is
+  percentile-ranked, averaged within its component, and the three components combined by
+  geometric mean — so strength in one cannot fully cancel exposure in another.</p>
+  <p><strong>Race and ethnicity are deliberately not inputs.</strong> Had they been, the finding
+  that vulnerability falls hardest on communities of color would be circular. Kept out, it is a
+  result: the index correlates <strong id="r-poc">—</strong> with the share of residents of color.</p>
+  <div class="card">
+    <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
+  </div>
+  <p class="note" id="lakeshore-note"></p>
+</section>
+
+<section>
+  <h2>Pick one</h2>
+  <h3>Neighborhood profile</h3>
+  <div class="card">
+    <div class="controls"><select id="picker" aria-label="Choose a neighborhood"></select></div>
+    <div class="prof" id="prof"></div>
+    <div style="margin-top:26px">
+      <div class="legend" id="lg-race"></div>
+      <svg id="race" viewBox="0 0 680 62" role="img" aria-label="Race and ethnicity composition"></svg>
+    </div>
+    <div style="margin-top:22px">
+      <svg id="vs-city" viewBox="0 0 680 210" role="img" aria-label="This neighborhood compared with the citywide median"></svg>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Method &amp; limits</h2>
+  <h3>What this is, and what it isn’t</h3>
+  <p><strong>Surface temperature is not air temperature.</strong> Landsat measures the skin
+  temperature of roofs and pavement, which runs far hotter than the air a person stands in. The
+  spatial pattern is meaningful; the absolute values are not comparable to a weather station.</p>
+  <p><strong>Daytime only.</strong> Landsat passes late morning. Night-time heat retention is
+  the more health-relevant variable and is not measured here.</p>
+  <p><strong>Three neighborhoods are parks</strong> — Golden Gate Park, McLaren Park and Lincoln
+  Park — with between 58 and 160 residents. Their census rates are noise, so they are mapped but
+  never scored or ranked.</p>
+  <p><strong>Neighborhood median income is an approximation.</strong> Medians cannot be summed,
+  so it is a household-weighted mean of tract medians. Every other rate is exact — summed
+  numerator over summed denominator, which is what population weighting means.</p>
+  <p><strong>41 units is coarse.</strong> Real inequity exists within neighborhoods and is
+  invisible at this resolution.</p>
+  <details>
+    <summary>Full data table</summary>
+    <div class="scroll" style="margin-top:14px"><table id="tbl"></table></div>
+  </details>
+</section>
+
+<footer>
+  Landsat Collection 2 Level-2 via Microsoft Planetary Computer · American Community Survey
+  2024 5-year via Census Reporter · neighborhood boundaries and tract crosswalk via DataSF.
+  Analysis in Python; page is a single static file with no dependencies.
+</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+const F = NEIGHBORHOODS.features;
+const SCORED = F.filter(f => f.properties.index !== null);
+const P = f => f.properties;
+const SVGNS = "http://www.w3.org/2000/svg";
+
+/* ---------- small helpers ---------- */
+const el = (name, attrs = {}, text) => {
+  const n = document.createElementNS(SVGNS, name);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  return n;
+};
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const extent = (rows, key) => {
+  const v = rows.map(r => P(r)[key]).filter(x => x !== null && !isNaN(x));
+  return [Math.min(...v), Math.max(...v)];
+};
+function pearson(rows, a, b) {
+  const xs = [], ys = [];
+  rows.forEach(r => {
+    const x = P(r)[a], y = P(r)[b];
+    if (x !== null && y !== null) { xs.push(x); ys.push(y); }
+  });
+  const n = xs.length;
+  const mx = xs.reduce((s, v) => s + v, 0) / n, my = ys.reduce((s, v) => s + v, 0) / n;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = xs[i] - mx, dy = ys[i] - my;
+    sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
+  }
+  return sxy / Math.sqrt(sxx * syy);
+}
+const signed = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2);
+const money = v => "$" + Math.round(v / 1000) + "k";
+
+/* ---------- colour scales ----------
+   Sequential = one hue, light to dark (reversed in dark mode so "more" always
+   moves away from the surface). Diverging = blue/red with a neutral midpoint,
+   used only for the heat anomaly, which has a true zero: the city average. */
+const seq = () => [css("--seq-1"), css("--seq-2"), css("--seq-3"), css("--seq-4"), css("--seq-5")];
+const div6 = () => [css("--div-c3"), css("--div-c2"), css("--div-c1"),
+                    css("--div-w1"), css("--div-w2"), css("--div-w3")];
+
+function quantileBreaks(values, n) {
+  const s = [...values].sort((a, b) => a - b), out = [];
+  for (let i = 1; i < n; i++) out.push(s[Math.floor(i * s.length / n)]);
+  return out;
+}
+function classify(v, breaks) {
+  let i = 0;
+  while (i < breaks.length && v >= breaks[i]) i++;
+  return i;
+}
+
+const METRICS = {
+  index:         { label: "Vulnerability", fmt: v => v.toFixed(0), kind: "seq",
+                   blurb: "Composite index, 0–100" },
+  heat_anomaly:  { label: "Heat", fmt: v => signed(v) + " °C", kind: "div",
+                   blurb: "°C vs the citywide average" },
+  ndvi:          { label: "Vegetation", fmt: v => v.toFixed(2), kind: "seq",
+                   blurb: "NDVI, higher is greener" },
+  fog:           { label: "Fog", fmt: v => Math.round(v * 100) + "%", kind: "seq",
+                   blurb: "Share of observations under cloud" },
+  median_income: { label: "Income", fmt: money, kind: "seq",
+                   blurb: "Median household income" },
+};
+
+function scaleFor(key) {
+  const m = METRICS[key] || { kind: "seq" };
+  const vals = SCORED.map(f => P(f)[key]).filter(v => v !== null);
+  if (m.kind === "div") {
+    // Fixed breaks around zero: the midpoint must mean "no different from the
+    // city average", so it cannot float with the data.
+    const breaks = [-4, -2, -0.5, 0.5, 2];
+    const ramp = div6();
+    return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
+  }
+  const breaks = quantileBreaks(vals, 5);
+  const ramp = seq();
+  return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
+}
+
+/* ---------- projection ---------- */
+function projector(w, h, pad) {
+  let x0 = 180, x1 = -180, y0 = 90, y1 = -90;
+  F.forEach(f => eachRing(f, r => r.forEach(([lo, la]) => {
+    if (lo < x0) x0 = lo; if (lo > x1) x1 = lo;
+    if (la < y0) y0 = la; if (la > y1) y1 = la;
+  })));
+  const k = Math.cos((y0 + y1) / 2 * Math.PI / 180);
+  const bw = (x1 - x0) * k, bh = y1 - y0;
+  const s = Math.min((w - 2 * pad) / bw, (h - 2 * pad) / bh);
+  const ox = (w - bw * s) / 2, oy = (h - bh * s) / 2;
+  return ([lo, la]) => [ox + (lo - x0) * k * s, oy + (y1 - la) * s];
+}
+function eachRing(f, fn) {
+  const g = f.geometry;
+  const polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+  polys.forEach(poly => poly.forEach(fn));
+}
+function pathFor(f, proj) {
+  let d = "";
+  eachRing(f, ring => {
+    ring.forEach((c, i) => {
+      const [x, y] = proj(c);
+      d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+    });
+    d += "Z";
+  });
+  return d;
+}
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById("tip");
+function showTip(e, html) {
+  tip.innerHTML = html;
+  tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  let x = e.clientX + 16, y = e.clientY + 16;
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 16;
+  if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 16;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => { tip.style.opacity = 0; };
+
+/* ---------- map ---------- */
+function drawMap(svgId, key, opts = {}) {
+  const svg = document.getElementById(svgId);
+  svg.innerHTML = "";
+  const vb = svg.viewBox.baseVal;
+  const proj = projector(vb.width, vb.height, opts.pad ?? 12);
+  const sc = scaleFor(key);
+  const m = METRICS[key] || { label: key, fmt: v => v.toFixed(2) };
+
+  F.forEach(f => {
+    const v = P(f)[key];
+    const p = el("path", {
+      d: pathFor(f, proj),
+      fill: sc.color(v),
+      class: "nb" + (P(f).nhood === selected ? " sel" : ""),
+      tabindex: "0",
+      role: "img",
+      "aria-label": P(f).nhood + ": " + (v === null ? "not scored" : m.fmt(v)),
+    });
+    const body = () => {
+      const q = P(f);
+      if (!q.has_residents) return "<b>" + q.nhood + "</b><span>Park — not scored<br>" +
+        q.population.toLocaleString() + " residents</span>";
+      return "<b>" + q.nhood + "</b><span>" +
+        "Heat " + signed(q.heat_anomaly) + " °C<br>" +
+        "Fog " + Math.round(q.fog * 100) + "% · NDVI " + q.ndvi.toFixed(2) + "<br>" +
+        "Income " + money(q.median_income) + "<br>" +
+        "Vulnerability " + q.index.toFixed(0) + " (rank " + q.rank + " of 38)</span>";
+    };
+    p.addEventListener("mousemove", e => showTip(e, body()));
+    p.addEventListener("mouseleave", hideTip);
+    p.addEventListener("focus", e => showTip({ clientX: 40, clientY: 90 }, body()));
+    p.addEventListener("blur", hideTip);
+    p.addEventListener("click", () => select(P(f).nhood));
+    p.addEventListener("keydown", e => { if (e.key === "Enter") select(P(f).nhood); });
+    svg.appendChild(p);
+  });
+  return sc;
+}
+
+function drawLegend(id, key, sc) {
+  const box = document.getElementById(id);
+  const m = METRICS[key] || { fmt: v => v.toFixed(2), blurb: "" };
+  const lo = sc.breaks[0], hi = sc.breaks[sc.breaks.length - 1];
+  const swatches = sc.ramp.map(c =>
+    '<i style="background:' + c + '"></i>').join("");
+  box.innerHTML =
+    '<span class="cap">' + m.blurb +
+      (m.kind === "div" ? " · fixed breaks around zero" : " · quantile bins") + "</span>" +
+    '<span class="ramp"><span class="end">' + m.fmt(lo) + "</span>" +
+      '<span class="swatches">' + swatches + "</span>" +
+      '<span class="end">' + m.fmt(hi) + "</span></span>" +
+    '<span class="lg-key"><i style="background:' + css("--none") + '"></i>not scored</span>';
+}
+
+/* ---------- scatter ---------- */
+function scatter(svgId, xk, yk, xlab, ylab, o = {}) {
+  const svg = document.getElementById(svgId);
+  svg.innerHTML = "";
+  const vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
+  const L = 58, R = 16, T = 14, B = 46;
+  const [x0, x1] = extent(SCORED, xk), [y0, y1] = extent(SCORED, yk);
+  const px = v => L + (v - x0) / (x1 - x0) * (W - L - R);
+  const py = v => H - B - (v - y0) / (y1 - y0) * (H - T - B);
+
+  for (let i = 0; i <= 4; i++) {
+    const y = T + i * (H - T - B) / 4;
+    svg.appendChild(el("line", { x1: L, x2: W - R, y1: y, y2: y, class: "gl" }));
+    svg.appendChild(el("text", { x: L - 9, y: y + 4, class: "tick", "text-anchor": "end" },
+      (o.yfmt || (v => v.toFixed(1)))(y1 - i * (y1 - y0) / 4)));
+  }
+  for (let i = 0; i <= 4; i++) {
+    const v = x0 + i * (x1 - x0) / 4;
+    svg.appendChild(el("text", { x: px(v), y: H - B + 20, class: "tick", "text-anchor": "middle" },
+      (o.xfmt || (v => v.toFixed(1)))(v)));
+  }
+  svg.appendChild(el("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, class: "ax" }));
+  svg.appendChild(el("text", { x: (L + W - R) / 2, y: H - 6, class: "alab", "text-anchor": "middle" }, xlab));
+  svg.appendChild(el("text", {
+    x: 0, y: 0, class: "alab", "text-anchor": "middle",
+    transform: "translate(14," + (T + (H - T - B) / 2) + ") rotate(-90)"
+  }, ylab));
+
+  // Least-squares fit, drawn to show how much slope there is (or isn't).
+  const xs = SCORED.map(f => P(f)[xk]), ys = SCORED.map(f => P(f)[yk]);
+  const n = xs.length;
+  const mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
+  let sxy = 0, sxx = 0;
+  for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; }
+  const slope = sxy / sxx;
+  svg.appendChild(el("line", {
+    x1: px(x0), y1: py(my + slope * (x0 - mx)),
+    x2: px(x1), y2: py(my + slope * (x1 - mx)),
+    stroke: css("--axis"), "stroke-width": 2, "stroke-linecap": "round"
+  }));
+
+  SCORED.forEach(f => {
+    const q = P(f);
+    const c = el("circle", { cx: px(q[xk]), cy: py(q[yk]), r: 5.5, class: "dot", tabindex: "0" });
+    const body = "<b>" + q.nhood + "</b><span>" + xlab + ": " +
+      (o.xfmt || (v => v.toFixed(2)))(q[xk]) + "<br>" + ylab + ": " +
+      (o.yfmt || (v => v.toFixed(2)))(q[yk]) + "</span>";
+    c.addEventListener("mousemove", e => showTip(e, body));
+    c.addEventListener("mouseleave", hideTip);
+    c.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
+    c.addEventListener("blur", hideTip);
+    c.addEventListener("click", () => select(q.nhood));
+    svg.appendChild(c);
+  });
+
+  // Label selectively — only the neighbourhoods the sentence is about.
+  (o.label || []).forEach(name => {
+    const f = SCORED.find(f => P(f).nhood === name);
+    if (!f) return;
+    const q = P(f);
+    svg.appendChild(el("text", {
+      x: px(q[xk]) + 10, y: py(q[yk]) + 4, class: "dlabel"
+    }, name));
+  });
+  // The correlation goes in an HTML caption, not inside the plot — anywhere in
+  // the frame it can and did land on top of a dot.
+  if (o.cap) {
+    document.getElementById(o.cap).textContent =
+      "Correlation r = " + signed(pearson(SCORED, xk, yk)) +
+      " across " + SCORED.length + " scored neighborhoods.";
+  }
+}
+
+/* ---------- ranked bars ---------- */
+function drawBars() {
+  const svg = document.getElementById("bars");
+  svg.innerHTML = "";
+  const rows = [...SCORED].sort((a, b) => P(a).rank - P(b).rank);
+  const rowH = 21, L = 168, R = 54, T = 8, W = 720;
+  const H = T + rows.length * rowH + 8;
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  const max = Math.max(...rows.map(f => P(f).index));
+  const bw = v => v / max * (W - L - R);
+
+  rows.forEach((f, i) => {
+    const q = P(f), y = T + i * rowH;
+    // One colour for every bar: length already encodes the value, so a ramp
+    // would double-encode it and burn the only free channel.
+    const g = el("g", { tabindex: "0" });
+    g.appendChild(el("rect", { x: 0, y: y, width: W, height: rowH - 2, fill: "transparent" }));
+    g.appendChild(el("text", { x: L - 10, y: y + 13, class: "tick", "text-anchor": "end" }, q.nhood));
+    g.appendChild(el("rect", {
+      x: L, y: y + 3, width: Math.max(bw(q.index), 1), height: rowH - 8,
+      rx: 4, fill: q.nhood === selected ? css("--ink") : css("--accent")
+    }));
+    g.appendChild(el("text", { x: L + bw(q.index) + 8, y: y + 13, class: "tick" }, q.index.toFixed(0)));
+    const body = "<b>" + q.nhood + "</b><span>Vulnerability " + q.index.toFixed(1) +
+      " · rank " + q.rank + "<br>Exposure " + q.exposure.toFixed(0) +
+      " · Sensitivity " + q.sensitivity.toFixed(0) +
+      " · Capacity gap " + q.capacity_gap.toFixed(0) + "</span>";
+    g.addEventListener("mousemove", e => showTip(e, body));
+    g.addEventListener("mouseleave", hideTip);
+    g.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
+    g.addEventListener("blur", hideTip);
+    g.addEventListener("click", () => select(q.nhood));
+    g.style.cursor = "pointer";
+    svg.appendChild(g);
+  });
+}
+
+/* ---------- neighbourhood profile ---------- */
+const RACE = [
+  ["pct_white_nh", "White", "--cat-1"],
+  ["pct_asian_nh", "Asian", "--cat-2"],
+  ["pct_hispanic", "Hispanic", "--cat-3"],
+  ["pct_black_nh", "Black", "--cat-4"],
+];
+let selected = "Chinatown";
+
+function median(vals) {
+  const s = [...vals].sort((a, b) => a - b);
+  return s[Math.floor(s.length / 2)];
+}
+function drawProfile() {
+  const f = F.find(x => P(x).nhood === selected) || SCORED[0];
+  const q = P(f);
+  const scored = q.index !== null;
+  document.getElementById("prof").innerHTML = [
+    ["Population", q.population.toLocaleString()],
+    ["Vulnerability", scored ? q.index.toFixed(0) + " (rank " + q.rank + ")" : "not scored"],
+    ["Heat anomaly", signed(q.heat_anomaly) + " °C"],
+    ["Fog", Math.round(q.fog * 100) + "%"],
+    ["Vegetation", q.ndvi.toFixed(2)],
+    ["Median income", scored ? money(q.median_income) : "—"],
+  ].map(([l, v]) => "<div><span>" + l + "</span><b>" + v + "</b></div>").join("");
+
+  // Race composition — the only multi-series mark on the page. Legend plus
+  // in-bar labels where they fit; the table carries the rest.
+  const svg = document.getElementById("race");
+  svg.innerHTML = "";
+  const W = 680, H = 40, GAP = 2;
+  let x = 0;
+  const parts = RACE.map(([k, name, tok]) => ({ v: q[k] || 0, name, c: css(tok) }));
+  const other = Math.max(0, 100 - parts.reduce((s, p) => s + p.v, 0));
+  parts.push({ v: other, name: "Other", c: css("--cat-5") });
+  parts.forEach(p => {
+    const w = p.v / 100 * W;
+    if (w <= 0) return;
+    svg.appendChild(el("rect", { x: x, y: 8, width: Math.max(w - GAP, 1), height: H, rx: 3, fill: p.c }));
+    if (w > 52) {
+      svg.appendChild(el("text", {
+        x: x + w / 2 - GAP / 2, y: 33, "text-anchor": "middle",
+        fill: "#fff", "font-size": 12, "font-weight": 500
+      }, Math.round(p.v) + "%"));
+    }
+    x += w;
+  });
+  document.getElementById("lg-race").innerHTML = parts.map(p =>
+    '<span class="lg-key"><i style="background:' + p.c + '"></i>' + p.name + "</span>").join("");
+
+  // Versus the citywide median.
+  const cmp = [
+    ["Heat anomaly", "heat_anomaly", v => signed(v) + " °C"],
+    ["Vegetation", "ndvi", v => v.toFixed(2)],
+    ["Poverty", "pct_poverty", v => v.toFixed(0) + "%"],
+    ["Over 65", "pct_65_plus", v => v.toFixed(0) + "%"],
+    ["Renters", "pct_renter", v => v.toFixed(0) + "%"],
+  ];
+  const s2 = document.getElementById("vs-city");
+  s2.innerHTML = "";
+  const LW = 150, RW = 90, BW = 680 - LW - RW;
+  cmp.forEach(([label, k, fmt], i) => {
+    const y = 16 + i * 38;
+    const [lo, hi] = extent(SCORED, k);
+    const med = median(SCORED.map(f => P(f)[k]));
+    const norm = v => (v - lo) / (hi - lo) * BW;
+    s2.appendChild(el("text", { x: LW - 10, y: y + 14, class: "tick", "text-anchor": "end" }, label));
+    s2.appendChild(el("rect", { x: LW, y: y + 5, width: BW, height: 12, rx: 3, fill: css("--grid") }));
+    s2.appendChild(el("rect", {
+      x: LW, y: y + 5, width: Math.max(norm(q[k]), 2), height: 12, rx: 3, fill: css("--accent")
+    }));
+    s2.appendChild(el("line", {
+      x1: LW + norm(med), x2: LW + norm(med), y1: y, y2: y + 22,
+      stroke: css("--ink"), "stroke-width": 2
+    }));
+    s2.appendChild(el("text", { x: LW + BW + 10, y: y + 15, class: "tick" }, fmt(q[k])));
+  });
+  s2.appendChild(el("text", { x: LW, y: 200, class: "tick" }, "vertical rule = citywide median"));
+  drawAll();
+}
+
+function select(name) {
+  selected = name;
+  document.getElementById("picker").value = name;
+  drawProfile();
+}
+
+/* ---------- table ---------- */
+function drawTable() {
+  const cols = [
+    ["nhood", "Neighborhood", v => v],
+    ["rank", "Rank", v => v ?? "—"],
+    ["index", "Index", v => v === null ? "—" : v.toFixed(1)],
+    ["heat_anomaly", "Heat °C", v => signed(v)],
+    ["fog", "Fog", v => Math.round(v * 100) + "%"],
+    ["ndvi", "NDVI", v => v.toFixed(2)],
+    ["clear_obs", "Clear obs", v => v.toFixed(0)],
+    ["population", "Pop.", v => v.toLocaleString()],
+    ["median_income", "Income", v => v === null ? "—" : money(v)],
+    ["pct_poverty", "Poverty", v => v === null ? "—" : v.toFixed(1) + "%"],
+    ["pct_65_plus", "65+", v => v === null ? "—" : v.toFixed(1) + "%"],
+    ["pct_poc", "People of colour", v => v === null ? "—" : v.toFixed(1) + "%"],
+  ];
+  const rows = [...F].sort((a, b) => (P(a).rank ?? 99) - (P(b).rank ?? 99));
+  document.getElementById("tbl").innerHTML =
+    "<thead><tr>" + cols.map(c => "<th>" + c[1] + "</th>").join("") + "</tr></thead><tbody>" +
+    rows.map(f => "<tr>" + cols.map(c => "<td>" + c[2](P(f)[c[0]]) + "</td>").join("") + "</tr>").join("") +
+    "</tbody>";
+}
+
+/* ---------- prose numbers, computed from the data ---------- */
+function fillProse() {
+  const [hmin, hmax] = extent(SCORED, "heat_anomaly");
+  const [fmin, fmax] = extent(SCORED, "fog");
+  const [omin, omax] = extent(SCORED, "clear_obs");
+  const set = (id, v) => { const n = document.getElementById(id); if (n) n.textContent = v; };
+
+  set("t-spread", (hmax - hmin).toFixed(1));
+  set("span-1", (hmax - hmin).toFixed(1));
+  set("t-fog", Math.round((fmax - fmin) * 100));
+  set("t-corr", signed(pearson(SCORED, "heat_anomaly", "median_income")));
+  set("r-income", signed(pearson(SCORED, "heat_anomaly", "median_income")));
+  set("r-fog", signed(pearson(SCORED, "heat_anomaly", "fog")));
+  set("r-ndvi", signed(pearson(SCORED, "heat_anomaly", "ndvi")));
+  set("r-fogincome", signed(pearson(SCORED, "fog", "median_income")));
+  set("r-fogpoc", signed(pearson(SCORED, "fog", "pct_poc")));
+  set("r-ndviinc", signed(pearson(SCORED, "ndvi", "median_income")));
+  set("r-ndvipoc", signed(pearson(SCORED, "ndvi", "pct_poc")));
+  set("r-poc", signed(pearson(SCORED, "index", "pct_poc")));
+  set("fog-range", Math.round(fmin * 100) + "% to " + Math.round(fmax * 100) + "%");
+  set("obs-min", Math.round(omin));
+  set("obs-max", Math.round(omax));
+
+  const lk = SCORED.find(f => P(f).nhood === "Lakeshore");
+  if (lk) {
+    document.getElementById("lakeshore-note").textContent =
+      "Lakeshore ranks " + P(lk).rank + " of 38 — near the bottom — despite " +
+      P(lk).pct_poverty.toFixed(0) + "% poverty, because it is among the foggiest and " +
+      "greenest places in the city. Exposure and disadvantage come apart here, which is " +
+      "exactly what the fog does to this city.";
+  }
+}
+
+/* ---------- wiring ---------- */
+let metric = "index";
+function drawAll() {
+  drawLegend("map-legend", metric, drawMap("map", metric, { pad: 14 }));
+  const f = F.find(x => P(x).nhood === selected);
+  const note = document.getElementById("map-note");
+  if (f && note) {
+    const v = P(f)[metric];
+    const m = METRICS[metric];
+    note.textContent = "Outlined: " + selected + " — " +
+      (v === null || v === undefined ? "not scored" : m.label + " " + m.fmt(v)) +
+      ". Hover any neighborhood for detail; click to select it.";
+  }
+  drawLegend("lg-heat", "heat_anomaly", drawMap("mini-heat", "heat_anomaly", { pad: 8 }));
+  drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
+  drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 12 }));
+  drawBars();
+}
+
+const btnBox = document.getElementById("metric-buttons");
+Object.entries(METRICS).forEach(([k, m]) => {
+  const b = document.createElement("button");
+  b.className = "seg"; b.textContent = m.label; b.type = "button";
+  b.setAttribute("aria-pressed", k === metric);
+  b.onclick = () => {
+    metric = k;
+    [...btnBox.children].forEach(c => c.setAttribute("aria-pressed", c === b));
+    drawAll();
+  };
+  btnBox.appendChild(b);
+});
+
+METRICS.clear_obs = { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
+                      blurb: "Usable clear satellite looks" };
+
+const picker = document.getElementById("picker");
+[...F].sort((a, b) => P(a).nhood.localeCompare(P(b).nhood)).forEach(f => {
+  const o = document.createElement("option");
+  o.value = o.textContent = P(f).nhood;
+  picker.appendChild(o);
+});
+picker.value = selected;
+picker.onchange = () => select(picker.value);
+
+fillProse();
+drawAll();
+scatter("sc-income", "median_income", "heat_anomaly",
+  "Median household income", "Heat anomaly (°C)",
+  { xfmt: money, yfmt: v => signed(v), cap: "cap-income",
+    label: ["Chinatown", "Lakeshore", "Seacliff"] });
+scatter("sc-canopy-income", "median_income", "ndvi",
+  "Median household income", "Vegetation", { xfmt: money, yfmt: v => v.toFixed(2),
+  cap: "cap-ci" });
+scatter("sc-canopy-poc", "pct_poc", "ndvi",
+  "Residents of color (%)", "Vegetation", { xfmt: v => Math.round(v) + "%",
+  yfmt: v => v.toFixed(2), cap: "cap-cp" });
+drawProfile();
+drawTable();
+
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => drawAll());
+</script>
+</body>
+</html>
