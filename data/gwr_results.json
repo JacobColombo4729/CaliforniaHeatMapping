@@ -1,0 +1,33 @@
+{
+  "n_tracts": 232,
+  "bandwidth": 50.0,
+  "predictors": [
+    "ndvi",
+    "fog",
+    "elevation"
+  ],
+  "gwr_r2": 0.9382248974214334,
+  "gwr_aicc": 359.7463146287629,
+  "global_r2": 0.7533519964849646,
+  "global_aic": 592.7600102135336,
+  "aicc_improvement": 233.01369558477074,
+  "critical_tval": 1.970286659282788,
+  "n_significant": 200,
+  "canopy_coef_range": [
+    -17.484479665190246,
+    5.4951876671150455
+  ],
+  "canopy_coef_median": -8.789451998391868,
+  "cooling_vs_fog_r": 0.6570537542241124,
+  "cooling_vs_ndvi_spread_r": 0.4319957750804176,
+  "local_condition_number": {
+    "median": 30.005570351276415,
+    "max": 111.11467390054057,
+    "share_above_30": 0.5,
+    "median_foggy": 30.634804321506085,
+    "median_clear": 29.49223467803595,
+    "median_standardised": 7.53894618995996,
+    "share_above_30_standardised": 0.01293103448275862,
+    "cooling_vs_fog_r_wellconditioned": 0.5357994388559354
+  }
+}

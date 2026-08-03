@@ -1,0 +1,192 @@
+{
+  "Presidio": {
+    "cooling_per_0.1_ndvi": 1.7484479665190247,
+    "significant_share": 1.0,
+    "local_r2": 0.9779112680108958
+  },
+  "Seacliff": {
+    "cooling_per_0.1_ndvi": 1.7374489767689927,
+    "significant_share": 1.0,
+    "local_r2": 0.957573274396432
+  },
+  "Outer Richmond": {
+    "cooling_per_0.1_ndvi": 1.6830532258807185,
+    "significant_share": 1.0,
+    "local_r2": 0.9308616938001102
+  },
+  "Twin Peaks": {
+    "cooling_per_0.1_ndvi": 1.6123701927608907,
+    "significant_share": 1.0,
+    "local_r2": 0.9674485234338536
+  },
+  "Inner Sunset": {
+    "cooling_per_0.1_ndvi": 1.603337344735508,
+    "significant_share": 1.0,
+    "local_r2": 0.9152499749146221
+  },
+  "Inner Richmond": {
+    "cooling_per_0.1_ndvi": 1.602932187514313,
+    "significant_share": 1.0,
+    "local_r2": 0.9381109979099207
+  },
+  "Lakeshore": {
+    "cooling_per_0.1_ndvi": 1.4594601867448056,
+    "significant_share": 1.0,
+    "local_r2": 0.8865492208014772
+  },
+  "Presidio Heights": {
+    "cooling_per_0.1_ndvi": 1.4207860734690416,
+    "significant_share": 1.0,
+    "local_r2": 0.9103038671317636
+  },
+  "Sunset/Parkside": {
+    "cooling_per_0.1_ndvi": 1.4178101512474202,
+    "significant_share": 1.0,
+    "local_r2": 0.8582583626887483
+  },
+  "Treasure Island": {
+    "cooling_per_0.1_ndvi": 1.3660459430146092,
+    "significant_share": 1.0,
+    "local_r2": 0.9177166341147682
+  },
+  "Haight Ashbury": {
+    "cooling_per_0.1_ndvi": 1.3134845870354321,
+    "significant_share": 1.0,
+    "local_r2": 0.919253638497562
+  },
+  "Noe Valley": {
+    "cooling_per_0.1_ndvi": 1.195518507523071,
+    "significant_share": 1.0,
+    "local_r2": 0.9586258190386613
+  },
+  "Castro/Upper Market": {
+    "cooling_per_0.1_ndvi": 1.1777689643258484,
+    "significant_share": 1.0,
+    "local_r2": 0.9248621737860325
+  },
+  "Lone Mountain/USF": {
+    "cooling_per_0.1_ndvi": 1.1381438498282104,
+    "significant_share": 1.0,
+    "local_r2": 0.8437718549964971
+  },
+  "West of Twin Peaks": {
+    "cooling_per_0.1_ndvi": 1.1379673707580613,
+    "significant_share": 1.0,
+    "local_r2": 0.8118870262186277
+  },
+  "Marina": {
+    "cooling_per_0.1_ndvi": 1.026169294097483,
+    "significant_share": 1.0,
+    "local_r2": 0.8996472592501932
+  },
+  "Russian Hill": {
+    "cooling_per_0.1_ndvi": 1.0092071864708376,
+    "significant_share": 1.0,
+    "local_r2": 0.8292251952308153
+  },
+  "Oceanview/Merced/Ingleside": {
+    "cooling_per_0.1_ndvi": 0.9483535186166616,
+    "significant_share": 1.0,
+    "local_r2": 0.7597543010066699
+  },
+  "Glen Park": {
+    "cooling_per_0.1_ndvi": 0.9283067727246903,
+    "significant_share": 1.0,
+    "local_r2": 0.943963251624085
+  },
+  "Nob Hill": {
+    "cooling_per_0.1_ndvi": 0.9129289858695253,
+    "significant_share": 1.0,
+    "local_r2": 0.6307685493504971
+  },
+  "North Beach": {
+    "cooling_per_0.1_ndvi": 0.9010366027466853,
+    "significant_share": 1.0,
+    "local_r2": 0.8639213202180676
+  },
+  "Pacific Heights": {
+    "cooling_per_0.1_ndvi": 0.8097022472228534,
+    "significant_share": 1.0,
+    "local_r2": 0.8044745926361001
+  },
+  "Hayes Valley": {
+    "cooling_per_0.1_ndvi": 0.8092034784193706,
+    "significant_share": 1.0,
+    "local_r2": 0.8612484751452332
+  },
+  "Chinatown": {
+    "cooling_per_0.1_ndvi": 0.7784432795675699,
+    "significant_share": 1.0,
+    "local_r2": 0.8024735911528086
+  },
+  "Mission": {
+    "cooling_per_0.1_ndvi": 0.742841951380006,
+    "significant_share": 0.9411764705882353,
+    "local_r2": 0.8040544292136433
+  },
+  "Potrero Hill": {
+    "cooling_per_0.1_ndvi": 0.7314202993557802,
+    "significant_share": 1.0,
+    "local_r2": 0.7596945712200858
+  },
+  "Visitacion Valley": {
+    "cooling_per_0.1_ndvi": 0.7063661245358321,
+    "significant_share": 1.0,
+    "local_r2": 0.823226220675985
+  },
+  "Japantown": {
+    "cooling_per_0.1_ndvi": 0.6493625057868775,
+    "significant_share": 1.0,
+    "local_r2": 0.7869894291241895
+  },
+  "Western Addition": {
+    "cooling_per_0.1_ndvi": 0.6474240455966411,
+    "significant_share": 1.0,
+    "local_r2": 0.7671733828187561
+  },
+  "Outer Mission": {
+    "cooling_per_0.1_ndvi": 0.6340639333140046,
+    "significant_share": 1.0,
+    "local_r2": 0.6854740520333908
+  },
+  "Excelsior": {
+    "cooling_per_0.1_ndvi": 0.5346241198412099,
+    "significant_share": 1.0,
+    "local_r2": 0.7330552465273603
+  },
+  "Bernal Heights": {
+    "cooling_per_0.1_ndvi": 0.4878599051963751,
+    "significant_share": 0.6666666666666666,
+    "local_r2": 0.8772844237632507
+  },
+  "Tenderloin": {
+    "cooling_per_0.1_ndvi": 0.4504105131615333,
+    "significant_share": 0.5555555555555556,
+    "local_r2": 0.6726594459146154
+  },
+  "Portola": {
+    "cooling_per_0.1_ndvi": 0.39651956074233186,
+    "significant_share": 0.5,
+    "local_r2": 0.8174488822507201
+  },
+  "Bayview Hunters Point": {
+    "cooling_per_0.1_ndvi": 0.27652310936386826,
+    "significant_share": 0.1,
+    "local_r2": 0.7834427797656197
+  },
+  "Financial District/South Beach": {
+    "cooling_per_0.1_ndvi": 0.2613405442903545,
+    "significant_share": 0.3,
+    "local_r2": 0.8517799676006914
+  },
+  "South of Market": {
+    "cooling_per_0.1_ndvi": 0.021666769027969233,
+    "significant_share": 0.0,
+    "local_r2": 0.8323563600664189
+  },
+  "Mission Bay": {
+    "cooling_per_0.1_ndvi": -0.38295035610022576,
+    "significant_share": 0.6666666666666666,
+    "local_r2": 0.8685994819582721
+  }
+}
