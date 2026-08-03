@@ -257,31 +257,29 @@
   .defn-drop[open] > summary { margin-bottom: 16px; }
   .defn-body { border-top: 1px solid var(--grid); padding-top: 16px; }
   .defn-body > :last-child { margin-bottom: 0; }
-  /* The index definition is mathematics, so it is set in a math face rather
-     than in the UI sans, where ρ, ·, − and ∈ are afterthoughts — Segoe UI draws
-     the interpunct at two-thirds the width a text face gives it, which is what
-     made the operators read as specks. No box: the dropdown is already one.
-     Alignment comes from a grid, not from padding names out with spaces. */
-  .idx-eq, .idx-parts, .m {
-    font-family: "Cambria Math", "STIX Two Math", Cambria, Georgia, serif;
-    font-variant-ligatures: none;
-  }
+  /* The index definition is in the page's own face, like everything else. No
+     box either — the dropdown is already one. Alignment comes from a grid, not
+     from padding the names out with spaces, which is what forced monospace on
+     it originally. */
   .idx-eq {
-    font-size: 1.22rem; line-height: 1.5; color: var(--ink);
+    font-size: 1.04rem; line-height: 1.5; color: var(--ink); font-weight: 600;
     margin: 0 0 18px; max-width: none;
   }
-  .idx-eq sup { font-size: 0.58em; vertical-align: 0.62em; }
+  .idx-eq sup { font-size: 0.62em; font-weight: 500; vertical-align: 0.58em; }
   .idx-parts { display: grid; gap: 2px; margin-bottom: 18px; }
   .idx-parts > div {
     display: grid; grid-template-columns: max-content max-content 1fr; gap: 0 12px;
     align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--grid);
   }
   .idx-parts > div:last-child { border-bottom: none; }
-  .idx-parts b { color: var(--ink); font-weight: 400; font-size: 1.02rem; }
-  .idx-parts i { font-style: normal; color: var(--muted); font-size: 1.02rem; }
-  .idx-parts span { color: var(--ink-2); font-size: 1.02rem; line-height: 1.6; }
-  /* Symbols keep the math face when they appear mid-sentence in the notes. */
-  .m { font-size: 1.08em; color: var(--ink-2); white-space: nowrap; }
+  .idx-parts b { color: var(--ink); font-weight: 600; font-size: 0.88rem; }
+  .idx-parts i { font-style: normal; color: var(--muted); font-size: 0.88rem; }
+  /* A touch of word-spacing so the operators, which sit between spaces, are not
+     crowded by their operands at this size. */
+  .idx-parts span {
+    color: var(--ink-2); font-size: 0.88rem; line-height: 1.65; word-spacing: 0.08em;
+  }
+  .m { white-space: nowrap; }
   /* A metric this project invented is specified, not described — the end user
      is a data scientist who needs the transformation and the source column, not
      an adjective. Monospace because these are literally identifiers. */
