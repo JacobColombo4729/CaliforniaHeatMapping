@@ -679,62 +679,7 @@
   still +0.433 at p &lt; 0.0001. And the mediation result reverses if the built-up index joins
   the controls — both specifications are in Explore.</p>
 
-  <details style="margin-top:22px">
-    <summary>What was dropped, and on whose authority</summary>
-    <p class="note" style="margin-top:12px">Every filter in the pipeline, what it removed, and
-    where the number came from. <strong>Most are judgement calls of mine</strong> — only the
-    census reliability bands come from an outside authority, and the cloud flags come from the
-    sensor’s own product definition rather than from me.</p>
-    <div class="scroll" style="max-height:none">
-      <table class="stat-table">
-        <thead><tr><th>Rule</th><th>Removed</th><th>Where the number comes from</th><th>What would change it</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>Cloudy observations discarded — QA bits for cloud, cloud shadow, cirrus and dilated cloud</td>
-            <td>varies by pixel</td>
-            <td><strong>USGS</strong> — the Landsat Collection 2 Level-2 <code>QA_PIXEL</code> definition, produced by their CFMask algorithm. Not my classification.</td>
-            <td>A less conservative mask — keeping cirrus, say — would retain more scenes but admit contaminated pixels.</td>
-          </tr>
-          <tr>
-            <td>Scene must cover ≥ 50% of the window</td>
-            <td>62 of 125 scenes</td>
-            <td><strong>My choice.</strong> Each scene is normalised to its own citywide mean, and a sliver of the city gives a mean that isn’t citywide.</td>
-            <td>Normalising against a fixed baseline instead of a per-scene mean would remove the need for this rule entirely.</td>
-          </tr>
-          <tr>
-            <td>Pixel needs ≥ 5 clear looks to get a temperature</td>
-            <td>110,673 px, mostly water</td>
-            <td><strong>My choice</strong>, with no external basis. A floor is necessary; five is not a special number.</td>
-            <td>A longer record would support a higher bar. Raising it trades coverage for stability, and the foggy west pays that cost first.</td>
-          </tr>
-          <tr>
-            <td>Water masked where a pixel reads water in &gt; 50% of clear looks</td>
-            <td>41.7% of the grid</td>
-            <td><strong>My choice</strong> — a majority rule on the QA water flag.</td>
-            <td>Little. Bay and ocean are unambiguous; only the shoreline pixel or two is genuinely borderline.</td>
-          </tr>
-          <tr>
-            <td>Neighborhoods under 500 residents are not scored</td>
-            <td>3 parks; also 1 tract, the Farallones</td>
-            <td><strong>My choice, but the data makes it robust</strong>: the next-smallest neighborhood has 3,901 residents, a 24× jump, so anything between 200 and 2,000 selects exactly the same three.</td>
-            <td>Nothing short of a threshold above 3,901, which would start removing real neighborhoods.</td>
-          </tr>
-          <tr>
-            <td>Confidence tiers at 20 and 30 usable scenes</td>
-            <td>nothing — labels only</td>
-            <td><strong>My choice.</strong> Purely descriptive.</td>
-            <td>Moving them relabels neighborhoods; it changes no number anywhere on this page.</td>
-          </tr>
-          <tr>
-            <td>Census estimates flagged unreliable above a 0.30 coefficient of variation, cautionary above 0.15</td>
-            <td>nothing — flags only</td>
-            <td><strong>US Census Bureau</strong> published reliability guidance. The only threshold here with an outside authority behind it.</td>
-            <td>Nothing, short of the Bureau revising its own guidance.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </details>
+
 </section>
 
 <footer>
