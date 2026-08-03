@@ -107,6 +107,46 @@ it is a result.
 
 ---
 
+## The statistics
+
+The dashboard reports 38 neighborhoods, which can only resolve correlations above |r| ≈ 0.32.
+`pipeline/spatial_analysis.py` repeats the analysis over **232 census tracts**, where the floor
+drops to 0.13, using methods that account for spatial dependence — because neighbouring tracts
+are not independent observations, and ordinary least squares on spatial data produces standard
+errors that are too small and p-values that are overconfident.
+
+**What the larger sample changed.** The poverty rate resolves at r = +0.20 [+0.07, +0.32] —
+poorer tracts really are hotter, which was invisible at n = 38. Median income still does not
+resolve (r = −0.13 [−0.25, +0.00]); it is noisy and top-coded at $250k.
+
+**What the spatial model shows.** Every variable is strongly clustered (fog I = +0.87, heat
+I = +0.56, all p = 0.001). Lagrange Multiplier diagnostics select a spatial error model,
+λ = 0.66, pseudo R² = 0.78. In it, **every demographic coefficient collapses to near zero**
+while canopy and fog stay large. The poverty association is confounded by physical geography.
+
+**Demographics alone explain 4% of the variance in heat** (R² = 0.040). That is the equity
+finding in one number — and the reason it has to travel through something physical.
+
+| Model | R² | Residual Moran's I |
+|---|---|---|
+| demographics only | 0.040 | +0.511 |
+| + canopy | 0.414 | +0.642 |
+| + fog | 0.768 | +0.465 |
+| + terrain | 0.786 | +0.459 |
+| + built-up | **0.801** | **+0.433** |
+
+In the full specification (all variance inflation factors under 6, so nothing is too collinear
+to read): built-up surface **+11.1** (p = 0.0001), fog **−10.6** (p < 0.0001), canopy **−4.0**
+(p = 0.007), elevation +0.009/m and slope −0.11°, both p < 0.0001. Slope *aspect* is not
+significant — at a late-morning overpass the sun is too high for orientation to matter.
+
+**An honest negative result.** The point of adding terrain and built-up surface was to test
+whether the right covariates would dissolve the residual spatial clustering. They did not:
++0.465 → +0.433, still p < 0.0001. Topography was not the missing variable, and the spatial
+error term is still absorbing something unidentified — building height and density, albedo, or
+anthropogenic heat are the remaining candidates. The spatial error model handles this correctly
+for inference, but λ = 0.66 is not an explanation of anything.
+
 ## Data sources
 
 | Layer | Source |
