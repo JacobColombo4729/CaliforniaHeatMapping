@@ -168,6 +168,39 @@ by evidence — which is why the reported specification excludes it. Both are in
 `data/mediation_results.json`; the conclusion reverses between them, so the choice is stated
 rather than buried.
 
+### Where a tree actually buys cooling
+
+Every model above fits one canopy coefficient for the whole city, which assumes a tree in the
+Sunset does the same work as a tree in the Mission. `pipeline/gwr.py` drops that assumption —
+geographically weighted regression, adaptive bandwidth of 50 tracts chosen by AICc.
+
+It is decisively better: **AICc improves by 233**, R² rises 0.753 → 0.938, local R² reaches
+0.98, and 200 of 232 tracts show a significant canopy effect at the corrected alpha.
+
+| Most cooling per 0.1 NDVI | | Least | |
+|---|---|---|---|
+| Outer Richmond (11 tracts) | **+1.68 °C** | Portola | +0.40 °C |
+| Twin Peaks (2) | +1.61 °C | Bayview Hunters Point | +0.28 °C |
+| Inner Sunset (6) | +1.60 °C | Financial District | +0.26 °C |
+| Inner Richmond (5) | +1.60 °C | South of Market | +0.02 °C |
+
+**Cooling power correlates +0.66 with fog** — trees buy *more* cooling where the marine layer
+is already thickest. That is the opposite of the prediction, and it survives every check: local
+VIF on canopy is 1.40 (canopy is separable from fog), the median local condition number of 30
+turned out to be a units artefact that falls to 7.5 on standardised predictors, and restricting
+to well-conditioned tracts alone the relationship still holds at +0.54.
+
+The mechanism is **not** established here. Fog drip sustaining transpiration is plausible and
+documented in coastal California, but range restriction also contributes — local cooling
+correlates +0.43 with how much NDVI varies within a neighborhood.
+
+> **The uncomfortable implication.** Tree planting buys the least cooling exactly where heat
+> vulnerability is highest. South of Market, Bayview and the Financial District gain almost
+> nothing per unit of added vegetation, while the already-cool, already-wealthy west gains
+> 1.6–1.7 °C. This does not say don't plant trees in the Mission; it says trees alone will not
+> close that gap, and cool roofs, less impervious surface and built shade probably matter more
+> in the dense east.
+
 **An honest negative result.** The point of adding terrain and built-up surface was to test
 whether the right covariates would dissolve the residual spatial clustering. They did not:
 +0.465 → +0.433, still p < 0.0001. Topography was not the missing variable, and the spatial
