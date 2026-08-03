@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SF Heat &amp; Equity</title>
+<title>San Francisco Heat Mapping</title>
 <style>
   :root {
     color-scheme: light;
@@ -23,7 +23,8 @@
     --ramp-violet: #f2daf0,#e0abdc,#c470bd,#9c3d93,#682660;
     --ramp-amber:  #f8e0b6,#f3cd8a,#e0a63c,#b57d05,#7a5300;
     --ramp-slate:  #e2e1dc,#c2c0b8,#9d9b92,#75736c,#4e4c46;
-    --hue-violet: #9c3d93;
+    --hue-red: #d1402f; --hue-blue: #2a78d6; --hue-green: #2e9a4b;
+    --hue-violet: #9c3d93; --hue-amber: #a17000; --hue-slate: #75736c;
     --div-c3: #e6f0fd; --div-c2: #bcd8f8; --div-c1: #86b3e8;
     --div-mid: #a9a69f;
     --div-w1: #d4796a; --div-w2: #b03d2c; --div-w3: #7d1c12;
@@ -55,7 +56,8 @@
       --ramp-violet: #f8e6f6,#eac4e6,#d494cd,#b866ae,#9c4a92;
       --ramp-amber:  #fdf0d6,#f6dba4,#ecc064,#d9a02c,#bd8410;
       --ramp-slate:  #ecebe6,#d2d0c9,#b0aea6,#8e8c84,#6e6c65;
-      --hue-violet: #b866ae;
+      --hue-red: #dd5744; --hue-blue: #4a86d4; --hue-green: #3f9d57;
+      --hue-violet: #b866ae; --hue-amber: #b8860f; --hue-slate: #7e7c75;
       --div-c3: #eaf3fe; --div-c2: #c2dbf9; --div-c1: #8fbaea;
       --div-mid: #b0ada6;
       --div-w1: #dd8271; --div-w2: #c04a37; --div-w3: #9c2b1c;
@@ -79,7 +81,8 @@
     --ramp-violet: #f8e6f6,#eac4e6,#d494cd,#b866ae,#9c4a92;
     --ramp-amber:  #fdf0d6,#f6dba4,#ecc064,#d9a02c,#bd8410;
     --ramp-slate:  #ecebe6,#d2d0c9,#b0aea6,#8e8c84,#6e6c65;
-    --hue-violet: #b866ae;
+    --hue-red: #dd5744; --hue-blue: #4a86d4; --hue-green: #3f9d57;
+    --hue-violet: #b866ae; --hue-amber: #b8860f; --hue-slate: #7e7c75;
     --div-c3: #eaf3fe; --div-c2: #c2dbf9; --div-c1: #8fbaea;
     --div-mid: #b0ada6;
     --div-w1: #dd8271; --div-w2: #c04a37; --div-w3: #9c2b1c;
@@ -196,6 +199,60 @@
   .note { font-size: 0.83rem; color: var(--muted); max-width: 68ch; }
   label.pick { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; color: var(--muted); }
 
+  /* Data status. One place that says how current the numbers are and which
+     feeds are live, so connecting a real one later changes this strip and
+     nothing else. */
+  .status {
+    display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: center;
+    padding: 12px 18px; margin: 26px 0 0;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    font-size: 0.82rem;
+  }
+  .status .feed { display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
+  .status .feed i {
+    width: 7px; height: 7px; border-radius: 50%; display: block; flex: none;
+    background: var(--muted);
+  }
+  .status .feed.on i { background: #0ca30c; }
+  .status .feed.off i { background: var(--axis); }
+  .status .feed b { font-weight: 600; color: var(--ink); }
+  .status .vintage { margin-left: auto; color: var(--muted); }
+
+  /* Generated interpretation, kept visually distinct from measured data so a
+     reader always knows which is which. */
+  .analysis {
+    border-left: 2px solid var(--accent); background: var(--surface-1);
+    border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 18px 0 0;
+  }
+  .analysis .tag {
+    display: flex; align-items: center; gap: 7px; margin-bottom: 7px;
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 600; color: var(--accent);
+  }
+  .analysis .tag::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); display: block;
+  }
+  .analysis p { margin: 0 0 10px; font-size: 0.92rem; max-width: 74ch; }
+  .analysis p:last-child { margin-bottom: 0; }
+
+  /* A metric invented for this project gets stated as a formula, not described
+     in a sentence. */
+  .formula {
+    font-size: 1.05rem; margin: 0 0 12px; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .defn { display: grid; gap: 8px; }
+  .defn > div {
+    display: grid; grid-template-columns: 160px 1fr; gap: 14px; align-items: baseline;
+    padding: 7px 0; border-bottom: 1px solid var(--grid);
+    font-size: 0.87rem; color: var(--ink-2);
+  }
+  .defn > div span {
+    display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ink);
+  }
+  .defn > div span i { width: 9px; height: 9px; border-radius: 2px; display: block; flex: none; }
+
   /* Which neighborhoods sit in which measurement tier is a list, not a map —
      the geography adds nothing the fog map has not already said. */
   .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 26px; }
@@ -221,8 +278,12 @@
      The one place it still carries colour is the confidence chart's status dots,
      which are set inline from the reserved status palette. */
   .prof { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; margin-top: 18px; }
-  .prof div span { display: block; color: var(--muted); font-size: 0.78rem; }
-  .prof div b { font-size: 1.35rem; font-weight: 600; }
+  .prof div span {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--muted); font-size: 0.78rem;
+  }
+  .prof div span i { width: 8px; height: 8px; border-radius: 2px; display: block; flex: none; }
+  .prof div b { font-size: 1.3rem; font-weight: 600; }
   footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.83rem; }
   a { color: var(--accent); }
 </style>
@@ -232,16 +293,24 @@
 <div class="wrap">
 
 <header>
-  <h1>San Francisco’s heat map is drawn by fog, not by income.</h1>
-  <p class="lede">In most American cities, surface heat tracks poverty. Here it doesn’t —
-  the marine layer overrules everything, and it doesn’t care who lives underneath it.
-  But the shade that people <em>build</em> is another story.</p>
+  <h1>San Francisco Heat Mapping</h1>
+  <p class="lede">Surface temperature, fog, vegetation and heat vulnerability — measured from
+  satellite and census data, with the statistics and the raw table alongside.</p>
   <div class="tiles">
     <div class="tile"><div class="v" id="t-spread">—</div><div class="l">°C between the coolest and hottest neighborhood</div></div>
     <div class="tile"><div class="v" id="t-fog">—</div><div class="l">percentage-point fog gap, west side to southeast</div></div>
-    <div class="tile"><div class="v" id="t-corr">—</div><div class="l">correlation between heat and household income</div></div>
+    <div class="tile"><div class="v" id="t-index">—</div><div class="l">highest vulnerability index, of 100</div></div>
   </div>
-  <p class="byline">63 Landsat scenes, summers 2019–2024 · American Community Survey 2024 5-year · 41 analysis neighborhoods</p>
+
+  <!-- One strip owning "how current is this". Wiring a live feed changes the
+       state here and nothing else on the page. -->
+  <div class="status">
+    <span class="feed on"><i></i><b>Satellite</b> 63 Landsat scenes, summers 2019–2024</span>
+    <span class="feed on"><i></i><b>Census</b> ACS 2024 5-year</span>
+    <span class="feed off"><i></i><b>Current conditions</b> not connected</span>
+    <span class="feed off"><i></i><b>Forecast</b> not connected</span>
+    <span class="vintage">Static snapshot · rebuilt when the pipeline is re-run</span>
+  </div>
 </header>
 
 <section>
@@ -262,31 +331,35 @@
 </section>
 
 <section>
-  <h2>The pattern that isn’t there</h2>
-  <h3>Income doesn’t predict heat. Poverty does — but only indirectly.</h3>
-  <p>The cloud is flat: <strong id="r-income">—</strong>. Demographics on their own — income,
-  poverty and race together — explain <strong>4%</strong> of the variation in heat. Physical
-  geography explains twenty times as much.</p>
-  <p><strong>But the flat line is two forces cancelling, not an absence of one.</strong> Money
-  buys canopy, which cools (−0.032 °C per $10,000); income also raises heat directly
-  (+0.041 °C), because wealthy San Francisco holds its densest built ground. The two nearly
-  annul each other, which is why the total reads as nothing.</p>
+  <h2>Heat against income</h2>
+  <h3>Neighborhood heat anomaly by median household income</h3>
   <div class="card">
     <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
     <p class="note" id="cap-income"></p>
-    <p class="note">One dot per neighborhood; the line is a least-squares fit. Click a dot to
-    open that neighborhood. Figures beyond the chart come from 232 census tracts and a spatial
-    error model — see Explore.</p>
+    <p class="note">One dot per scored neighborhood; the line is a least-squares fit. Click a dot
+    to open that neighborhood.</p>
   </div>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p>The relationship is flat at <strong id="r-income">—</strong>, and demographics alone —
+    income and poverty together — explain <strong>4%</strong> of heat variance (R² = 0.040 at
+    tract level, n = 232). Physical geography explains roughly twenty times as much.</p>
+    <p>That flat line is <strong>two effects cancelling, not the absence of one</strong>. A
+    mediation model with a spatial block bootstrap separates them: income buys canopy and canopy
+    cools (indirect −0.032 °C per $10,000, CI [−0.055, −0.005]), while income also raises heat
+    directly (+0.041 °C, CI [+0.007, +0.072]) because the wealthiest ground here is also the
+    densest and most built. Net effect indistinguishable from zero.</p>
+    <p>Treat the 38-neighborhood figure as underpowered on its own — it can only resolve
+    |r| ≥ 0.32. The tract-level replication is what carries this.</p>
+  </aside>
 </section>
 
 <section>
-  <h2>Why</h2>
-  <h3>The fog shadow does the sorting</h3>
-  <p>The same passes that measure temperature record which pixels were under cloud. Summed,
-  they give a fog climatology — <strong id="fog-range">—</strong> of observations obscured,
-  rising toward the ocean. The two maps are near mirror images: heat against fog
-  <strong id="r-fog">—</strong>, against canopy <strong id="r-ndvi">—</strong>.</p>
+  <h2>Fog</h2>
+  <h3>Surface heat and fog frequency, side by side</h3>
+  <p>Fog frequency is built from the cloud masks the temperature composite discards, so it uses
+  every observation rather than only the clear ones — <strong id="fog-range">—</strong> of
+  observations obscured.</p>
   <div class="grid-2">
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:0.95rem">Surface heat</h4>
@@ -299,28 +372,36 @@
       <div class="legend" id="lg-fog"></div>
     </div>
   </div>
-  <p><strong>Fog is distributed by geography, not wealth or race</strong> — with income
-  <strong id="r-fogincome">—</strong>. It is the one major driver handed out indifferently, and strong enough to flatten the
-  heat–poverty pattern seen in most other cities.</p>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p>The two fields are near mirror images — heat against fog <strong id="r-fog">—</strong>,
+    heat against canopy <strong id="r-ndvi">—</strong>. Fog is the single largest term in every
+    model fitted here, and adding it lifts R² from 0.41 to 0.77.</p>
+    <p><strong>Fog is distributed by geography, not by wealth</strong> — its correlation with
+    income is only <strong id="r-fogincome">—</strong>. That is why the heat–poverty pattern
+    documented in most US cities is flattened here: the dominant driver is handed out
+    indifferently.</p>
+  </aside>
 </section>
 
 <section>
-  <h2>What the fog hides</h2>
-  <h3>The shade people build is not distributed evenly</h3>
-  <p>Vegetation cools nearly as strongly as fog — but unlike fog it follows money and race.
-  Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>). It is the part of the
-  picture a city can change.</p>
+  <h2>Canopy</h2>
+  <h3>Vegetation by median household income</h3>
   <div class="card">
     <svg id="sc-canopy-income" viewBox="0 0 900 400" role="img" aria-label="Scatter of vegetation against income"></svg>
     <p class="note" id="cap-ci"></p>
   </div>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p>Canopy cools almost as strongly as fog, but unlike fog it is unevenly distributed:
+    greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>), and at tract level
+    vegetation correlates −0.36 with the poverty rate. This is the part of the exposure picture
+    that is built rather than given, and therefore the part a city can act on.</p>
+  </aside>
 
-  <h3 style="margin-top:44px">But a tree is not worth the same everywhere</h3>
-  <p>Letting the canopy effect vary by location instead of fitting one citywide number fits far
-  better. <strong>Trees buy about 1.7 °C per 0.1 of added greenness in the Outer Richmond and
-  Inner Sunset, and almost nothing in South of Market, Bayview or the Financial District.</strong>
-  Cooling tracks fog at r = +0.66 — the opposite of the obvious guess, most likely because fog
-  keeps trees watered enough to transpire.</p>
+  <h3 style="margin-top:44px">Cooling bought per unit of added canopy</h3>
+  <p>A geographically weighted regression fits a separate local model at every tract rather than
+  one coefficient citywide — adaptive bandwidth 50 tracts, chosen by AICc.</p>
   <div class="grid-2">
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:0.95rem">Cooling bought per 0.1 NDVI</h4>
@@ -333,12 +414,23 @@
       <p class="note" id="cap-cooling"></p>
     </div>
   </div>
-  <p><strong>Which means tree planting is weakest exactly where heat vulnerability is
-  highest.</strong> The two run against each other at <strong id="r-cooling">—</strong>: the
-  neighborhoods that most need cooling are the ones where a tree delivers least of it.</p>
-  <p class="note">Not an argument against planting trees in the Mission — an argument that trees
-  alone won’t close that gap, and that cool roofs and less pavement likely matter more in the
-  dense east.</p>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p>Letting the effect vary is decisively better — AICc improves by 233, R² 0.753 → 0.938,
+    and 200 of 232 tracts show a significant local canopy effect at the corrected alpha.
+    <strong>Trees buy roughly 1.7 °C per 0.1 NDVI in the Outer Richmond and Inner Sunset, and
+    close to nothing in South of Market, Bayview or the Financial District.</strong></p>
+    <p>Local cooling power correlates <strong>+0.66</strong> with fog — trees work best where the
+    marine layer is already thickest, the opposite of the obvious prediction. Mechanism is not
+    established: fog drip sustaining transpiration is plausible and documented in this climate,
+    but range restriction also contributes (cooling correlates +0.43 with within-neighborhood
+    NDVI spread).</p>
+    <p><strong>Operationally this cuts against the intuitive intervention.</strong> Cooling
+    bought and vulnerability run opposite at <strong id="r-cooling">—</strong>: planting delivers
+    least where the need is greatest. Not an argument against street trees in the Mission — an
+    argument that canopy alone will not close that gap, and that albedo and impervious-surface
+    measures likely dominate in the dense east.</p>
+  </aside>
 </section>
 
 <section>
@@ -368,26 +460,75 @@
     above are confidence labels, not gates. Lakeshore’s 14 scenes at 74% fog are in every
     statistic on this page — flagged as least certain, never removed.</p>
   </div>
-  <p><strong>So every temperature here understates how much cooler the west really is.</strong>
-  The true fog effect exceeds the <strong id="r-fog-2">—</strong> shown earlier, making the
-  canopy inequity a floor rather than a ceiling.</p>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p><strong>Every temperature on this page understates how much cooler the west really
+    is.</strong> The foggiest neighborhoods are sampled almost entirely on their clear — and
+    therefore warm — days, so the true fog effect exceeds the <strong id="r-fog-2">—</strong>
+    measured, and the canopy inequity is a floor rather than a ceiling.</p>
+    <p>This is a sampling limit of thermal satellite imagery, not something a better model
+    fixes. Closing it needs an all-weather ground source — dense air-temperature sensors would
+    do it, and would address the surface-versus-air gap at the same time.</p>
+  </aside>
 </section>
 
 <section>
   <h2>Every neighborhood</h2>
   <h3>Ranked by heat vulnerability</h3>
-  <p>Exposure (heat, vegetation, fog), sensitivity (over 65, under 5, poverty) and a capacity
-  gap (income, renting, limited English) — each percentile-ranked, then combined by geometric
-  mean so strength in one can’t cancel exposure in another.</p>
-  <p>This project is <strong>race-agnostic</strong>: no racial or ethnic variable is collected
-  or used anywhere in it. The index correlates <strong id="r-poc">—</strong> with the share of
-  residents below poverty.</p>
+  <div class="card">
+    <h4 style="margin:0 0 10px;font-size:0.95rem">Definition</h4>
+    <p class="formula">index = ( Exposure × Sensitivity × Capacity&nbsp;gap ) <sup>1/3</sup></p>
+    <p class="note" style="margin:0 0 14px">Each component is the mean of its variables’
+    percentile ranks among the 38 scored neighborhoods, scaled 0–100.
+    <b>↑</b> means a higher value raises vulnerability; <b>↓</b> means a lower value does.</p>
+    <div class="defn">
+      <div>
+        <span><i data-hue="heat_anomaly"></i>Exposure</span>
+        heat anomaly ↑ · vegetation ↓ · fog ↓
+      </div>
+      <div>
+        <span><i data-hue="pct_65_plus"></i>Sensitivity</span>
+        aged 65+ ↑ · under 5 ↑ · below poverty ↑
+      </div>
+      <div>
+        <span><i data-hue="median_income"></i>Capacity gap</span>
+        median income ↓ · renters ↑ · limited-English households ↑
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px"><strong>What it is and isn’t.</strong> A
+    <em>relative</em> position among these 38 neighborhoods, not an absolute risk — it does not
+    transfer to another city. All nine variables carry equal weight, and so do the three
+    components. The geometric mean means a neighborhood cannot fully offset extreme exposure
+    with strong adaptive capacity. Percentile ranks span (0, 1] and never reach zero, which
+    would otherwise annihilate the product. No racial or ethnic variable enters it, or exists
+    anywhere in this project.</p>
+    <p class="note"><strong>Provenance.</strong> Heat vulnerability indices are an established
+    tool — health departments use them to site cooling centres and target outreach, and San
+    Francisco’s own Department of Public Health publishes one. The exposure / sensitivity /
+    adaptive-capacity decomposition is the conventional climate-vulnerability framing. Neither
+    is original here. <strong>What is specific to this project is the choice of these nine
+    variables, weighting them all equally, weighting the three components equally, and combining
+    them geometrically.</strong> Another analyst working from the same framework would
+    reasonably choose differently and get a different ranking. Ranks a few places apart should
+    be read as ties.</p>
+    <p class="note"><strong>It has not been validated against any outcome.</strong> A working
+    index would be tested against heat-related emergency visits or mortality. This one is tested
+    against nothing — it is a defensible composite of plausible variables, not a demonstrated
+    predictor of harm. Treat it as a screening tool for where to look, not as a measurement of
+    who gets hurt.</p>
+  </div>
   <div class="card">
     <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
     <p class="note">Ranks a few places apart should be read as ties. The index inherits the
-    clear-sky bias in its exposure half and survey margins in the other two.</p>
+    clear-sky sampling limit in its exposure half and survey margins in the other two.</p>
   </div>
-  <p class="note" id="lakeshore-note"></p>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p>The index correlates <strong id="r-poc">—</strong> with the share of residents below
+    poverty — a result rather than a construction, since no economic variable enters the
+    exposure component and no racial variable enters at all.</p>
+    <p id="lakeshore-note"></p>
+  </aside>
 </section>
 
 <section>
@@ -463,6 +604,14 @@
 <section>
   <h2>Method &amp; limits</h2>
   <h3>What this is, and what it isn’t</h3>
+  <p><strong>Blocks marked “Analysis” are generated interpretation, not measurement.</strong>
+  Every figure quoted inside one is computed by the pipeline and reproducible from
+  <code>data/</code>; the reading placed on those figures is commentary and should be treated
+  as such. Charts and tables carry only measured values.</p>
+  <p><strong>This is a static snapshot.</strong> Current conditions and forecast feeds are not
+  connected — the status strip at the top says which sources are live. The page reads a single
+  artifact, <code>docs/data.js</code>, so a live feed replaces that file rather than rewiring
+  any chart.</p>
   <p><strong>Surface temperature is not air temperature</strong>, and Landsat passes late
   morning — so nothing here describes the night, which matters more for health. The spatial
   pattern is meaningful; the absolute values aren’t comparable to a weather station.</p>
@@ -621,6 +770,17 @@ function rampColor(ramp, t) {
   return mix(ramp[i], ramp[i + 1], x - i);
 }
 const gradientOf = ramp => "linear-gradient(to right," + ramp.join(",") + ")";
+
+// One solid colour standing for a variable's family, for marks that aren't
+// scaled — profile bars, key dots. Heat anomaly is diverging on a map but reads
+// as "heat" here, so it takes red.
+const hueColor = key => {
+  const family = HUE_OF[key];
+  // Dedicated solid tokens, not ramp[3]. Yellow is intrinsically the most
+  // luminous hue, so the same step made amber roughly twice as bright as red
+  // and it dominated everything beside it. These are luminance-matched by hand.
+  return css("--hue-" + (!family || family === "diverging" ? "red" : family));
+};
 
 const METRICS = {
   index:         { label: "Vulnerability", fmt: v => v.toFixed(0), kind: "seq",
@@ -994,14 +1154,21 @@ function drawProfile() {
   const f = F.find(x => P(x).nhood === selected) || SCORED[0];
   const q = P(f);
   const scored = q.index !== null;
+  // Each figure carries a dot in its variable's hue, so the profile reads in
+  // the same colour language as the maps rather than as undifferentiated text.
   document.getElementById("prof").innerHTML = [
-    ["Population", q.population.toLocaleString()],
-    ["Vulnerability", scored ? q.index.toFixed(0) + " (rank " + q.rank + ")" : "not scored"],
-    ["Heat anomaly", signed(q.heat_anomaly) + " °C"],
-    ["Fog", Math.round(q.fog * 100) + "%"],
-    ["Vegetation", q.ndvi.toFixed(2)],
-    ["Median income", scored ? money(q.median_income) : "—"],
-  ].map(([l, v]) => "<div><span>" + l + "</span><b>" + v + "</b></div>").join("");
+    ["Vulnerability", scored ? q.index.toFixed(0) + " (rank " + q.rank + ")" : "not scored", "index"],
+    ["Heat anomaly", signed(q.heat_anomaly) + " °C", "heat_anomaly"],
+    ["Fog", Math.round(q.fog * 100) + "%", "fog"],
+    ["Vegetation", q.ndvi.toFixed(2), "ndvi"],
+    ["Cooling per 0.1 NDVI", q.canopy_cooling === null ? "—" : q.canopy_cooling.toFixed(2) + " °C",
+     "canopy_cooling"],
+    ["Median income", scored ? money(q.median_income) : "—", "median_income"],
+    ["Below poverty", scored ? q.pct_poverty.toFixed(0) + "%" : "—", "pct_poverty"],
+    ["Population", q.population.toLocaleString(), "population"],
+  ].map(([l, v, k]) =>
+    '<div><span><i style="background:' + hueColor(k) + '"></i>' + l + "</span><b>" + v +
+    "</b></div>").join("");
 
   // How much to trust this particular neighborhood's numbers.
   const conf = document.getElementById("prof-conf");
@@ -1017,26 +1184,33 @@ function drawProfile() {
   }
 
 
-  // Versus the citywide median.
+  // Versus the citywide median. Each bar takes its variable's own hue, so the
+  // profile uses the same colour language as the maps — heat red, vegetation
+  // green, fog blue, census amber.
   const cmp = [
     ["Heat anomaly", "heat_anomaly", v => signed(v) + " °C"],
     ["Vegetation", "ndvi", v => v.toFixed(2)],
+    ["Fog", "fog", v => Math.round(v * 100) + "%"],
+    ["Cooling per 0.1 NDVI", "canopy_cooling", v => v.toFixed(2) + " °C"],
     ["Poverty", "pct_poverty", v => v.toFixed(0) + "%"],
     ["Over 65", "pct_65_plus", v => v.toFixed(0) + "%"],
     ["Renters", "pct_renter", v => v.toFixed(0) + "%"],
   ];
   const s2 = document.getElementById("vs-city");
   s2.innerHTML = "";
-  const LW = 150, RW = 90, BW = 680 - LW - RW;
-  cmp.forEach(([label, k, fmt], i) => {
-    const y = 16 + i * 38;
+  const LW = 168, RW = 96, BW = 680 - LW - RW;
+  let row = 0;
+  cmp.forEach(([label, k, fmt]) => {
+    if (q[k] === null || q[k] === undefined) return;
+    const y = 14 + row * 34;
+    row++;
     const [lo, hi] = extent(SCORED, k);
-    const med = median(SCORED.map(f => P(f)[k]));
-    const norm = v => (v - lo) / (hi - lo) * BW;
+    const med = median(SCORED.map(f => P(f)[k]).filter(v => v !== null));
+    const norm = v => (hi === lo ? 0.5 : (v - lo) / (hi - lo)) * BW;
     s2.appendChild(el("text", { x: LW - 10, y: y + 14, class: "tick", "text-anchor": "end" }, label));
     s2.appendChild(el("rect", { x: LW, y: y + 5, width: BW, height: 12, rx: 3, fill: css("--grid") }));
     s2.appendChild(el("rect", {
-      x: LW, y: y + 5, width: Math.max(norm(q[k]), 2), height: 12, rx: 3, fill: css("--accent")
+      x: LW, y: y + 5, width: Math.max(norm(q[k]), 2), height: 12, rx: 3, fill: hueColor(k),
     }));
     s2.appendChild(el("line", {
       x1: LW + norm(med), x2: LW + norm(med), y1: y, y2: y + 22,
@@ -1044,7 +1218,9 @@ function drawProfile() {
     }));
     s2.appendChild(el("text", { x: LW + BW + 10, y: y + 15, class: "tick" }, fmt(q[k])));
   });
-  s2.appendChild(el("text", { x: LW, y: 200, class: "tick" }, "vertical rule = citywide median"));
+  s2.setAttribute("viewBox", "0 0 680 " + (14 + row * 34 + 26));
+  s2.appendChild(el("text", { x: LW, y: 14 + row * 34 + 16, class: "tick" },
+    "bar = this neighborhood across the citywide range · vertical rule = median"));
   drawAll();
 }
 
@@ -1090,7 +1266,7 @@ function fillProse() {
   set("t-spread", (hmax - hmin).toFixed(1));
   set("span-1", (hmax - hmin).toFixed(1));
   set("t-fog", Math.round((fmax - fmin) * 100));
-  set("t-corr", signed(pearson(SCORED, "heat_anomaly", "median_income")));
+  set("t-index", Math.round(extent(SCORED, "index")[1]));
   set("r-income", signed(pearson(SCORED, "heat_anomaly", "median_income")));
   set("r-fog", signed(pearson(SCORED, "heat_anomaly", "fog")));
   set("r-ndvi", signed(pearson(SCORED, "heat_anomaly", "ndvi")));
@@ -1119,7 +1295,14 @@ function fillProse() {
 
 /* ---------- wiring ---------- */
 let metric = "index";
+function paintHueDots() {
+  document.querySelectorAll("[data-hue]").forEach(n => {
+    n.style.background = hueColor(n.dataset.hue);
+  });
+}
+
 function drawAll() {
+  paintHueDots();
   // Hatch only the layers the blind spot actually affects. Fog is built from
   // every observation, and income from a survey — neither has the problem, and
   // marking them would be dishonest.

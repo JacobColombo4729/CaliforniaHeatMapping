@@ -89,15 +89,37 @@ Each scene is warped onto one canonical 30 m grid, normalized to its own citywid
 and the stack reduced by median — so a regionally hot day cannot masquerade as a hot
 neighborhood. Temperature is reported as an anomaly in °C against the city average.
 
-### The index
+### The vulnerability index
 
-Percentile-rank each variable across the scored neighborhoods, average within each component,
-then combine the three components by **geometric mean** — multiplicative, so strength in one
-cannot fully cancel exposure in another.
+```
+index = ( Exposure × Sensitivity × Capacity gap ) ^ (1/3)
+```
 
-- **Exposure** — heat anomaly, vegetation (inverted), fog (inverted)
-- **Sensitivity** — % over 65, % under 5, % below poverty
-- **Capacity gap** — median income (inverted), % renters, % limited-English households
+Each component is the mean of its variables' percentile ranks among the 38 scored
+neighborhoods, scaled 0–100. ↑ means a higher value raises vulnerability, ↓ that a lower one
+does.
+
+| Component | Variables |
+|---|---|
+| **Exposure** | heat anomaly ↑ · vegetation ↓ · fog ↓ |
+| **Sensitivity** | aged 65+ ↑ · under 5 ↑ · below poverty ↑ |
+| **Capacity gap** | median income ↓ · renters ↑ · limited-English households ↑ |
+
+A *relative* position among these 38 neighborhoods, not an absolute risk — it does not transfer
+to another city. All nine variables carry equal weight, and so do the three components. The
+geometric mean means a neighborhood cannot fully offset extreme exposure with strong adaptive
+capacity. Percentile ranks span (0, 1] and never reach zero, which would annihilate the product.
+
+**Provenance.** Heat vulnerability indices are an established tool, and the
+exposure / sensitivity / adaptive-capacity decomposition is the conventional
+climate-vulnerability framing — neither is original here. **What is specific to this project is
+the choice of these nine variables, weighting them all equally, weighting the three components
+equally, and combining them geometrically.** Another analyst would reasonably choose differently
+and get a different ranking.
+
+**It has not been validated against any outcome.** A working index would be tested against
+heat-related emergency visits or mortality. This one is tested against nothing — a defensible
+composite of plausible variables, not a demonstrated predictor of harm.
 
 **This project is race-agnostic.** No racial or ethnic variable is collected, computed or used
 anywhere in it — not in the index, not in the models, not in the published data.
