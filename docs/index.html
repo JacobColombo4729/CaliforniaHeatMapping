@@ -265,6 +265,9 @@
     margin: 0 0 16px; max-width: none; letter-spacing: -0.005em;
   }
   .idx-eq sup { font-size: 0.62em; font-weight: 500; }
+  .idx-lead {
+    font-size: 0.86rem; color: var(--ink-2); margin: 0 0 12px; max-width: none;
+  }
   .idx-parts { display: grid; gap: 2px; margin-bottom: 18px; }
   .idx-parts > div {
     display: grid; grid-template-columns: 128px 1fr; gap: 16px; align-items: baseline;
@@ -272,7 +275,11 @@
   }
   .idx-parts > div:last-child { border-bottom: none; }
   .idx-parts b { color: var(--ink); font-weight: 600; font-size: 0.88rem; }
-  .idx-parts span { color: var(--ink-2); font-size: 0.88rem; }
+  .idx-parts span { color: var(--ink); font-size: 0.88rem; }
+  /* "inverted" is an annotation on the variable beside it, not another variable. */
+  .idx-parts em, .defn-body .note em {
+    font-style: normal; color: var(--muted); font-size: 0.92em;
+  }
   /* A metric this project invented is specified, not described — the end user
      is a data scientist who needs the transformation and the source column, not
      an adjective. Monospace because these are literally identifiers. */
@@ -398,17 +405,20 @@
   <details class="defn-drop">
     <summary>How the heat vulnerability index is calculated</summary>
     <div class="defn-body">
-      <p class="idx-eq">index = ( exposure · sensitivity · capacity_gap )<sup>1/3</sup></p>
+      <p class="idx-eq">index = ( exposure × sensitivity × capacity_gap )<sup>1/3</sup></p>
+      <p class="idx-lead">Each component is the mean percentile rank of its three variables,
+      scaled to 0–100.</p>
       <div class="idx-parts">
-        <div><b>exposure</b><span>100 · mean[ ρ(heat_anomaly), ρ(−ndvi), ρ(−fog) ]</span></div>
-        <div><b>sensitivity</b><span>100 · mean[ ρ(pct_65_plus), ρ(pct_under_5), ρ(pct_poverty) ]</span></div>
-        <div><b>capacity_gap</b><span>100 · mean[ ρ(−median_income), ρ(pct_renter), ρ(pct_limited_english) ]</span></div>
+        <div><b>exposure</b><span>heat_anomaly, ndvi <em>inverted</em>, fog <em>inverted</em></span></div>
+        <div><b>sensitivity</b><span>pct_65_plus, pct_under_5, pct_poverty</span></div>
+        <div><b>capacity_gap</b><span>median_income <em>inverted</em>, pct_renter, pct_limited_english</span></div>
       </div>
-      <p class="note">Each of the three is published as its own column, so any neighborhood’s
-      index can be recomputed from the table below the Explore section.</p>
-      <p class="note">ρ(x) is the percentile rank of x among the n = 38 scored neighborhoods,
-      computed as rank(x, method='average') / n, so ρ ∈ (0, 1] — never 0, which would annihilate
-      the product. Negation orients a variable so that higher ρ always means more vulnerable.</p>
+      <p class="note">Percentile rank is rank(x, method='average') / n among the n = 38 scored
+      neighborhoods, so it spans (0, 1] and never reaches 0, which would annihilate the product.
+      <em>Inverted</em> means the variable is negated first, so a higher rank always means more
+      vulnerable.</p>
+      <p class="note">Each of the three components is published as its own column, so any
+      neighborhood’s index can be recomputed from the table below the Explore section.</p>
     </div>
   </details>
 </header>
