@@ -223,6 +223,34 @@
   .status .feed b { font-weight: 600; color: var(--ink); }
   .status .vintage { margin-left: auto; color: var(--muted); }
 
+  /* The same feed state, restated under each panel. A reader looking at one
+     chart should not have to scroll to the top to learn whether what they are
+     looking at is current. Rendered from the same FEEDS object as the strip, so
+     the two can never disagree. */
+  .panel-status {
+    display: flex; flex-wrap: wrap; gap: 8px 22px;
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--grid);
+  }
+  .panel-status .pf { display: flex; align-items: baseline; gap: 7px; }
+  .panel-status .pf::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--axis); display: block; flex: none;
+    position: relative; top: -1px;
+  }
+  .panel-status .pf.on::before { background: #0ca30c; }
+  .panel-status .pf b {
+    font-weight: 600; color: var(--ink-2); font-size: 0.72rem;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .panel-status .pf i {
+    font-style: normal; color: var(--muted); font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Stacked under a narrow card, side by side when there is room. */
+  @media (max-width: 560px) {
+    .panel-status .pf { flex-direction: column; gap: 2px; }
+  }
+
   /* Generated interpretation, kept visually distinct from measured data so a
      reader always knows which is which. */
   .analysis {
@@ -404,15 +432,9 @@
     <div class="tile"><div class="v" id="t-index">—</div><div class="l">highest vulnerability index, of 100</div></div>
   </div>
 
-  <!-- One strip owning "how current is this". Wiring a live feed changes the
-       state here and nothing else on the page. -->
-  <div class="status">
-    <span class="feed on"><i></i><b>Satellite</b> 63 Landsat scenes, summers 2019–2024</span>
-    <span class="feed on"><i></i><b>Census</b> ACS 2024 5-year</span>
-    <span class="feed off"><i></i><b>Current conditions</b> not connected</span>
-    <span class="feed off"><i></i><b>Forecast</b> not connected</span>
-    <span class="vintage">Static snapshot · rebuilt when the pipeline is re-run</span>
-  </div>
+  <!-- One strip owning "how current is this". Rendered from FEEDS, the same
+       object every per-panel status block reads, so the two cannot disagree. -->
+  <div class="status" id="status-strip"></div>
 
   <details class="defn-drop">
     <summary>How the heat vulnerability index is calculated</summary>
@@ -434,7 +456,7 @@
 
 <section>
   <h2>Where it’s hot</h2>
-  <h3>Every neighborhood, five ways</h3>
+  <h3>Neighborhood assessment report</h3>
   <p>Heat is an <strong>anomaly</strong> — degrees above or below the citywide average that
   day — so a hot afternoon can’t masquerade as a hot neighborhood.</p>
   <div class="card">
@@ -446,12 +468,13 @@
     <p class="note" id="map-note" style="margin-top:12px"></p>
     <p class="note">Hatching marks neighborhoods where the satellite has fewest usable
     observations, on the two layers built from cloud-free days. Fog and income aren’t affected.</p>
+    <div class="panel-status" data-feeds="current"></div>
   </div>
 </section>
 
 <section>
   <h2>Fog</h2>
-  <h3>Surface heat and fog frequency, side by side</h3>
+  <h3>Surface heat and fog frequency</h3>
   <p>Fog frequency is built from the cloud masks the temperature composite discards, so it uses
   every observation rather than only the clear ones — <strong id="fog-range">—</strong> of
   observations obscured.</p>
@@ -1606,17 +1629,48 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 
    Load one with ?live=<url>, or call applyLive(payload) from the console.
    Nothing is fetched otherwise: a page that says "not connected" must not be
-   quietly reaching out to something.
+   quietly reaching out to something, and must not stand in synthetic data for
+   the source it does not have.
 --------------------------------------------------------------------------- */
 const LIVE_KEY = "air_temp";
 
-function setFeed(name, text) {
-  const chip = [...document.querySelectorAll(".status .feed")]
-    .find(s => s.querySelector("b")?.textContent === name);
-  if (!chip) return;
-  chip.classList.remove("off");
-  chip.classList.add("on");
-  chip.lastChild.nodeValue = " " + text;
+/* One object owning "how current is this". The header strip and every
+   per-panel status block render from it, so they cannot disagree. */
+const FEEDS = {
+  satellite: { label: "Satellite", state: "on",
+               text: "63 Landsat scenes, summers 2019–2024" },
+  census:    { label: "Census", state: "on", text: "ACS 2024 5-year" },
+  current:   { label: "Current conditions", state: "off", text: "not connected" },
+  forecast:  { label: "Forecast", state: "off", text: "not connected" },
+};
+let VINTAGE = "Static snapshot · rebuilt when the pipeline is re-run";
+
+function setFeed(name, text, state) {
+  const key = Object.keys(FEEDS).find(k => FEEDS[k].label === name);
+  if (!key) return;
+  FEEDS[key].state = state || "on";
+  FEEDS[key].text = text;
+}
+
+function renderFeeds() {
+  const strip = document.getElementById("status-strip");
+  if (strip) {
+    strip.innerHTML =
+      Object.values(FEEDS).map(f =>
+        '<span class="feed ' + f.state + '"><i></i><b>' + f.label + "</b> " +
+        f.text + "</span>").join("") +
+      '<span class="vintage">' + VINTAGE + "</span>";
+  }
+  // The same states, restated under each panel, so a reader looking at one
+  // chart never has to scroll up to learn whether it is current.
+  document.querySelectorAll(".panel-status").forEach(box => {
+    box.innerHTML = (box.dataset.feeds || "").split(",")
+      .map(k => FEEDS[k.trim()])
+      .filter(Boolean)
+      .map(f => '<span class="pf ' + f.state + '"><b>' + f.label +
+                "</b><i>" + f.text + "</i></span>")
+      .join("");
+  });
 }
 
 const when = iso => new Date(iso).toLocaleString(undefined,
@@ -1654,15 +1708,21 @@ function applyLive(p) {
   }
 
   if (p.source) {
-    document.querySelector(".status .vintage").textContent = "Live · " + p.source;
+    VINTAGE = "Live · " + p.source;
   }
+  renderFeeds();
 }
 
 {
+  renderFeeds();
   const url = new URLSearchParams(location.search).get("live");
   if (url) {
     fetch(url).then(r => r.json()).then(applyLive)
-      .catch(e => console.error("live feed failed:", e));
+      .catch(e => {
+        setFeed("Current conditions", "feed unreachable — " + e.message, "off");
+        renderFeeds();
+        console.error("live feed failed:", e);
+      });
   }
 }
 </script>
