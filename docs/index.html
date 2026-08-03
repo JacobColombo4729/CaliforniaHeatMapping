@@ -155,23 +155,9 @@
 
   .note { font-size: 0.83rem; color: var(--muted); max-width: 68ch; }
 
-  /* Confidence is a status, not a series — it uses the reserved status colours
-     and always ships as dot + word, never colour alone. */
-  .conf {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-size: 0.74rem; letter-spacing: 0.04em; text-transform: uppercase;
-    font-weight: 600; color: var(--ink-2);
-    border: 1px solid var(--border); border-radius: 999px;
-    padding: 4px 11px 4px 9px; background: var(--surface-1);
-    vertical-align: middle;
-  }
-  .conf i { width: 9px; height: 9px; border-radius: 50%; display: block; flex: none; }
-  .conf-high i { background: #0ca30c; }
-  .conf-moderate i { background: #fab219; }
-  .conf-low i { background: #ec835a; }
-  .conf-why { font-size: 0.83rem; color: var(--muted); max-width: 68ch; margin: 10px 0 0; }
-  .hgroup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-  .hgroup h3 { margin: 0; }
+  /* Uncertainty lives in footnotes and tooltips, not in badges on every heading.
+     The one place it still carries colour is the confidence chart's status dots,
+     which are set inline from the reserved status palette. */
   .prof { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px; margin-top: 18px; }
   .prof div span { display: block; color: var(--muted); font-size: 0.78rem; }
   .prof div b { font-size: 1.35rem; font-weight: 600; }
@@ -198,14 +184,7 @@
 
 <section>
   <h2>Where it’s hot</h2>
-  <div class="hgroup">
-    <h3>Every neighborhood, five ways</h3>
-    <span class="conf conf-moderate"><i></i>Moderate confidence</span>
-  </div>
-  <p class="conf-why">Temperature and vegetation are measured only on cloud-free days, and the
-  west side gets far fewer of them. Hatched neighborhoods are the ones where the satellite sees
-  least — their readings are the least trustworthy on the page. Fog and census metrics do not
-  carry that problem.</p>
+  <h3>Every neighborhood, five ways</h3>
   <p>Surface temperature is shown as an <strong>anomaly</strong> — degrees above or below the
   citywide average on the same day — so a hot afternoon can’t masquerade as a hot
   neighborhood. Switch the metric and watch which patterns move together.</p>
@@ -216,16 +195,14 @@
     </div>
     <div class="legend" id="map-legend"></div>
     <p class="note" id="map-note" style="margin-top:12px"></p>
+    <p class="note">Hatching marks neighborhoods where the satellite has fewest usable
+    observations, on the two layers built from cloud-free days. Fog and income aren’t affected.</p>
   </div>
 </section>
 
 <section>
   <h2>The pattern that isn’t there</h2>
-  <div class="hgroup">
-    <h3>Heat and income barely relate</h3>
-    <span class="conf conf-high"><i></i>High confidence</span>
-  </div>
-  <p class="conf-why" id="null-why"></p>
+  <h3>Heat and income barely relate</h3>
   <p>Plot every neighborhood’s heat anomaly against its median household income and the cloud
   is flat. The correlation is <strong id="r-income">—</strong> — for practical purposes, nothing.
   Split the city into income quartiles and the poorest and richest differ by well under a degree,
@@ -235,18 +212,13 @@
     <p class="note" id="cap-income"></p>
     <p class="note">One dot per scored neighborhood. The line is a least-squares fit, drawn to
     show how little slope there is. Click any dot to open that neighborhood’s profile.</p>
+    <p class="note" id="null-why"></p>
   </div>
 </section>
 
 <section>
   <h2>Why</h2>
-  <div class="hgroup">
-    <h3>The fog shadow does the sorting</h3>
-    <span class="conf conf-high"><i></i>High confidence</span>
-  </div>
-  <p class="conf-why">The best-measured layer here. Fog frequency is built from
-  <em>every</em> observation, cloudy ones included — a scene useless for temperature is a data
-  point for fog — so it is the one product on this page with no clear-sky blind spot.</p>
+  <h3>The fog shadow does the sorting</h3>
   <p>The same satellite passes that measure temperature also record which pixels were under
   cloud. Sum those and you get a fog climatology: <strong id="fog-range">—</strong> of
   observations obscured, rising sharply toward the ocean. Put the two maps together and
@@ -273,13 +245,7 @@
 
 <section>
   <h2>What the fog hides</h2>
-  <div class="hgroup">
-    <h3>The shade people build is not distributed evenly</h3>
-    <span class="conf conf-moderate"><i></i>Moderate confidence</span>
-  </div>
-  <p class="conf-why">NDVI shares the clear-sky sampling problem, though vegetation changes far
-  more slowly than temperature, so a biased sample of days matters much less. Income comes from
-  survey estimates with their own margins — see the neighborhood profiles.</p>
+  <h3>The shade people build is not distributed evenly</h3>
   <p>Vegetation cools nearly as strongly as fog — but unlike fog, it follows money and race.
   Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>) and whiter
   (<strong id="r-ndvipoc">—</strong>). The fog gradient is so large that it buries this in the
@@ -298,10 +264,7 @@
 
 <section>
   <h2>What the satellite can’t see</h2>
-  <div class="hgroup">
-    <h3>The west is measured only on its warmest days</h3>
-    <span class="conf conf-low"><i></i>Known bias, quantified</span>
-  </div>
+  <h3>The west is measured only on its warmest days</h3>
   <p>A thermal sensor cannot see through fog, so the foggiest neighborhoods are observed almost
   exclusively on their rare clear days — which are their <em>warm</em> days. This is not a bug
   to be fixed; it is a hard limit of the instrument. What you can do is measure it.</p>
@@ -335,13 +298,7 @@
 
 <section>
   <h2>Every neighborhood</h2>
-  <div class="hgroup">
-    <h3>Ranked by heat vulnerability</h3>
-    <span class="conf conf-moderate"><i></i>Moderate confidence</span>
-  </div>
-  <p class="conf-why">The index inherits every uncertainty above — clear-sky bias in its
-  exposure half, survey margins in its sensitivity and capacity halves. Ranks near each other
-  should be read as ties, not as an order. Ranks 20 places apart are real.</p>
+  <h3>Ranked by heat vulnerability</h3>
   <p>The index combines <strong>exposure</strong> (heat, vegetation, fog),
   <strong>sensitivity</strong> (residents over 65 and under 5, poverty) and a
   <strong>capacity gap</strong> (income, renting, limited-English households). Each variable is
@@ -352,6 +309,8 @@
   result: the index correlates <strong id="r-poc">—</strong> with the share of residents of color.</p>
   <div class="card">
     <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
+    <p class="note">Ranks a few places apart should be read as ties. The index inherits the
+    clear-sky bias in its exposure half and survey margins in the other two.</p>
   </div>
   <p class="note" id="lakeshore-note"></p>
 </section>
@@ -829,24 +788,15 @@ function drawProfile() {
   // How much to trust this particular neighborhood's numbers.
   const conf = document.getElementById("prof-conf");
   if (!scored) {
-    conf.innerHTML = '<p class="conf-why">This is a park with ' +
-      q.population.toLocaleString() + " residents. Its census rates are noise, so it is " +
-      "mapped but never scored or ranked.</p>";
+    conf.innerHTML = '<p class="note">A park with ' + q.population.toLocaleString() +
+      " residents. Its census rates are noise, so it is mapped but never scored or ranked.</p>";
   } else {
-    const chip = (grade, label) =>
-      '<span class="conf conf-' + grade + '"><i></i>' + label + " " + grade + "</span>";
     conf.innerHTML =
-      '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
-      chip(q.heat_confidence, "Satellite") + chip(q.acs_confidence, "Census") + "</div>" +
-      '<p class="conf-why">Seen on <strong>' + q.clear_obs.toFixed(0) +
-      " of 63</strong> scenes. On those days the city ran <strong>+" +
-      q.heat_bias.toFixed(2) + " °C</strong> hotter than average, so this reading is " +
-      "biased warm by about that much. Temperatures vary by <strong>" +
-      q.heat_sd.toFixed(1) + " °C</strong> within the neighborhood itself. " +
-      "Census margins give a typical coefficient of variation of <strong>" +
-      q.acs_cv.toFixed(2) + "</strong>" +
-      (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".") +
-      "</p>";
+      '<p class="note">Seen on ' + q.clear_obs.toFixed(0) + " of 63 scenes; those days ran +" +
+      q.heat_bias.toFixed(2) + " °C hotter than average, so this reading is biased warm by " +
+      "about that much. Temperatures vary " + q.heat_sd.toFixed(1) +
+      " °C within the neighborhood. Census coefficient of variation " + q.acs_cv.toFixed(2) +
+      (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".") + "</p>";
   }
 
   // Race composition — the only multi-series mark on the page. Legend plus
