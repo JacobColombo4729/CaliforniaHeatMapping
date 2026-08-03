@@ -10,7 +10,7 @@ geography rather than by wealth.
 
 But the shade people *build* is another story, and that is where the inequity lives.
 
-🔗 **[Live dashboard](https://YOUR-USERNAME.github.io/CaliforniaHeatMapping/)**
+🔗 **[Live dashboard](https://JacobColombo4729.github.io/CaliforniaHeatMapping/)**
 
 ![Surface temperature, fog frequency and clear-sky observation counts across San Francisco](data/landsat_preview.png)
 
