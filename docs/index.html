@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>San Francisco Heat Indexing</title>
+<title>San Francisco Heat Index</title>
 <style>
   :root {
     color-scheme: light;
@@ -245,6 +245,17 @@
     font-size: 1.05rem; margin: 0 0 12px; color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
+  /* The index is this project's own construction, so it is defined before the
+     first chart that uses it — collapsed, so it informs without delaying. */
+  .defn-drop {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 18px; margin-top: 12px;
+  }
+  .defn-drop > summary {
+    cursor: pointer; font-size: 0.88rem; font-weight: 600; color: var(--ink); margin: 0;
+  }
+  .defn-drop[open] > summary { margin-bottom: 16px; }
+  .defn-body { border-top: 1px solid var(--grid); padding-top: 16px; }
   .defn { display: grid; gap: 8px; }
   .defn > div {
     display: grid; grid-template-columns: 160px 1fr; gap: 14px; align-items: baseline;
@@ -296,9 +307,9 @@
 <div class="wrap">
 
 <header>
-  <h1>San Francisco Heat Indexing</h1>
-  <p class="lede">Surface temperature, fog, vegetation and heat vulnerability — measured from
-  satellite and census data, with the statistics and the raw table alongside.</p>
+  <h1>San Francisco Heat Index</h1>
+  <p class="lede">Where heat concentrates across the city’s 41 neighborhoods, who is least
+  equipped to cope with it, and how far the underlying data can be trusted.</p>
   <div class="tiles">
     <div class="tile"><div class="v" id="t-spread">—</div><div class="l">°C between the coolest and hottest neighborhood</div></div>
     <div class="tile"><div class="v" id="t-fog">—</div><div class="l">percentage-point fog gap, west side to southeast</div></div>
@@ -314,6 +325,51 @@
     <span class="feed off"><i></i><b>Forecast</b> not connected</span>
     <span class="vintage">Static snapshot · rebuilt when the pipeline is re-run</span>
   </div>
+
+  <details class="defn-drop">
+    <summary>How the heat vulnerability index is calculated</summary>
+    <div class="defn-body">
+      <p class="formula">index = ( Exposure × Sensitivity × Capacity&nbsp;gap ) <sup>1/3</sup></p>
+      <p class="note" style="margin:0 0 14px">Each component is the mean of its variables’
+      percentile ranks among the 38 scored neighborhoods, scaled 0–100.
+      <b>↑</b> means a higher value raises vulnerability; <b>↓</b> means a lower value does.</p>
+      <div class="defn">
+        <div>
+          <span><i data-hue="heat_anomaly"></i>Exposure</span>
+          heat anomaly ↑ · vegetation ↓ · fog ↓
+        </div>
+        <div>
+          <span><i data-hue="pct_65_plus"></i>Sensitivity</span>
+          aged 65+ ↑ · under 5 ↑ · below poverty ↑
+        </div>
+        <div>
+          <span><i data-hue="median_income"></i>Capacity gap</span>
+          median income ↓ · renters ↑ · limited-English households ↑
+        </div>
+      </div>
+      <p class="note" style="margin-top:14px"><strong>What it is and isn’t.</strong> A
+      <em>relative</em> position among these 38 neighborhoods, not an absolute risk — it does not
+      transfer to another city. All nine variables carry equal weight, and so do the three
+      components. The geometric mean means a neighborhood cannot fully offset extreme exposure
+      with strong adaptive capacity. Percentile ranks span (0, 1] and never reach zero, which
+      would otherwise annihilate the product. No racial or ethnic variable enters it, or exists
+      anywhere in this project.</p>
+      <p class="note"><strong>Provenance.</strong> Heat vulnerability indices are an established
+      tool — health departments use them to site cooling centres and target outreach, and San
+      Francisco’s own Department of Public Health publishes one. The exposure / sensitivity /
+      adaptive-capacity decomposition is the conventional climate-vulnerability framing. Neither
+      is original here. <strong>What is specific to this project is the choice of these nine
+      variables, weighting them all equally, weighting the three components equally, and combining
+      them geometrically.</strong> Another analyst working from the same framework would
+      reasonably choose differently and get a different ranking. Ranks a few places apart should
+      be read as ties.</p>
+      <p class="note"><strong>It has not been validated against any outcome.</strong> A working
+      index would be tested against heat-related emergency visits or mortality. This one is tested
+      against nothing — it is a defensible composite of plausible variables, not a demonstrated
+      predictor of harm. Treat it as a screening tool for where to look, not as a measurement of
+      who gets hurt.</p>
+    </div>
+  </details>
 </header>
 
 <section>
@@ -478,48 +534,6 @@
 <section>
   <h2>Every neighborhood</h2>
   <h3>Ranked by heat vulnerability</h3>
-  <div class="card">
-    <h4 style="margin:0 0 10px;font-size:0.95rem">Definition</h4>
-    <p class="formula">index = ( Exposure × Sensitivity × Capacity&nbsp;gap ) <sup>1/3</sup></p>
-    <p class="note" style="margin:0 0 14px">Each component is the mean of its variables’
-    percentile ranks among the 38 scored neighborhoods, scaled 0–100.
-    <b>↑</b> means a higher value raises vulnerability; <b>↓</b> means a lower value does.</p>
-    <div class="defn">
-      <div>
-        <span><i data-hue="heat_anomaly"></i>Exposure</span>
-        heat anomaly ↑ · vegetation ↓ · fog ↓
-      </div>
-      <div>
-        <span><i data-hue="pct_65_plus"></i>Sensitivity</span>
-        aged 65+ ↑ · under 5 ↑ · below poverty ↑
-      </div>
-      <div>
-        <span><i data-hue="median_income"></i>Capacity gap</span>
-        median income ↓ · renters ↑ · limited-English households ↑
-      </div>
-    </div>
-    <p class="note" style="margin-top:14px"><strong>What it is and isn’t.</strong> A
-    <em>relative</em> position among these 38 neighborhoods, not an absolute risk — it does not
-    transfer to another city. All nine variables carry equal weight, and so do the three
-    components. The geometric mean means a neighborhood cannot fully offset extreme exposure
-    with strong adaptive capacity. Percentile ranks span (0, 1] and never reach zero, which
-    would otherwise annihilate the product. No racial or ethnic variable enters it, or exists
-    anywhere in this project.</p>
-    <p class="note"><strong>Provenance.</strong> Heat vulnerability indices are an established
-    tool — health departments use them to site cooling centres and target outreach, and San
-    Francisco’s own Department of Public Health publishes one. The exposure / sensitivity /
-    adaptive-capacity decomposition is the conventional climate-vulnerability framing. Neither
-    is original here. <strong>What is specific to this project is the choice of these nine
-    variables, weighting them all equally, weighting the three components equally, and combining
-    them geometrically.</strong> Another analyst working from the same framework would
-    reasonably choose differently and get a different ranking. Ranks a few places apart should
-    be read as ties.</p>
-    <p class="note"><strong>It has not been validated against any outcome.</strong> A working
-    index would be tested against heat-related emergency visits or mortality. This one is tested
-    against nothing — it is a defensible composite of plausible variables, not a demonstrated
-    predictor of harm. Treat it as a screening tool for where to look, not as a measurement of
-    who gets hurt.</p>
-  </div>
   <div class="card">
     <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
     <p class="note">Ranks a few places apart should be read as ties. The index inherits the

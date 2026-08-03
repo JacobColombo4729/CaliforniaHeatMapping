@@ -1,6 +1,9 @@
-# SF Heat & Equity
+# San Francisco Heat Index
 
-**San Francisco's heat map is drawn by fog, not by income.**
+Where heat concentrates across San Francisco's 41 neighborhoods, who is least equipped to cope
+with it, and how far the underlying data can be trusted.
+
+**The headline finding: San Francisco's heat map is drawn by fog, not by income.**
 
 In most American cities surface temperature tracks poverty closely enough that heat maps and
 income maps are near-substitutes. San Francisco breaks that pattern. Across its 41 analysis
