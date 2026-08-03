@@ -26,6 +26,9 @@ from shapely.geometry import mapping
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 IN_PATH = DATA / "neighborhoods_acs.parquet"
+# Optional. Produced by gwr.py, which runs at tract level; if it hasn't been run
+# the dashboard simply omits the cooling layer rather than failing.
+GWR_PATH = DATA / "gwr_by_neighborhood.json"
 OUT_JSON = DATA / "neighborhoods.json"
 # "docs" rather than "site": GitHub Pages serves from the repo root or /docs on a
 # branch, and nothing else.
@@ -232,6 +235,22 @@ def main() -> None:
     gdf["heat_confidence"] = gdf.apply(grade_measurement, axis=1)
     gdf["acs_confidence"] = gdf["acs_cv"].apply(grade_census)
 
+    # How much cooling a unit of added greenery actually buys here, from the
+    # geographically weighted regression. Degrees C per 0.1 NDVI — roughly the
+    # difference between a bare street and a lined one.
+    if GWR_PATH.exists():
+        gwr = json.loads(GWR_PATH.read_text(encoding="utf-8"))
+        gdf["canopy_cooling"] = gdf["nhood"].map(
+            lambda name: gwr.get(name, {}).get("cooling_per_0.1_ndvi"))
+        gdf["cooling_local_r2"] = gdf["nhood"].map(
+            lambda name: gwr.get(name, {}).get("local_r2"))
+        have = gdf["canopy_cooling"].notna().sum()
+        print(f"  merged GWR cooling for {have} of {len(gdf)} neighborhoods")
+    else:
+        gdf["canopy_cooling"] = None
+        gdf["cooling_local_r2"] = None
+        print("  no GWR results found — run gwr.py to add the cooling layer")
+
     gdf = build_index(gdf)
     scored = gdf["index"].notna()
     print(f"\n  scored {int(scored.sum())} of {len(gdf)} neighborhoods")
@@ -277,6 +296,7 @@ def main() -> None:
         "heat_bias", "heat_sd", "pixel_coverage", "heat_confidence",
         "acs_cv", "acs_cv_worst", "cv_poverty", "cv_65_plus",
         "cv_limited_english", "acs_confidence",
+        "canopy_cooling", "cooling_local_r2",
     ]
 
     geojson = to_geojson(export, columns)

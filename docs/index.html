@@ -292,10 +292,24 @@
   They buy almost <strong>nothing</strong> in South of Market, Bayview and the Financial
   District. Cooling power tracks fog at r = +0.66 — the opposite of what you'd guess, and most
   likely because fog keeps trees watered enough to transpire.</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Cooling bought per 0.1 NDVI</h4>
+      <svg id="map-cooling" viewBox="0 0 330 345" role="img" aria-label="Map of how much cooling added vegetation buys in each neighborhood"></svg>
+      <div class="legend" id="lg-cooling"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Against heat vulnerability</h4>
+      <svg id="sc-cooling" viewBox="0 0 400 330" role="img" aria-label="Scatter of cooling bought per tree against the heat vulnerability index"></svg>
+      <p class="note" id="cap-cooling"></p>
+    </div>
+  </div>
   <p><strong>Which means tree planting is weakest exactly where heat vulnerability is
-  highest.</strong> That isn't an argument against planting trees in the Mission. It's an
-  argument that trees alone won't close that gap, and that cool roofs, less pavement and built
-  shade probably matter more in the dense east.</p>
+  highest.</strong> The two run against each other at <strong id="r-cooling">—</strong>: the
+  neighborhoods that most need cooling are the ones where a tree delivers least of it.</p>
+  <p>That isn’t an argument against planting trees in the Mission. It’s an argument that trees
+  alone won’t close that gap, and that cool roofs, less pavement and built shade probably matter
+  more in the dense east.</p>
 </section>
 
 <section>
@@ -466,9 +480,13 @@ const METRICS = {
                    blurb: "Median household income" },
 };
 
-// Not offered as a map toggle — it has its own section — but it needs a scale
-// and a legend like any other layer.
+// The five metrics that get toggle buttons on the main map. Everything below
+// lives in its own section, where it can be explained rather than just offered.
+const MAP_TOGGLE = ["index", "heat_anomaly", "ndvi", "fog", "median_income"];
+
 const QUALITY_METRICS = {
+  canopy_cooling: { label: "Cooling per tree", fmt: v => v.toFixed(2) + " °C", kind: "seq",
+                    blurb: "°C bought per 0.1 NDVI, from the local regression" },
   clear_obs: { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
                blurb: "Usable clear looks, of 63 scenes" },
   // Sequential, not diverging: the bias is positive everywhere, because any day
@@ -685,13 +703,19 @@ function scatter(svgId, xk, yk, xlab, ylab, o = {}) {
     svg.appendChild(c);
   });
 
-  // Label selectively — only the neighbourhoods the sentence is about.
+  // Label selectively — only the neighbourhoods the sentence is about — and
+  // flip a label to the left of its dot when it would otherwise run off the
+  // right edge. A clipped label is worse than no label.
   (o.label || []).forEach(name => {
     const f = SCORED.find(f => P(f).nhood === name);
     if (!f) return;
     const q = P(f);
+    const cx = px(q[xk]);
+    // ~6.3px per character at 11.5px — enough to decide which side fits.
+    const flip = cx + 10 + name.length * 6.3 > W - R;
     svg.appendChild(el("text", {
-      x: px(q[xk]) + 10, y: py(q[yk]) + 4, class: "dlabel"
+      x: cx + (flip ? -10 : 10), y: py(q[yk]) + 4, class: "dlabel",
+      "text-anchor": flip ? "end" : "start",
     }, name));
   });
   // The correlation goes in an HTML caption, not inside the plot — anywhere in
@@ -952,6 +976,7 @@ function fillProse() {
   const biasFog = pearson(SCORED, "heat_bias", "fog");
   const biasIncome = pearson(SCORED, "heat_bias", "median_income");
   set("r-fog-2", signed(pearson(SCORED, "heat_anomaly", "fog")));
+  set("r-cooling", "r = " + signed(pearson(SCORED, "index", "canopy_cooling")));
 
   const summary = document.getElementById("bias-summary");
   if (summary) {
@@ -1007,14 +1032,14 @@ function drawAll() {
   drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
   drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 8 }));
   drawLegend("lg-bias", "heat_bias", drawMap("map-bias", "heat_bias", { pad: 8 }));
+  drawLegend("lg-cooling", "canopy_cooling",
+    drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
   drawBars();
   drawConfBars();
 }
 
-// Only the five story metrics get toggle buttons. The quality layers live in
-// their own section, where they can be explained rather than just offered.
 const btnBox = document.getElementById("metric-buttons");
-Object.entries(METRICS).filter(([k]) => !(k in QUALITY_METRICS)).forEach(([k, m]) => {
+Object.entries(METRICS).filter(([k]) => MAP_TOGGLE.includes(k)).forEach(([k, m]) => {
   const b = document.createElement("button");
   b.className = "seg"; b.textContent = m.label; b.type = "button";
   b.setAttribute("aria-pressed", k === metric);
@@ -1047,6 +1072,10 @@ scatter("sc-canopy-income", "median_income", "ndvi",
 scatter("sc-canopy-poc", "pct_poc", "ndvi",
   "Residents of color (%)", "Vegetation", { xfmt: v => Math.round(v) + "%",
   yfmt: v => v.toFixed(2), cap: "cap-cp" });
+scatter("sc-cooling", "index", "canopy_cooling",
+  "Heat vulnerability index", "°C per 0.1 NDVI",
+  { xfmt: v => v.toFixed(0), yfmt: v => v.toFixed(1), cap: "cap-cooling",
+    label: ["Outer Richmond", "South of Market", "Bayview Hunters Point"] });
 drawProfile();
 drawTable();
 
