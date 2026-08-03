@@ -1,7 +1,7 @@
 # The San Francisco Heat Index
 
-Where heat concentrates across San Francisco's 41 neighborhoods, who is least equipped to cope
-with it.
+Surface temperature, fog, vegetation, and heat vulnerability across San Francisco's 41
+neighborhoods, measured from satellite and census data.
 
 **The headline finding: San Francisco's heat map is drawn by fog, not by income.**
 
