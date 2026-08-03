@@ -12,7 +12,10 @@ But the shade people *build* is another story, and that is where the inequity li
 
 🔗 **[Live dashboard](https://JacobColombo4729.github.io/CaliforniaHeatMapping/)**
 
-![Surface temperature, fog frequency and clear-sky observation counts across San Francisco](data/landsat_preview.png)
+[![Surface temperature anomaly across San Francisco's 41 analysis neighborhoods, with hatching marking where the satellite has fewest usable observations](docs/dashboard.png)](https://JacobColombo4729.github.io/CaliforniaHeatMapping/)
+
+*Cool on the ocean side, hot along the bay. Hatched neighborhoods are the ones the satellite
+sees least — and they are the foggy ones, which is the central caveat of the whole project.*
 
 ---
 
@@ -72,6 +75,11 @@ Canopy   ┘     41 features                one page, no dependencies
 | `pipeline/boundaries_acs.py` | 41 neighborhood polygons + census demographics, aggregated from 241 tracts |
 | `pipeline/landsat.py` | 63 summer scenes → surface temperature, fog frequency, NDVI, clear-observation counts |
 | `pipeline/join_export.py` | Zonal statistics, the vulnerability index, and the exported artifact |
+
+![Surface temperature, fog frequency and clear-sky observation counts across San Francisco](data/landsat_preview.png)
+
+*The three rasters the pipeline produces. Note the third panel: the west side yields roughly
+half the usable observations of the east, which is the clear-sky bias made visible.*
 
 ### The heat composite
 
