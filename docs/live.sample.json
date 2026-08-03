@@ -1,0 +1,71 @@
+{
+  "_note": "SYNTHETIC sample payload. Demonstrates the contract; not a real observation.",
+  "source": "sample payload (not a live source)",
+  "current": {
+    "observed": "2026-08-03T20:55:00Z",
+    "unit": "degC",
+    "neighborhoods": {
+      "Western Addition": 19.9,
+      "West of Twin Peaks": 19.0,
+      "Visitacion Valley": 20.2,
+      "Twin Peaks": 18.4,
+      "South of Market": 21.6,
+      "Treasure Island": 17.6,
+      "Presidio Heights": 19.4,
+      "Presidio": 15.8,
+      "Potrero Hill": 21.1,
+      "Portola": 19.8,
+      "Pacific Heights": 19.5,
+      "Outer Richmond": 18.7,
+      "Outer Mission": 19.4,
+      "Sunset/Parkside": 19.1,
+      "Oceanview/Merced/Ingleside": 19.1,
+      "North Beach": 19.8,
+      "Noe Valley": 20.3,
+      "Lone Mountain/USF": 19.5,
+      "Lincoln Park": 14.6,
+      "Seacliff": 17.9,
+      "Nob Hill": 20.5,
+      "Mission Bay": 20.4,
+      "Mission": 21.5,
+      "Russian Hill": 19.8,
+      "Marina": 19.4,
+      "Lakeshore": 15.8,
+      "Tenderloin": 20.2,
+      "McLaren Park": 17.3,
+      "Japantown": 19.8,
+      "Inner Sunset": 18.4,
+      "Hayes Valley": 20.5,
+      "Haight Ashbury": 19.2,
+      "Golden Gate Park": 15.1,
+      "Inner Richmond": 19.3,
+      "Glen Park": 18.9,
+      "Financial District/South Beach": 19.5,
+      "Excelsior": 19.4,
+      "Chinatown": 20.2,
+      "Castro/Upper Market": 20.5,
+      "Bernal Heights": 20.2,
+      "Bayview Hunters Point": 20.6
+    }
+  },
+  "forecast": {
+    "issued": "2026-08-03T18:00:00Z",
+    "days": [
+      {
+        "date": "2026-08-04",
+        "high": 24.0,
+        "advisory": false
+      },
+      {
+        "date": "2026-08-05",
+        "high": 27.5,
+        "advisory": false
+      },
+      {
+        "date": "2026-08-06",
+        "high": 31.0,
+        "advisory": true
+      }
+    ]
+  }
+}

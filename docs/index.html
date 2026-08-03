@@ -742,6 +742,7 @@ const rampOf = name => css("--ramp-" + name).split(",").map(s => s.trim());
 const HUE_OF = {
   index: "violet", exposure: "violet", sensitivity: "violet", capacity_gap: "violet",
   heat_anomaly: "diverging", heat_p90: "red", heat_absolute: "red", heat_sd: "red",
+  air_temp: "red",
   fog: "blue", canopy_cooling: "blue",
   ndvi: "green",
   median_income: "amber", pct_poverty: "amber", pct_65_plus: "amber",
@@ -1337,17 +1338,21 @@ function drawAll() {
 }
 
 const btnBox = document.getElementById("metric-buttons");
-Object.entries(METRICS).filter(([k]) => MAP_TOGGLE.includes(k)).forEach(([k, m]) => {
-  const b = document.createElement("button");
-  b.className = "seg"; b.textContent = m.label; b.type = "button";
-  b.setAttribute("aria-pressed", k === metric);
-  b.onclick = () => {
-    metric = k;
-    [...btnBox.children].forEach(c => c.setAttribute("aria-pressed", c === b));
-    drawAll();
-  };
-  btnBox.appendChild(b);
-});
+function buildMetricButtons() {
+  btnBox.innerHTML = "";
+  Object.entries(METRICS).filter(([k]) => MAP_TOGGLE.includes(k)).forEach(([k, m]) => {
+    const b = document.createElement("button");
+    b.className = "seg"; b.textContent = m.label; b.type = "button";
+    b.setAttribute("aria-pressed", k === metric);
+    b.onclick = () => {
+      metric = k;
+      [...btnBox.children].forEach(c => c.setAttribute("aria-pressed", c === b));
+      drawAll();
+    };
+    btnBox.appendChild(b);
+  });
+}
+buildMetricButtons();
 
 const picker = document.getElementById("picker");
 [...F].sort((a, b) => P(a).nhood.localeCompare(P(b).nhood)).forEach(f => {
@@ -1550,6 +1555,95 @@ drawTable();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   drawAll(); drawExploreMap(); drawExploreScatter();
 });
+
+/* ---------- live feed ----------------------------------------------------
+   The two dark chips in the status strip are unconnected on purpose, but the
+   seam they plug into is real. Every chart reads properties off the same
+   feature objects and looks its formatting up in METRICS, so a live source
+   writes properties and registers a metric — it rewires no chart.
+
+   Payload shape (docs/live.sample.json is a valid instance):
+
+     {
+       "source":   string,      provenance, shown in the strip
+       "current":  {
+         "observed":      ISO 8601 timestamp,
+         "unit":          "degC",
+         "neighborhoods": { "<neighborhood name>": <number>, ... }
+       },
+       "forecast": {
+         "issued": ISO 8601 timestamp,
+         "days":   [ { "date": "YYYY-MM-DD", "high": <number>,
+                       "advisory": <boolean> }, ... ]
+       }
+     }
+
+   Either section may be absent; each drives its own chip independently. Names
+   must match the `nhood` column exactly — unmatched names are counted and
+   reported rather than silently dropped, because a renamed neighborhood
+   upstream is exactly the failure that would otherwise go unnoticed.
+
+   Load one with ?live=<url>, or call applyLive(payload) from the console.
+   Nothing is fetched otherwise: a page that says "not connected" must not be
+   quietly reaching out to something.
+--------------------------------------------------------------------------- */
+const LIVE_KEY = "air_temp";
+
+function setFeed(name, text) {
+  const chip = [...document.querySelectorAll(".status .feed")]
+    .find(s => s.querySelector("b")?.textContent === name);
+  if (!chip) return;
+  chip.classList.remove("off");
+  chip.classList.add("on");
+  chip.lastChild.nodeValue = " " + text;
+}
+
+const when = iso => new Date(iso).toLocaleString(undefined,
+  { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+function applyLive(p) {
+  if (p.current?.neighborhoods) {
+    const byName = p.current.neighborhoods;
+    const known = new Set(F.map(f => P(f).nhood));
+    const unmatched = Object.keys(byName).filter(n => !known.has(n));
+    let matched = 0;
+    F.forEach(f => {
+      const v = byName[P(f).nhood];
+      P(f)[LIVE_KEY] = v === undefined ? null : v;
+      if (v !== undefined) matched++;
+    });
+    METRICS[LIVE_KEY] = {
+      label: "Air now", kind: "seq", fmt: v => v.toFixed(1) + " °C",
+      blurb: "Air temperature at " + when(p.current.observed)
+    };
+    if (!MAP_TOGGLE.includes(LIVE_KEY)) MAP_TOGGLE.push(LIVE_KEY);
+    buildMetricButtons();
+    drawAll();
+    drawTable();
+    setFeed("Current conditions", matched + " of " + F.length +
+      " neighborhoods · " + when(p.current.observed) +
+      (unmatched.length ? " · " + unmatched.length + " unmatched name(s)" : ""));
+    if (unmatched.length) console.warn("live feed: unmatched names", unmatched);
+  }
+
+  if (p.forecast?.days?.length) {
+    const d = p.forecast.days[0];
+    setFeed("Forecast", "high " + d.high.toFixed(0) + " °C on " + d.date +
+      (d.advisory ? " · heat advisory" : "") + " · issued " + when(p.forecast.issued));
+  }
+
+  if (p.source) {
+    document.querySelector(".status .vintage").textContent = "Live · " + p.source;
+  }
+}
+
+{
+  const url = new URLSearchParams(location.search).get("live");
+  if (url) {
+    fetch(url).then(r => r.json()).then(applyLive)
+      .catch(e => console.error("live feed failed:", e));
+  }
+}
 </script>
 </body>
 </html>
