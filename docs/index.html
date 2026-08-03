@@ -240,6 +240,9 @@
   }
   .analysis p { margin: 0 0 10px; font-size: 0.92rem; max-width: 74ch; }
   .analysis p:last-child { margin-bottom: 0; }
+  /* An aside usually closes its section. Where prose carries on after one, it
+     needs room or it reads as part of the block. */
+  .analysis + p { margin-top: 24px; }
 
   /* A metric invented for this project gets stated as a formula, not described
      in a sentence. */
@@ -345,9 +348,15 @@
      items and each word landed on its own row. */
   .defn > div p { margin: 0; max-width: none; color: inherit; font-size: inherit; }
 
-  /* Which neighborhoods sit in which measurement tier is a list, not a map —
-     the geography adds nothing the fog map has not already said. */
-  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 26px; }
+  /* One header over a pair of cards, so they read as one panel that a live feed
+     would refresh rather than as two separate exhibits. */
+  .chart-head {
+    margin: 0 0 10px; font-size: 0.95rem; font-weight: 600;
+  }
+
+  /* Which neighborhoods sit in which measurement tier is a list beside the map,
+     not a second map — the map answers "where", the list answers "which". */
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
   .tier h4 { margin: 0 0 4px; font-size: 0.95rem; }
   .tier .cap { color: var(--muted); font-size: 0.78rem; margin-bottom: 10px; display: block; }
   .tier-list { display: grid; gap: 3px; }
@@ -360,7 +369,8 @@
   .tier-row.sel { color: var(--accent); font-weight: 600; }
   .tier-row b { font-variant-numeric: tabular-nums; font-weight: 600; }
   .tier-row i { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums;
-                font-size: 0.8rem; min-width: 3.4em; text-align: right; }
+                font-size: 0.8rem; min-width: 4.2em; text-align: right; }
+  .tier .cap em { font-style: normal; color: var(--ink); }
   .controls select { font-size: 0.85rem; padding: 6px 10px; }
   details > summary { margin-bottom: 6px; }
   .scroll table th { cursor: pointer; }
@@ -530,45 +540,6 @@
 </section>
 
 <section>
-  <h2>What the satellite can’t see</h2>
-  <h3>The west is measured only on its warmest days</h3>
-  <p class="note" id="conf-note" style="margin-bottom:14px"></p>
-  <p>A thermal sensor can’t see through fog, so the foggiest neighborhoods are observed almost
-  only on their rare clear — and therefore <em>warm</em> — days. A hard limit of the instrument,
-  not a bug. Usable scenes run from <strong id="obs-min">—</strong> to
-  <strong id="obs-max">—</strong> out of 63 — and since a scene is only usable when it isn’t
-  cloudy, that count is the fog map seen from the other side. The foggiest places are the
-  least-measured places, necessarily.</p>
-  <div class="card">
-    <div class="tiers" id="conf-tiers"></div>
-    <details style="margin-top:18px">
-      <summary id="conf-mid-summary">Moderately measured</summary>
-      <div class="tier-list" id="conf-mid" style="margin-top:10px"></div>
-    </details>
-    <p class="note" style="margin-top:18px"><strong>Nothing is excluded for being foggy.</strong>
-    The filter is binary and per-observation, taken from Landsat’s own quality band: a single
-    pixel-reading is dropped if it is flagged cloud, cloud shadow, cirrus or dilated cloud — and
-    those discards are exactly what the fog layer counts. The only quantitative floors are that a
-    scene must cover at least half the window (62 of 125 failed), a pixel needs at least 5 clear
-    looks before it gets a temperature, and pixels reading as water in more than half their clear
-    looks are masked out.</p>
-    <p class="note"><strong>At neighborhood level nothing is filtered at all.</strong> The tiers
-    above are confidence labels, not gates. Lakeshore’s 14 scenes at 74% fog are in every
-    statistic on this page — flagged as least certain, never removed.</p>
-  </div>
-  <aside class="analysis">
-    <div class="tag">Analysis</div>
-    <p><strong>Every temperature on this page understates how much cooler the west really
-    is.</strong> The foggiest neighborhoods are sampled almost entirely on their clear — and
-    therefore warm — days, so the true fog effect exceeds the <strong id="r-fog-2">—</strong>
-    measured, and the canopy inequity is a floor rather than a ceiling.</p>
-    <p>This is a sampling limit of thermal satellite imagery, not something a better model
-    fixes. Closing it needs an all-weather ground source — dense air-temperature sensors would
-    do it, and would address the surface-versus-air gap at the same time.</p>
-  </aside>
-</section>
-
-<section>
   <h2>Every neighborhood</h2>
   <h3>Ranked by heat vulnerability</h3>
   <div class="card">
@@ -657,15 +628,41 @@
 
 <section>
   <h2>Method &amp; limits</h2>
-  <h3>What this is, and what it isn’t</h3>
+  <h3>Confounding variables</h3>
+  <p class="note" id="conf-note" style="margin-bottom:14px"></p>
+  <h4 class="chart-head">Coverage — where the satellite can see</h4>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin:0 0 4px;font-size:0.95rem">Usable scenes, of 63</h4>
+      <svg id="map-obs" viewBox="0 0 330 345" role="img" aria-label="Map of how many usable satellite scenes each neighborhood has"></svg>
+      <div class="legend" id="lg-obs"></div>
+    </div>
+    <div class="card">
+      <div class="tiers" id="conf-tiers"></div>
+      <details style="margin-top:18px">
+        <summary id="conf-mid-summary">Moderately measured</summary>
+        <div class="tier-list" id="conf-mid" style="margin-top:10px"></div>
+      </details>
+      <p class="note" style="margin-top:14px">Each row: usable scenes, then warm-day sampling
+      bias — the citywide temperature on the days that place was visible, against the average
+      of all 63. Click a name to load it in the profile above.</p>
+    </div>
+  </div>
+  <aside class="analysis">
+    <div class="tag">Analysis</div>
+    <p><strong>The hottest neighborhoods are, if anything, hotter than this page says.</strong>
+    Scenes and fog correlate <strong id="r-obsfog">—</strong> — the same variable:
+    <strong id="obs-lo">—</strong> against <strong id="obs-hi">—</strong>. Every neighborhood is
+    biased warm, <strong id="bias-range">—</strong>, worst where the fog is thickest
+    (<strong id="r-biasfog">—</strong>). On foggy mornings only eastern pixels set the citywide
+    mean, so the east is measured against itself: <strong id="hot-1">—</strong> is a floor,
+    <strong id="cold-1">—</strong> a ceiling, and the fog effect of
+    <strong id="r-fog-2">—</strong> conservative.</p>
+  </aside>
   <p><strong>Blocks marked “Analysis” are generated interpretation, not measurement.</strong>
   Every figure quoted inside one is computed by the pipeline and reproducible from
   <code>data/</code>; the reading placed on those figures is commentary and should be treated
   as such. Charts and tables carry only measured values.</p>
-  <p><strong>This is a static snapshot.</strong> Current conditions and forecast feeds are not
-  connected — the status strip at the top says which sources are live. The page reads a single
-  artifact, <code>docs/data.js</code>, so a live feed replaces that file rather than rewiring
-  any chart.</p>
   <p><strong>Surface temperature is not air temperature</strong>, and Landsat passes late
   morning — so nothing here describes the night, which matters more for health. The spatial
   pattern is meaningful; the absolute values aren’t comparable to a weather station.</p>
@@ -812,7 +809,10 @@ const MAP_TOGGLE = ["index", "heat_anomaly", "ndvi", "fog", "median_income"];
 const QUALITY_METRICS = {
   canopy_cooling: { label: "Cooling per tree", fmt: v => v.toFixed(2) + " °C", kind: "seq",
                     blurb: "°C bought per 0.1 NDVI, from the local regression" },
-  clear_obs: { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
+  // Reversed on purpose. Everywhere else "more" is darker, but this layer is
+  // read as legibility rather than quantity: the places the satellite can
+  // barely see should be the dark ones.
+  clear_obs: { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq", reverse: true,
                blurb: "Usable clear looks, of 63 scenes" },
 };
 Object.assign(METRICS, QUALITY_METRICS);
@@ -848,6 +848,7 @@ function scaleFor(key) {
   }
 
   const ramp = rampOf(hue);
+  if (METRICS[key] && METRICS[key].reverse) ramp.reverse();
   return {
     ramp, lo, hi,
     color: v => (v === null || isNaN(v) ? css("--none")
@@ -1111,8 +1112,9 @@ function drawBars() {
 }
 
 /* ---------- how well is each neighbourhood measured? ---------- */
-// The per-neighborhood confidence chart is gone; the same information now
-// arrives as one sentence, plus the numbers in each tooltip and the table.
+// A count is not an answer to "which ones". The map says where the satellite
+// sees least; these lists name the places and carry the two numbers that
+// explain the ranking — scenes seen, and how foggy the place is.
 function writeConfidenceSummary() {
   const counts = { high: 0, moderate: 0, low: 0 };
   SCORED.forEach(f => counts[P(f).heat_confidence]++);
@@ -1124,14 +1126,14 @@ function writeConfidenceSummary() {
     counts.moderate + " moderately and " + counts.low + " poorly. Usable scenes run from " +
     Math.round(Math.min(...obs)) + " to " + Math.round(Math.max(...obs)) + " of 63.";
 
-  // The tiers, as lists. Each row carries the two numbers that matter — scenes
-  // seen and how foggy the place is — because the whole point is that the
-  // second explains the first.
+  // Each row carries both numbers the grade is made of. Showing scenes alone
+  // made the tiers look mis-sorted — the Mission has 41 scenes and still only
+  // grades moderate, because its sample of days leans warm.
   const row = f => {
     const q = P(f);
     return '<div class="tier-row' + (q.nhood === selected ? " sel" : "") +
       '" data-n="' + q.nhood + '"><span>' + q.nhood + "</span><b>" +
-      q.clear_obs.toFixed(0) + "</b><i>" + Math.round(q.fog * 100) + "% fog</i></div>";
+      q.clear_obs.toFixed(0) + "</b><i>" + signed(q.heat_bias) + " °C</i></div>";
   };
   const byObs = grade => [...SCORED].filter(f => P(f).heat_confidence === grade)
     .sort((a, b) => P(b).clear_obs - P(a).clear_obs);
@@ -1139,10 +1141,11 @@ function writeConfidenceSummary() {
   const high = byObs("high"), low = byObs("low"), mid = byObs("moderate");
   document.getElementById("conf-tiers").innerHTML =
     '<div class="tier"><h4>Best measured — ' + high.length + "</h4>" +
-      '<span class="cap">most usable scenes, least fog</span>' +
+      '<span class="cap">30+ usable scenes <em>and</em> under 0.5 °C of warm-day bias</span>' +
       '<div class="tier-list">' + high.map(row).join("") + "</div></div>" +
     '<div class="tier"><h4>Worst measured — ' + low.length + "</h4>" +
-      '<span class="cap">under 20 usable scenes — read their temperatures with care</span>' +
+      '<span class="cap">under 20 scenes, <em>or</em> more than 1 °C of bias — read their ' +
+      "temperatures with care</span>" +
       '<div class="tier-list">' + low.map(row).join("") + "</div></div>";
   document.getElementById("conf-mid-summary").textContent =
     "Moderately measured — " + mid.length;
@@ -1270,7 +1273,6 @@ function drawTable() {
 function fillProse() {
   const [hmin, hmax] = extent(SCORED, "heat_anomaly");
   const [fmin, fmax] = extent(SCORED, "fog");
-  const [omin, omax] = extent(SCORED, "clear_obs");
   const set = (id, v) => { const n = document.getElementById(id); if (n) n.textContent = v; };
 
   set("t-spread", (hmax - hmin).toFixed(1));
@@ -1284,12 +1286,29 @@ function fillProse() {
   set("r-ndviinc", signed(pearson(SCORED, "ndvi", "median_income")));
   set("r-poc", signed(pearson(SCORED, "index", "pct_poverty")));
   set("fog-range", Math.round(fmin * 100) + "% to " + Math.round(fmax * 100) + "%");
-  set("obs-min", Math.round(omin));
-  set("obs-max", Math.round(omax));
 
   // Data-quality prose, all measured rather than asserted.
   set("r-fog-2", signed(pearson(SCORED, "heat_anomaly", "fog")));
   set("r-cooling", "r = " + signed(pearson(SCORED, "index", "canopy_cooling")));
+  // Three decimals here, not two: this one rounds to −1.00, which reads as a
+  // claim of perfect correlation rather than a measurement.
+  const rObsFog = pearson(SCORED, "clear_obs", "fog");
+  set("r-obsfog", "r = " + (rObsFog >= 0 ? "+" : "−") + Math.abs(rObsFog).toFixed(3));
+  set("r-biasfog", "r = " + signed(pearson(SCORED, "heat_bias", "fog")));
+  const [bmin, bmax] = extent(SCORED, "heat_bias");
+  set("bias-range", signed(bmin) + " to " + signed(bmax) + " °C");
+
+  // Name the ends rather than asserting them, so the claims move with the data.
+  const byHeat = [...SCORED].sort((a, b) => P(b).heat_anomaly - P(a).heat_anomaly);
+  const hottest = P(byHeat[0]), coldest = P(byHeat[byHeat.length - 1]);
+  set("hot-1", hottest.nhood + "’s " + signed(hottest.heat_anomaly) + " °C");
+  set("cold-1", coldest.nhood + "’s " + signed(coldest.heat_anomaly) + " °C");
+
+  const byObs = [...SCORED].sort((a, b) => P(b).clear_obs - P(a).clear_obs);
+  const most = P(byObs[0]), least = P(byObs[byObs.length - 1]);
+  const seen = q => q.clear_obs.toFixed(0) + " scenes in " + q.nhood;
+  set("obs-lo", seen(least));
+  set("obs-hi", seen(most));
 
 
 
@@ -1333,6 +1352,8 @@ function drawAll() {
   drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
   drawLegend("lg-cooling", "canopy_cooling",
     drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
+  // No hatching here: this map IS the hatching, drawn as a value.
+  drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 8 }));
   drawBars();
   writeConfidenceSummary();
 }
