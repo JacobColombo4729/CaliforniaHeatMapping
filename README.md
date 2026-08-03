@@ -285,8 +285,13 @@ python pipeline/join_export.py      # ~5 s
 
 See `environment.yml` for why four packages come from pip. No API keys are required.
 
-The dashboard is a single static HTML file with no build step and no dependencies — maps and
-charts are inline SVG. Open `docs/index.html` directly, or serve the folder:
+The dashboard states the findings once, at the top, and then hands over the apparatus: any of
+29 variables on the map, any pair on a scatter, a clickable correlation matrix across every
+variable, the fitted spatial / mediation / GWR output, and the full table as sortable columns or
+a CSV download. The conclusions are the short list; everything below them is for checking them.
+
+It is a single static HTML file with no build step and no dependencies — maps and charts are
+inline SVG. Open `docs/index.html` directly, or serve the folder:
 
 ```bash
 python -m http.server 8765 --directory docs

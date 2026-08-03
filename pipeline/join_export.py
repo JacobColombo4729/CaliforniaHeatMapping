@@ -312,6 +312,21 @@ def main() -> None:
     (SITE_JSON.parent / "data.js").write_text(
         "const NEIGHBORHOODS = " + payload + ";\n", encoding="utf-8"
     )
+
+    # Bundle whatever model output exists so the page can show the statistics
+    # rather than only their conclusions. Each is optional — the corresponding
+    # panel just stays empty if its script hasn't been run.
+    stats = {}
+    for key, name in (("spatial", "spatial_results.json"),
+                      ("mediation", "mediation_results.json"),
+                      ("gwr", "gwr_results.json")):
+        path = DATA / name
+        if path.exists():
+            stats[key] = json.loads(path.read_text(encoding="utf-8"))
+    (SITE_JSON.parent / "stats.js").write_text(
+        "const STATS = " + json.dumps(stats, allow_nan=False) + ";\n", encoding="utf-8"
+    )
+    print(f"  bundled model output: {', '.join(stats) or 'none found'}")
     site = SITE_JSON.parent.name
     print(f"\n  wrote data/{OUT_JSON.name}, {site}/{SITE_JSON.name}, "
           f"{site}/data.js ({len(payload) / 1024:.0f} KB)")
