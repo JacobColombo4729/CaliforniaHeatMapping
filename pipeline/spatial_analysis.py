@@ -51,8 +51,24 @@ RASTERS = {
     "lst_anomaly": "heat",
     "fog_frequency": "fog",
     "ndvi_median": "ndvi",
+    "ndbi_median": "ndbi",
+    "elevation": "elevation",
+    "slope": "slope",
+    "southness": "southness",
     "clear_obs_count": "clear_obs",
     "sampling_bias": "heat_bias",
+}
+
+# Each block adds a mechanism. Tracking residual spatial clustering as they go
+# in shows which one was actually holding the missing structure.
+SPECS = {
+    "demographics only": ["income_10k", "pct_poverty", "pct_poc"],
+    "+ canopy": ["income_10k", "pct_poverty", "pct_poc", "ndvi"],
+    "+ fog": ["income_10k", "pct_poverty", "pct_poc", "ndvi", "fog"],
+    "+ terrain": ["income_10k", "pct_poverty", "pct_poc", "ndvi", "fog",
+                  "elevation", "slope", "southness"],
+    "+ built-up": ["income_10k", "pct_poverty", "pct_poc", "ndvi", "fog",
+                   "elevation", "slope", "southness", "ndbi"],
 }
 
 # A tract needs enough measured pixels for its mean to mean anything.
@@ -152,6 +168,8 @@ def build() -> gpd.GeoDataFrame:
         & tracts["heat"].notna()
         & tracts["median_income"].notna()
         & tracts["ndvi"].notna()
+        & tracts["elevation"].notna()
+        & tracts["ndbi"].notna()
     )
     tracts = tracts[keep].reset_index(drop=True)
     print(f"  {len(tracts)} usable ({before - len(tracts)} dropped: too few pixels, "
@@ -216,46 +234,57 @@ def main() -> None:
     print(f"\n{'=' * 70}\n  DOES FOG EXPLAIN THE SPATIAL STRUCTURE?\n{'=' * 70}")
     y = tracts[["heat"]].to_numpy(float)
 
-    specs = {
-        "without fog": ["ndvi", "income_10k", "pct_poverty", "pct_poc"],
-        "with fog": ["ndvi", "income_10k", "pct_poverty", "pct_poc", "fog"],
-    }
     results["models"] = {}
-    for label, cols in specs.items():
+    print(f"  {'model':<20} {'R2':>6} {'resid I':>9} {'p':>8}")
+    for label, cols in SPECS.items():
         X = tracts[cols].to_numpy(float)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             model = OLS(y, X, w=w, spat_diag=True, moran=True,
                         name_y="heat", name_x=cols, name_ds="tracts")
-        resid_i, resid_p = model.moran_res[0], model.moran_res[2]
-        print(f"\n  OLS {label}:  R2 = {model.r2:.3f}")
-        for name, beta, t, p in zip(model.name_x[1:], model.betas[1:, 0],
-                                    [v[0] for v in model.t_stat[1:]],
-                                    [v[1] for v in model.t_stat[1:]]):
-            stars = "***" if p < .001 else "**" if p < .01 else "*" if p < .05 else ""
-            print(f"    {name:<16} b = {beta:+8.4f}   p = {p:.4f} {stars}")
-        print(f"    Moran's I on residuals = {resid_i:+.3f}  (p = {resid_p:.4f})")
-        print(f"    LM lag p = {model.lm_lag[1]:.4f}   LM error p = {model.lm_error[1]:.4f}")
+        resid_i, resid_p = float(model.moran_res[0]), float(model.moran_res[2])
+        print(f"  {label:<20} {model.r2:>6.3f} {resid_i:>+9.3f} {resid_p:>8.4f}")
         results["models"][label] = {
-            "r2": model.r2, "resid_moran_I": float(resid_i), "resid_moran_p": float(resid_p),
+            "r2": model.r2, "resid_moran_I": resid_i, "resid_moran_p": resid_p,
             "betas": {k: float(v) for k, v in zip(model.name_x[1:], model.betas[1:, 0])},
             "pvalues": {k: float(v[1]) for k, v in zip(model.name_x[1:], model.t_stat[1:])},
             "lm_lag_p": float(model.lm_lag[1]), "lm_error_p": float(model.lm_error[1]),
         }
 
-    a = results["models"]["without fog"]["resid_moran_I"]
-    b = results["models"]["with fog"]["resid_moran_I"]
-    drop = (a - b) / a * 100 if a else float("nan")
-    print(f"\n  Residual clustering fell {drop:.0f}% when fog entered the model "
-          f"({a:+.3f} -> {b:+.3f}).")
-    results["residual_moran_drop_pct"] = drop
+    full = SPECS["+ built-up"]
+    print(f"\n  Coefficients, full OLS specification:")
+    m = results["models"]["+ built-up"]
+    for name in full:
+        b, p = m["betas"][name], m["pvalues"][name]
+        stars = "***" if p < .001 else "**" if p < .01 else "*" if p < .05 else ""
+        print(f"    {name:<16} b = {b:+9.4f}   p = {p:.4f} {stars}")
+
+    # Multicollinearity: NDVI and NDBI measure opposite sides of the same
+    # surface, so they will be correlated. If a variance inflation factor is
+    # large the coefficients are unstable and should not be read as effects.
+    print("\n  Variance inflation factors (over 10 is a problem):")
+    from statsmodels.stats.outliers_influence import variance_inflation_factor
+    Xf = np.c_[np.ones(n), tracts[full].to_numpy(float)]
+    vifs = {}
+    for i, name in enumerate(full, start=1):
+        v = variance_inflation_factor(Xf, i)
+        vifs[name] = float(v)
+        flag = "  <- collinear" if v > 10 else ""
+        print(f"    {name:<16} {v:6.2f}{flag}")
+    results["vif"] = vifs
+
+    first = results["models"]["demographics only"]["resid_moran_I"]
+    last = results["models"]["+ built-up"]["resid_moran_I"]
+    print(f"\n  Residual clustering across the whole sequence: "
+          f"{first:+.3f} -> {last:+.3f} ({(first - last) / first * 100:.0f}% absorbed)")
+    results["residual_moran_drop_pct"] = (first - last) / first * 100
 
     # --- A properly specified spatial model --------------------------------
     print(f"\n{'=' * 70}\n  SPATIAL MODEL\n{'=' * 70}")
-    cols = specs["with fog"]
+    cols = SPECS["+ built-up"]
     X = tracts[cols].to_numpy(float)
-    lm_lag_p = results["models"]["with fog"]["lm_lag_p"]
-    lm_err_p = results["models"]["with fog"]["lm_error_p"]
+    lm_lag_p = results["models"]["+ built-up"]["lm_lag_p"]
+    lm_err_p = results["models"]["+ built-up"]["lm_error_p"]
     choice = "lag" if lm_lag_p < lm_err_p else "error"
     print(f"  LM diagnostics favour the spatial {choice} model.")
     with warnings.catch_warnings():

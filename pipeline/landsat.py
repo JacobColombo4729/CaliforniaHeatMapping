@@ -151,6 +151,7 @@ def read_scene(item, transform, width, height):
         ("qa", "qa_pixel"),
         ("red", "red"),
         ("nir", "nir08"),
+        ("swir", "swir16"),
     ):
         with rasterio.open(item.assets[asset].href) as src:
             with WarpedVRT(src, **vrt_options) as vrt:
@@ -190,16 +191,28 @@ def read_scene(item, transform, width, height):
     ndvi[~valid] = np.nan
     ndvi = np.clip(ndvi, -1, 1)
 
-    return lst.astype(np.float32), ndvi.astype(np.float32), cloud, water, valid
+    # Built-up index. NDVI says where vegetation is absent; NDBI says where
+    # pavement and rooftops are present. They are related but not the same
+    # thing — bare soil and dry grass read low on NDVI without being impervious —
+    # and the thermal mass of the built surface is its own mechanism.
+    swir = out["swir"].astype(np.float32) * SR_SCALE + SR_OFFSET
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ndbi = (swir - nir) / (swir + nir)
+    ndbi[~valid] = np.nan
+    ndbi = np.clip(ndbi, -1, 1)
+
+    return (lst.astype(np.float32), ndvi.astype(np.float32),
+            ndbi.astype(np.float32), cloud, water, valid)
 
 
 def build_stack(items, transform, width, height):
     if CACHE.exists():
         print(f"  cached stack: {CACHE.name}")
         z = np.load(CACHE)
-        return z["lst"], z["ndvi"], z["cloud"], z["water"], z["valid"]
+        return z["lst"], z["ndvi"], z["ndbi"], z["cloud"], z["water"], z["valid"]
 
-    lst_list, ndvi_list, cloud_list, water_list, valid_list = [], [], [], [], []
+    lst_list, ndvi_list, ndbi_list = [], [], []
+    cloud_list, water_list, valid_list = [], [], []
     skipped = 0
     done = 0
 
@@ -220,9 +233,10 @@ def build_stack(items, transform, width, height):
             if result is None:
                 skipped += 1
                 continue
-            lst, ndvi, cloud, water, valid = result
+            lst, ndvi, ndbi, cloud, water, valid = result
             lst_list.append(lst)
             ndvi_list.append(ndvi)
+            ndbi_list.append(ndbi)
             cloud_list.append(cloud)
             water_list.append(water)
             valid_list.append(valid)
@@ -233,15 +247,16 @@ def build_stack(items, transform, width, height):
 
     lst = np.stack(lst_list)
     ndvi = np.stack(ndvi_list)
+    ndbi = np.stack(ndbi_list)
     cloud = np.stack(cloud_list)
     water = np.stack(water_list)
     valid = np.stack(valid_list)
 
     INTERIM.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
-        CACHE, lst=lst, ndvi=ndvi, cloud=cloud, water=water, valid=valid
+        CACHE, lst=lst, ndvi=ndvi, ndbi=ndbi, cloud=cloud, water=water, valid=valid
     )
-    return lst, ndvi, cloud, water, valid
+    return lst, ndvi, ndbi, cloud, water, valid
 
 
 def write_raster(path: Path, array: np.ndarray, transform, width, height) -> None:
@@ -281,7 +296,7 @@ def main() -> None:
           f"{items[-1].datetime:%Y-%m-%d}\n")
 
     print("Reading scenes...")
-    lst, ndvi, cloud, water, valid = build_stack(items, transform, width, height)
+    lst, ndvi, ndbi, cloud, water, valid = build_stack(items, transform, width, height)
     n_scenes = lst.shape[0]
 
     # --- Water mask --------------------------------------------------------
@@ -341,6 +356,7 @@ def main() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
         ndvi_median = np.nanmedian(np.where(clear, ndvi, np.nan), axis=0)
+        ndbi_median = np.nanmedian(np.where(clear, ndbi, np.nan), axis=0)
 
     # --- How biased is each pixel's sample of days? ----------------------
     # A foggy pixel is only ever seen on its rare clear days, and those are its
@@ -360,6 +376,7 @@ def main() -> None:
     lst_anomaly[thin] = np.nan
     lst_absolute[thin] = np.nan
     ndvi_median[thin] = np.nan
+    ndbi_median[thin] = np.nan
     sampling_bias[thin] = np.nan
     print(f"  dropped {thin.sum():,} px with fewer than {MIN_CLEAR_OBS} clear looks")
     print(f"  anomaly range: {np.nanmin(lst_anomaly):+.1f} to "
@@ -387,6 +404,7 @@ def main() -> None:
     write_raster(ROOT / "data" / "lst_anomaly.tif", lst_anomaly, transform, width, height)
     write_raster(ROOT / "data" / "lst_absolute.tif", lst_absolute, transform, width, height)
     write_raster(ROOT / "data" / "ndvi_median.tif", ndvi_median, transform, width, height)
+    write_raster(ROOT / "data" / "ndbi_median.tif", ndbi_median, transform, width, height)
     write_raster(ROOT / "data" / "fog_frequency.tif", fog, transform, width, height)
     write_raster(ROOT / "data" / "clear_obs_count.tif", clear_count.astype(np.float32),
                  transform, width, height)
