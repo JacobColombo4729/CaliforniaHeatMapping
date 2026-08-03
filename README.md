@@ -1,4 +1,4 @@
-# San Francisco Heat Index
+# The San Francisco Heat Index
 
 Where heat concentrates across San Francisco's 41 neighborhoods, who is least equipped to cope
 with it, and how far the underlying data can be trusted.
