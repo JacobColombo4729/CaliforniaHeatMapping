@@ -20,6 +20,20 @@
     --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #5598e7;
     --seq-4: #2a78d6; --seq-5: #184f95;
 
+    /* One sequential ramp per kind of thing, so a map's hue tells you what it
+       is before you read the legend: heat is red, anything cooling is blue,
+       vegetation green, the composite index magenta, census amber, and
+       data-quality layers a neutral slate because they describe the data
+       rather than the city. Each is a single hue, monotonic in lightness,
+       adjacent steps at least 8 apart in OKLab. */
+    --ramp-red:    #fbdcd8,#f5b0a7,#e8776b,#d1402f,#96241a;
+    --ramp-blue:   #cde2fb,#9ec5f4,#5598e7,#2a78d6,#184f95;
+    --ramp-green:  #d6f0d9,#a4dcac,#5fbe73,#2e9a4b,#186632;
+    --ramp-violet: #f2daf0,#e0abdc,#c470bd,#9c3d93,#682660;
+    --ramp-amber:  #fbe7c4,#f3cd8a,#e0a63c,#b57d05,#7a5300;
+    --ramp-slate:  #e2e1dc,#c2c0b8,#9d9b92,#75736c,#4e4c46;
+    --hue-violet: #9c3d93;
+
     --div-c3: #1c5cab; --div-c2: #3987e5; --div-c1: #9ec5f4;
     --div-mid: #e8e7e3;
     --div-w1: #f0a9a8; --div-w2: #e34948; --div-w3: #a32e2d;
@@ -36,11 +50,18 @@
       --grid: #2c2c2a; --axis: #383835;
       --border: rgba(255, 255, 255, 0.10);
       --accent: #3987e5;
+      --ramp-red:    #96241a,#d1402f,#e8776b,#f5b0a7,#fbdcd8;
+      --ramp-blue:   #184f95,#2a78d6,#5598e7,#9ec5f4,#cde2fb;
+      --ramp-green:  #186632,#2e9a4b,#5fbe73,#a4dcac,#d6f0d9;
+      --ramp-violet: #682660,#9c3d93,#c470bd,#e0abdc,#f2daf0;
+      --ramp-amber:  #7a5300,#b57d05,#e0a63c,#f3cd8a,#fbe7c4;
+      --ramp-slate:  #4e4c46,#75736c,#9d9b92,#c2c0b8,#e2e1dc;
+      --hue-violet: #c470bd;
       --seq-1: #184f95; --seq-2: #2a78d6; --seq-3: #5598e7;
       --seq-4: #9ec5f4; --seq-5: #cde2fb;
-      --div-c3: #9ec5f4; --div-c2: #5598e7; --div-c1: #2a5f9e;
-      --div-mid: #383835;
-      --div-w1: #7a3130; --div-w2: #e34948; --div-w3: #f3a9a8;
+      --div-c3: #7ab4f0; --div-c2: #4784cf; --div-c1: #2c5075;
+      --div-mid: #3a3a37;
+      --div-w1: #7a3a30; --div-w2: #c9483a; --div-w3: #f0705c;
       --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70;
       --cat-4: #c98500; --cat-5: #d55181;
       --none: #35342f;
@@ -53,11 +74,18 @@
     --grid: #2c2c2a; --axis: #383835;
     --border: rgba(255, 255, 255, 0.10);
     --accent: #3987e5;
+    --ramp-red:    #96241a,#d1402f,#e8776b,#f5b0a7,#fbdcd8;
+    --ramp-blue:   #184f95,#2a78d6,#5598e7,#9ec5f4,#cde2fb;
+    --ramp-green:  #186632,#2e9a4b,#5fbe73,#a4dcac,#d6f0d9;
+    --ramp-violet: #682660,#9c3d93,#c470bd,#e0abdc,#f2daf0;
+    --ramp-amber:  #7a5300,#b57d05,#e0a63c,#f3cd8a,#fbe7c4;
+    --ramp-slate:  #4e4c46,#75736c,#9d9b92,#c2c0b8,#e2e1dc;
+    --hue-violet: #c470bd;
     --seq-1: #184f95; --seq-2: #2a78d6; --seq-3: #5598e7;
     --seq-4: #9ec5f4; --seq-5: #cde2fb;
-    --div-c3: #9ec5f4; --div-c2: #5598e7; --div-c1: #2a5f9e;
-    --div-mid: #383835;
-    --div-w1: #7a3130; --div-w2: #e34948; --div-w3: #f3a9a8;
+    --div-c3: #7ab4f0; --div-c2: #4784cf; --div-c1: #2c5075;
+    --div-mid: #3a3a37;
+    --div-w1: #7a3a30; --div-w2: #c9483a; --div-w3: #f0705c;
     --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70;
     --cat-4: #c98500; --cat-5: #d55181;
     --none: #35342f;
@@ -134,6 +162,17 @@
   .legend .ramp { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .legend .ramp i { width: 30px; height: 11px; border-radius: 2px; display: block; }
   .legend .swatches { display: flex; gap: 2px; }
+  .legend .bar {
+    position: relative; display: block; width: 168px; height: 11px; border-radius: 3px;
+  }
+  .legend .bar .zero {
+    position: absolute; top: 13px; transform: translateX(-50%);
+    font-size: 0.68rem; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .legend .bar .zero::before {
+    content: ""; position: absolute; left: 50%; top: -13px; width: 1px; height: 11px;
+    background: var(--ink); opacity: .55;
+  }
   .legend .cap { color: var(--muted); font-size: 0.78rem; flex-basis: 100%; }
   .legend .end { color: var(--ink-2); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
   .lg-key { display: flex; align-items: center; gap: 7px; margin-right: 16px; font-size: 0.82rem; color: var(--ink-2); }
@@ -298,6 +337,7 @@
 <section>
   <h2>What the satellite can’t see</h2>
   <h3>The west is measured only on its warmest days</h3>
+  <p class="note" id="conf-note" style="margin-bottom:14px"></p>
   <p>A thermal sensor can’t see through fog, so the foggiest neighborhoods are observed almost
   only on their rare clear — and therefore <em>warm</em> — days. A hard limit of the instrument,
   not a bug. What you can do is measure it: <strong>left</strong>, usable scenes out of 63, from
@@ -319,11 +359,6 @@
   <p><strong>So every temperature here understates how much cooler the west really is.</strong>
   The true fog effect exceeds the <strong id="r-fog-2">—</strong> shown earlier, making the
   canopy inequity a floor rather than a ceiling.</p>
-  <div class="card">
-    <h4 style="margin:0 0 10px;font-size:0.95rem">Confidence by neighborhood</h4>
-    <svg id="conf-bars" role="img" aria-label="Satellite measurement confidence for every neighborhood"></svg>
-    <p class="note" id="conf-note"></p>
-  </div>
 </section>
 
 <section>
@@ -483,20 +518,46 @@ const money = v => "$" + Math.round(v / 1000) + "k";
    Sequential = one hue, light to dark (reversed in dark mode so "more" always
    moves away from the surface). Diverging = blue/red with a neutral midpoint,
    used only for the heat anomaly, which has a true zero: the city average. */
-const seq = () => [css("--seq-1"), css("--seq-2"), css("--seq-3"), css("--seq-4"), css("--seq-5")];
-const div6 = () => [css("--div-c3"), css("--div-c2"), css("--div-c1"),
-                    css("--div-w1"), css("--div-w2"), css("--div-w3")];
+/* ---------- colour ----------
+   Each variable draws on the ramp that matches what it *is*, so the hue tells
+   you the subject before you read the legend. Colour is blended continuously
+   between the ramp's stops rather than snapped into bins — the underlying
+   quantities are continuous, and hard class edges invent boundaries the data
+   does not have. */
+const rampOf = name => css("--ramp-" + name).split(",").map(s => s.trim());
 
-function quantileBreaks(values, n) {
-  const s = [...values].sort((a, b) => a - b), out = [];
-  for (let i = 1; i < n; i++) out.push(s[Math.floor(i * s.length / n)]);
-  return out;
+const HUE_OF = {
+  index: "violet", exposure: "violet", sensitivity: "violet", capacity_gap: "violet",
+  heat_anomaly: "diverging", heat_p90: "red", heat_absolute: "red", heat_sd: "red",
+  fog: "blue", canopy_cooling: "blue",
+  ndvi: "green",
+  median_income: "amber", pct_poverty: "amber", pct_65_plus: "amber",
+  pct_under_5: "amber", pct_renter: "amber", pct_limited_english: "amber",
+  population: "amber", households: "amber",
+  pct_poc: "amber", pct_white_nh: "amber", pct_asian_nh: "amber",
+  pct_hispanic: "amber", pct_black_nh: "amber",
+  clear_obs: "slate", heat_bias: "slate", acs_cv: "slate",
+  pixel_coverage: "slate", cooling_local_r2: "slate",
+};
+
+// Interpolating straight in sRGB is normally muddy, but these ramps were built
+// with their stops already perceptually spaced (adjacent steps ≥ 8 ΔE in
+// OKLab), so each segment is short enough that the shortcut is indistinguishable
+// from doing it properly.
+function mix(a, b, t) {
+  const pa = [1, 3, 5].map(i => parseInt(a.slice(i, i + 2), 16));
+  const pb = [1, 3, 5].map(i => parseInt(b.slice(i, i + 2), 16));
+  return "#" + pa.map((v, i) =>
+    Math.round(v + (pb[i] - v) * t).toString(16).padStart(2, "0")).join("");
 }
-function classify(v, breaks) {
-  let i = 0;
-  while (i < breaks.length && v >= breaks[i]) i++;
-  return i;
+function rampColor(ramp, t) {
+  if (!(t >= 0)) t = 0;
+  if (t > 1) t = 1;
+  const x = t * (ramp.length - 1);
+  const i = Math.min(Math.floor(x), ramp.length - 2);
+  return mix(ramp[i], ramp[i + 1], x - i);
 }
+const gradientOf = ramp => "linear-gradient(to right," + ramp.join(",") + ")";
 
 const METRICS = {
   index:         { label: "Vulnerability", fmt: v => v.toFixed(0), kind: "seq",
@@ -529,19 +590,41 @@ const QUALITY_METRICS = {
 Object.assign(METRICS, QUALITY_METRICS);
 
 function scaleFor(key) {
-  const m = METRICS[key] || { kind: "seq" };
-  const vals = SCORED.map(f => P(f)[key]).filter(v => v !== null);
-  if (m.kind === "div") {
-    // The midpoint must mean "no different from the baseline", so it never
-    // floats with the data even when the breaks around it do.
-    const breaks = typeof m.breaks === "function" ? m.breaks(vals)
-                 : (m.breaks || [-4, -2, -0.5, 0.5, 2]);
-    const ramp = div6();
-    return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
+  const values = SCORED.map(f => P(f)[key]).filter(v => v !== null && !isNaN(v));
+  const lo = Math.min(...values), hi = Math.max(...values);
+  const hue = HUE_OF[key] || "blue";
+
+  if (hue === "diverging") {
+    // Heat anomaly is measured against the city average, so zero means "no
+    // different" and must sit exactly at the neutral midpoint however lopsided
+    // the two arms are.
+    //
+    // The arms come from dedicated diverging tokens rather than from the
+    // sequential ramps. Reusing the sequential ones put the *palest* red at the
+    // hottest end in dark mode, so the hottest neighborhoods rendered pale pink
+    // while merely warm ones were deep red — inverting the one colour
+    // convention everybody already knows.
+    const ramp = [
+      css("--div-c3"), css("--div-c2"), css("--div-c1"),
+      css("--div-mid"),
+      css("--div-w1"), css("--div-w2"), css("--div-w3"),
+    ];
+    return {
+      ramp, lo, hi, mid: 0, diverging: true,
+      color: v => {
+        if (v === null || isNaN(v)) return css("--none");
+        const t = v < 0 ? 0.5 * (1 - (lo ? v / lo : 0)) : 0.5 + 0.5 * (hi ? v / hi : 0);
+        return rampColor(ramp, t);
+      },
+    };
   }
-  const breaks = quantileBreaks(vals, 5);
-  const ramp = seq();
-  return { ramp, breaks, color: v => (v === null ? css("--none") : ramp[classify(v, breaks)]) };
+
+  const ramp = rampOf(hue);
+  return {
+    ramp, lo, hi,
+    color: v => (v === null || isNaN(v) ? css("--none")
+                 : rampColor(ramp, hi === lo ? 0.5 : (v - lo) / (hi - lo))),
+  };
 }
 
 /* ---------- projection ---------- */
@@ -661,20 +744,24 @@ function drawMap(svgId, key, opts = {}) {
 function drawLegend(id, key, sc, opts = {}) {
   const box = document.getElementById(id);
   const m = METRICS[key] || { fmt: v => v.toFixed(2), blurb: "" };
-  const lo = sc.breaks[0], hi = sc.breaks[sc.breaks.length - 1];
-  const swatches = sc.ramp.map(c =>
-    '<i style="background:' + c + '"></i>').join("");
   const hatchKey = opts.hatch
     ? '<span class="lg-key"><i style="background:repeating-linear-gradient(45deg,' +
       css("--ink") + ' 0 1.5px,transparent 1.5px 7px);opacity:.6"></i>' +
       "satellite sees least</span>"
     : "";
+  // A continuous fill needs a continuous key. A diverging scale also gets its
+  // zero marked, since "no different from the city average" is the one value
+  // on that bar with a meaning of its own.
+  const zeroTick = sc.diverging
+    ? '<span class="zero" style="left:' +
+      (100 * (0.5 * (1 - (sc.lo ? 0 / sc.lo : 0)))).toFixed(1) + '%">0</span>'
+    : "";
   box.innerHTML =
-    '<span class="cap">' + m.blurb +
-      (m.kind === "div" ? " · fixed breaks around zero" : " · quantile bins") + "</span>" +
-    '<span class="ramp"><span class="end">' + m.fmt(lo) + "</span>" +
-      '<span class="swatches">' + swatches + "</span>" +
-      '<span class="end">' + m.fmt(hi) + "</span></span>" +
+    '<span class="cap">' + m.blurb + "</span>" +
+    '<span class="ramp"><span class="end">' + m.fmt(sc.lo) + "</span>" +
+      '<span class="bar" style="background:' + gradientOf(sc.ramp) + '">' + zeroTick +
+      "</span>" +
+      '<span class="end">' + m.fmt(sc.hi) + "</span></span>" +
     '<span class="lg-key"><i style="background:' + css("--none") + '"></i>not scored</span>' +
     hatchKey;
 }
@@ -778,7 +865,7 @@ function drawBars() {
     g.appendChild(el("text", { x: L - 10, y: y + 13, class: "tick", "text-anchor": "end" }, q.nhood));
     g.appendChild(el("rect", {
       x: L, y: y + 3, width: Math.max(bw(q.index), 1), height: rowH - 8,
-      rx: 4, fill: q.nhood === selected ? css("--ink") : css("--accent")
+      rx: 4, fill: q.nhood === selected ? css("--ink") : css("--hue-violet")
     }));
     g.appendChild(el("text", { x: L + bw(q.index) + 8, y: y + 13, class: "tick" }, q.index.toFixed(0)));
     const body = "<b>" + q.nhood + "</b><span>Vulnerability " + q.index.toFixed(1) +
@@ -796,58 +883,19 @@ function drawBars() {
 }
 
 /* ---------- how well is each neighbourhood measured? ---------- */
-const CONF_COLOR = { high: "#0ca30c", moderate: "#fab219", low: "#ec835a" };
-
-function drawConfBars() {
-  const svg = document.getElementById("conf-bars");
-  svg.innerHTML = "";
-  const rows = [...SCORED].sort((a, b) => P(a).clear_obs - P(b).clear_obs);
-  const rowH = 19, L = 168, R = 118, T = 6, W = 720;
-  const H = T + rows.length * rowH + 6;
-  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-  const TOTAL = 63;
-  const bw = v => (v / TOTAL) * (W - L - R);
-
-  // Track shows the scenes that existed; the fill shows the ones that were
-  // usable. The gap between them is the blind spot.
-  rows.forEach((f, i) => {
-    const q = P(f), y = T + i * rowH;
-    const g = el("g", { tabindex: "0" });
-    g.style.cursor = "pointer";
-    g.appendChild(el("rect", { x: 0, y: y, width: W, height: rowH - 2, fill: "transparent" }));
-    g.appendChild(el("text", { x: L - 22, y: y + 12, class: "tick", "text-anchor": "end" }, q.nhood));
-    g.appendChild(el("circle", {
-      cx: L - 11, cy: y + 8, r: 4, fill: CONF_COLOR[q.heat_confidence],
-    }));
-    g.appendChild(el("rect", {
-      x: L, y: y + 3, width: W - L - R, height: rowH - 8, rx: 3, fill: css("--grid"),
-    }));
-    g.appendChild(el("rect", {
-      x: L, y: y + 3, width: Math.max(bw(q.clear_obs), 1), height: rowH - 8,
-      rx: 3, fill: q.nhood === selected ? css("--ink") : css("--accent"),
-    }));
-    g.appendChild(el("text", { x: W - R + 10, y: y + 12, class: "tick" },
-      q.clear_obs.toFixed(0) + " looks · +" + q.heat_bias.toFixed(2) + " °C"));
-    const body = "<b>" + q.nhood + "</b><span>" +
-      q.clear_obs.toFixed(0) + " usable looks of " + TOTAL + " scenes<br>" +
-      "Warm-day bias +" + q.heat_bias.toFixed(2) + " °C<br>" +
-      "Within-neighborhood spread " + q.heat_sd.toFixed(1) + " °C<br>" +
-      "Satellite confidence: " + q.heat_confidence + "</span>";
-    g.addEventListener("mousemove", e => showTip(e, body));
-    g.addEventListener("mouseleave", hideTip);
-    g.addEventListener("focus", () => showTip({ clientX: 40, clientY: 90 }, body));
-    g.addEventListener("blur", hideTip);
-    g.addEventListener("click", () => select(q.nhood));
-    svg.appendChild(g);
-  });
-
+// The per-neighborhood confidence chart is gone; the same information now
+// arrives as one sentence, plus the numbers in each tooltip and the table.
+function writeConfidenceSummary() {
   const counts = { high: 0, moderate: 0, low: 0 };
-  rows.forEach(f => counts[P(f).heat_confidence]++);
-  document.getElementById("conf-note").innerHTML =
-    "Sorted by usable observations. Dot colour is the confidence grade: " +
-    counts.high + " high, " + counts.moderate + " moderate, " + counts.low +
-    " low. Grades come from fixed thresholds — fewer than 20 looks, or more than " +
-    "1.0 °C of warm-day bias, drops a neighborhood to low.";
+  SCORED.forEach(f => counts[P(f).heat_confidence]++);
+  const obs = SCORED.map(f => P(f).clear_obs);
+  const node = document.getElementById("conf-note");
+  if (!node) return;
+  node.textContent =
+    "Of " + SCORED.length + " scored neighborhoods, " + counts.high + " are well measured, " +
+    counts.moderate + " moderately, and " + counts.low + " poorly — fewer than 20 usable " +
+    "scenes or more than 1 °C of warm-day bias. Usable scenes run from " +
+    Math.round(Math.min(...obs)) + " to " + Math.round(Math.max(...obs)) + " of 63.";
 }
 
 /* ---------- neighbourhood profile ---------- */
@@ -1066,7 +1114,7 @@ function drawAll() {
   drawLegend("lg-cooling", "canopy_cooling",
     drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
   drawBars();
-  drawConfBars();
+  writeConfidenceSummary();
 }
 
 const btnBox = document.getElementById("metric-buttons");
