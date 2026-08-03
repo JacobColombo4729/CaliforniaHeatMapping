@@ -125,7 +125,9 @@
   .dot { fill: var(--accent); stroke: var(--surface-1); stroke-width: 2; }
   .dlabel { fill: var(--ink); font-size: 11.5px; font-weight: 500; }
 
-  .mapbox { max-width: 560px; margin: 0 auto; }
+  /* Interactive figures get room. A map you can re-point deserves more space
+     than one that only ever shows a single thing. */
+  .mapbox { max-width: 680px; margin: 0 auto; }
   .legend { display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
   /* The ramp must never wrap mid-scale — swatches split across lines stop
      reading as one continuous scale. */
@@ -190,9 +192,8 @@
 <section>
   <h2>Where it’s hot</h2>
   <h3>Every neighborhood, five ways</h3>
-  <p>Surface temperature is shown as an <strong>anomaly</strong> — degrees above or below the
-  citywide average on the same day — so a hot afternoon can’t masquerade as a hot
-  neighborhood. Switch the metric and watch which patterns move together.</p>
+  <p>Heat is an <strong>anomaly</strong> — degrees above or below the citywide average that
+  day — so a hot afternoon can’t masquerade as a hot neighborhood.</p>
   <div class="card">
     <div class="controls" id="metric-buttons" role="group" aria-label="Map metric"></div>
     <div class="mapbox">
@@ -208,49 +209,31 @@
 <section>
   <h2>The pattern that isn’t there</h2>
   <h3>Income doesn’t predict heat. Poverty does — but only indirectly.</h3>
-  <p>Plot every neighborhood’s heat anomaly against its median household income and the cloud
-  is flat. The correlation is <strong id="r-income">—</strong> — for practical purposes, nothing.
-  Split the city into income quartiles and the poorest and richest differ by well under a degree,
-  against a <strong id="span-1">—</strong> °C span across the city.</p>
-  <p>But 38 neighborhoods is a small sample — it can only resolve correlations above about 0.32.
-  Repeating the analysis across <strong>232 census tracts</strong>, where that floor drops to
-  0.13, sharpens the picture. Median income still doesn’t resolve. The <strong>poverty rate
-  does, at r = +0.20</strong>. Poorer tracts really are hotter.</p>
-  <p>Put the demographic variables in a regression on their own and they explain
-  <strong>4%</strong> of the variation in heat across the city. Income, poverty and race
-  together. Physical geography explains twenty times as much.</p>
-  <p><strong>The flat line is two opposing forces cancelling, not an absence of one.</strong>
-  A formal mediation test — with a bootstrap that resamples blocks of geography rather than
-  individual tracts, so it doesn’t pretend neighbours are independent — separates them.</p>
-  <p>Money buys tree canopy, and canopy cools: <strong>−0.032 °C per $10,000</strong> of median
-  income, travelling through vegetation. But income <em>also</em> raises heat directly, by
-  <strong>+0.041 °C per $10,000</strong>, because wealthy San Francisco includes its densest and
-  most built-up ground. The two nearly annul each other, and the total reads as zero.</p>
-  <p>The same structure holds for race, and here nothing offsets it. Running the path from the
-  share of residents of color through canopy to heat: <strong>a tract that is 90% residents of
-  color runs about 0.4 °C hotter than one at 30%, entirely by way of having less tree
-  canopy.</strong></p>
+  <p>The cloud is flat: <strong id="r-income">—</strong>. Demographics on their own — income,
+  poverty and race together — explain <strong>4%</strong> of the variation in heat. Physical
+  geography explains twenty times as much.</p>
+  <p><strong>But the flat line is two forces cancelling, not an absence of one.</strong> Money
+  buys canopy, which cools (−0.032 °C per $10,000); income also raises heat directly
+  (+0.041 °C), because wealthy San Francisco holds its densest built ground. For race nothing
+  offsets it — <strong>a tract at 90% residents of color runs about 0.4 °C hotter than one at
+  30%, purely by having less canopy</strong>.</p>
   <div class="card">
     <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
     <p class="note" id="cap-income"></p>
-    <p class="note">One dot per scored neighborhood. The line is a least-squares fit, drawn to
-    show how little slope there is. Click any dot to open that neighborhood’s profile.</p>
+    <p class="note">One dot per neighborhood; the line is a least-squares fit. Click a dot to
+    open that neighborhood. Figures beyond the chart come from 232 census tracts and a spatial
+    error model — see Explore.</p>
     <p class="note" id="null-why"></p>
-    <p class="note">Tract-level figures come from <code>pipeline/spatial_analysis.py</code>:
-    Queen-contiguity weights, Moran’s I, and a spatial error model chosen by Lagrange Multiplier
-    diagnostics (λ = 0.68). Ordinary regression is not valid here — every variable is strongly
-    spatially clustered, which makes standard errors too small and p-values overconfident.</p>
   </div>
 </section>
 
 <section>
   <h2>Why</h2>
   <h3>The fog shadow does the sorting</h3>
-  <p>The same satellite passes that measure temperature also record which pixels were under
-  cloud. Sum those and you get a fog climatology: <strong id="fog-range">—</strong> of
-  observations obscured, rising sharply toward the ocean. Put the two maps together and
-  they are near mirror images — heat against fog correlates <strong id="r-fog">—</strong>,
-  and against tree canopy <strong id="r-ndvi">—</strong>.</p>
+  <p>The same passes that measure temperature record which pixels were under cloud. Summed,
+  they give a fog climatology — <strong id="fog-range">—</strong> of observations obscured,
+  rising toward the ocean. The two maps are near mirror images: heat against fog
+  <strong id="r-fog">—</strong>, against canopy <strong id="r-ndvi">—</strong>.</p>
   <div class="grid-2">
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:0.95rem">Surface heat</h4>
@@ -263,20 +246,18 @@
       <div class="legend" id="lg-fog"></div>
     </div>
   </div>
-  <p>Crucially, <strong>fog is distributed by geography, not by wealth or race.</strong> Its
-  correlation with income is <strong id="r-fogincome">—</strong> and with the share of
-  residents of color <strong id="r-fogpoc">—</strong>. It is the one major driver of heat here
-  that is handed out indifferently — and it is strong enough to flatten the heat-poverty
-  relationship that shows up almost everywhere else.</p>
+  <p><strong>Fog is distributed by geography, not wealth or race</strong> — with income
+  <strong id="r-fogincome">—</strong>, with residents of color <strong id="r-fogpoc">—</strong>.
+  It is the one major driver handed out indifferently, and strong enough to flatten the
+  heat–poverty pattern seen in most other cities.</p>
 </section>
 
 <section>
   <h2>What the fog hides</h2>
   <h3>The shade people build is not distributed evenly</h3>
-  <p>Vegetation cools nearly as strongly as fog — but unlike fog, it follows money and race.
+  <p>Vegetation cools nearly as strongly as fog — but unlike fog it follows money and race.
   Greener neighborhoods are richer (<strong id="r-ndviinc">—</strong>) and whiter
-  (<strong id="r-ndvipoc">—</strong>). The fog gradient is so large that it buries this in the
-  raw temperature numbers, but it is the part of the picture the city can actually change.</p>
+  (<strong id="r-ndvipoc">—</strong>). It is the part of the picture a city can change.</p>
   <div class="grid-2">
     <div class="card">
       <svg id="sc-canopy-income" viewBox="0 0 400 320" role="img" aria-label="Scatter of vegetation against income"></svg>
@@ -289,14 +270,11 @@
   </div>
 
   <h3 style="margin-top:44px">But a tree is not worth the same everywhere</h3>
-  <p>Fitting one canopy effect for the whole city assumes a tree in the Sunset does the same
-  work as a tree in the Mission. Letting the effect vary by location instead — a separate local
-  regression at every tract — fits dramatically better, and shows it does not.</p>
-  <p><strong>Trees buy the most cooling on the foggy west side</strong>, about
-  <strong>1.7 °C</strong> per 0.1 of added greenness in the Outer Richmond and Inner Sunset.
-  They buy almost <strong>nothing</strong> in South of Market, Bayview and the Financial
-  District. Cooling power tracks fog at r = +0.66 — the opposite of what you'd guess, and most
-  likely because fog keeps trees watered enough to transpire.</p>
+  <p>Letting the canopy effect vary by location instead of fitting one citywide number fits far
+  better. <strong>Trees buy about 1.7 °C per 0.1 of added greenness in the Outer Richmond and
+  Inner Sunset, and almost nothing in South of Market, Bayview or the Financial District.</strong>
+  Cooling tracks fog at r = +0.66 — the opposite of the obvious guess, most likely because fog
+  keeps trees watered enough to transpire.</p>
   <div class="grid-2">
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:0.95rem">Cooling bought per 0.1 NDVI</h4>
@@ -312,21 +290,19 @@
   <p><strong>Which means tree planting is weakest exactly where heat vulnerability is
   highest.</strong> The two run against each other at <strong id="r-cooling">—</strong>: the
   neighborhoods that most need cooling are the ones where a tree delivers least of it.</p>
-  <p>That isn’t an argument against planting trees in the Mission. It’s an argument that trees
-  alone won’t close that gap, and that cool roofs, less pavement and built shade probably matter
-  more in the dense east.</p>
+  <p class="note">Not an argument against planting trees in the Mission — an argument that trees
+  alone won’t close that gap, and that cool roofs and less pavement likely matter more in the
+  dense east.</p>
 </section>
 
 <section>
   <h2>What the satellite can’t see</h2>
   <h3>The west is measured only on its warmest days</h3>
-  <p>A thermal sensor cannot see through fog, so the foggiest neighborhoods are observed almost
-  exclusively on their rare clear days — which are their <em>warm</em> days. This is not a bug
-  to be fixed; it is a hard limit of the instrument. What you can do is measure it.</p>
-  <p><strong>Left:</strong> how many of the 63 scenes actually yielded a usable reading, from
-  <strong id="obs-min">—</strong> to <strong id="obs-max">—</strong>.
-  <strong>Right:</strong> how much hotter the city was, on average, on the particular days each
-  neighborhood happened to be visible. That second number is the bias, in degrees.</p>
+  <p>A thermal sensor can’t see through fog, so the foggiest neighborhoods are observed almost
+  only on their rare clear — and therefore <em>warm</em> — days. A hard limit of the instrument,
+  not a bug. What you can do is measure it: <strong>left</strong>, usable scenes out of 63, from
+  <strong id="obs-min">—</strong> to <strong id="obs-max">—</strong>; <strong>right</strong>, how
+  much hotter the city ran on the days each neighborhood happened to be visible.</p>
   <div class="grid-2">
     <div class="card">
       <h4 style="margin:0 0 4px;font-size:0.95rem">Usable observations</h4>
@@ -340,10 +316,9 @@
     </div>
   </div>
   <p id="bias-summary"></p>
-  <p><strong>Every temperature number on this page therefore understates how much cooler the
-  west side really is.</strong> The true fog effect is larger than the
-  <strong id="r-fog-2">—</strong> shown earlier, which makes the canopy inequity a floor rather
-  than a ceiling.</p>
+  <p><strong>So every temperature here understates how much cooler the west really is.</strong>
+  The true fog effect exceeds the <strong id="r-fog-2">—</strong> shown earlier, making the
+  canopy inequity a floor rather than a ceiling.</p>
   <div class="card">
     <h4 style="margin:0 0 10px;font-size:0.95rem">Confidence by neighborhood</h4>
     <svg id="conf-bars" role="img" aria-label="Satellite measurement confidence for every neighborhood"></svg>
@@ -354,14 +329,12 @@
 <section>
   <h2>Every neighborhood</h2>
   <h3>Ranked by heat vulnerability</h3>
-  <p>The index combines <strong>exposure</strong> (heat, vegetation, fog),
-  <strong>sensitivity</strong> (residents over 65 and under 5, poverty) and a
-  <strong>capacity gap</strong> (income, renting, limited-English households). Each variable is
-  percentile-ranked, averaged within its component, and the three components combined by
-  geometric mean — so strength in one cannot fully cancel exposure in another.</p>
-  <p><strong>Race and ethnicity are deliberately not inputs.</strong> Had they been, the finding
-  that vulnerability falls hardest on communities of color would be circular. Kept out, it is a
-  result: the index correlates <strong id="r-poc">—</strong> with the share of residents of color.</p>
+  <p>Exposure (heat, vegetation, fog), sensitivity (over 65, under 5, poverty) and a capacity
+  gap (income, renting, limited English) — each percentile-ranked, then combined by geometric
+  mean so strength in one can’t cancel exposure in another.</p>
+  <p><strong>Race is deliberately not an input.</strong> Included, the finding that vulnerability
+  falls hardest on communities of color would be circular. Excluded, it is a result:
+  <strong id="r-poc">—</strong>.</p>
   <div class="card">
     <svg id="bars" role="img" aria-label="Neighborhoods ranked by heat vulnerability index"></svg>
     <p class="note">Ranks a few places apart should be read as ties. The index inherits the
@@ -390,22 +363,23 @@
 <section>
   <h2>Explore</h2>
   <h3>Everything the story was built from</h3>
-  <p>The sections above make an argument. This one hands over the material, so you can check it
-  or look for something else entirely. Any variable on the map, any pair on the scatter.</p>
-  <div class="grid-2">
-    <div class="card">
-      <div class="controls"><label class="pick">Map<select id="x-metric"></select></label></div>
-      <svg id="x-map" viewBox="0 0 340 355" role="img" aria-label="Map of any chosen variable"></svg>
-      <div class="legend" id="x-legend"></div>
+  <p>Any variable on the map, any pair on the scatter — check the argument above, or look for
+  something else entirely.</p>
+  <div class="card">
+    <div class="controls"><label class="pick">Map<select id="x-metric"></select></label></div>
+    <div class="mapbox" style="max-width:660px">
+      <svg id="x-map" viewBox="0 0 560 580" role="img" aria-label="Map of any chosen variable"></svg>
     </div>
-    <div class="card">
-      <div class="controls">
-        <label class="pick">X<select id="x-sx"></select></label>
-        <label class="pick">Y<select id="x-sy"></select></label>
-      </div>
-      <svg id="x-scatter" viewBox="0 0 420 355" role="img" aria-label="Scatter of two chosen variables"></svg>
-      <p class="note" id="x-cap"></p>
+    <div class="legend" id="x-legend"></div>
+  </div>
+
+  <div class="card">
+    <div class="controls">
+      <label class="pick">X<select id="x-sx"></select></label>
+      <label class="pick">Y<select id="x-sy"></select></label>
     </div>
+    <svg id="x-scatter" viewBox="0 0 900 440" role="img" aria-label="Scatter of two chosen variables"></svg>
+    <p class="note" id="x-cap"></p>
   </div>
 
   <details style="margin-top:26px">
@@ -446,24 +420,18 @@
 <section>
   <h2>Method &amp; limits</h2>
   <h3>What this is, and what it isn’t</h3>
-  <p><strong>Surface temperature is not air temperature.</strong> Landsat measures the skin
-  temperature of roofs and pavement, which runs far hotter than the air a person stands in. The
-  spatial pattern is meaningful; the absolute values are not comparable to a weather station.</p>
-  <p><strong>Daytime only.</strong> Landsat passes late morning. Night-time heat retention is
-  the more health-relevant variable and is not measured here.</p>
-  <p><strong>Three neighborhoods are parks</strong> — Golden Gate Park, McLaren Park and Lincoln
-  Park — with between 58 and 160 residents. Their census rates are noise, so they are mapped but
-  never scored or ranked.</p>
-  <p><strong>Neighborhood median income is an approximation.</strong> Medians cannot be summed,
-  so it is a household-weighted mean of tract medians. Every other rate is exact — summed
-  numerator over summed denominator, which is what population weighting means.</p>
-  <p><strong>41 units is coarse.</strong> Real inequity exists within neighborhoods and is
-  invisible at this resolution.</p>
-  <p><strong>The residual spatial clustering was never explained.</strong> After fog, canopy,
-  terrain and built-up surface, Moran’s I on the model residuals is still +0.433 at
-  p &lt; 0.0001 — something spatially organised remains unidentified. And the mediation result
-  reverses if the built-up index is added to the controls; both specifications are in the
-  Explore section above.</p>
+  <p><strong>Surface temperature is not air temperature</strong>, and Landsat passes late
+  morning — so nothing here describes the night, which matters more for health. The spatial
+  pattern is meaningful; the absolute values aren’t comparable to a weather station.</p>
+  <p><strong>Three neighborhoods are parks</strong> — Golden Gate Park, McLaren Park, Lincoln
+  Park, 58 to 160 residents. Mapped, never scored. <strong>Median income is approximate</strong>
+  (medians can’t be summed, so it’s a household-weighted mean of tract medians); every other
+  rate is exact. <strong>41 units is coarse</strong> — inequity within neighborhoods is
+  invisible here.</p>
+  <p><strong>Two things remain unresolved.</strong> Residual spatial clustering was never
+  explained: after fog, canopy, terrain and built-up surface, Moran’s I on the residuals is
+  still +0.433 at p &lt; 0.0001. And the mediation result reverses if the built-up index joins
+  the controls — both specifications are in Explore.</p>
 </section>
 
 <footer>
@@ -716,7 +684,7 @@ function scatter(svgId, xk, yk, xlab, ylab, o = {}) {
   const svg = document.getElementById(svgId);
   svg.innerHTML = "";
   const vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
-  const L = 58, R = 16, T = 14, B = 46;
+  const L = 78, R = 18, T = 14, B = 48;
   const [x0, x1] = extent(SCORED, xk), [y0, y1] = extent(SCORED, yk);
   const px = v => L + (v - x0) / (x1 - x0) * (W - L - R);
   const py = v => H - B - (v - y0) / (y1 - y0) * (H - T - B);
