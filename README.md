@@ -140,6 +140,34 @@ to read): built-up surface **+11.1** (p = 0.0001), fog **−10.6** (p < 0.0001),
 (p = 0.007), elevation +0.009/m and slope −0.11°, both p < 0.0001. Slope *aspect* is not
 significant — at a late-morning overpass the sun is too high for orientation to matter.
 
+### Mediation: the null was two opposing paths
+
+`pipeline/mediation.py` tests income/race → canopy → heat, bootstrapping **blocks of
+geography** rather than individual tracts — naive resampling assumes an independence this data
+demonstrably lacks, and produces intervals that are far too narrow.
+
+Both treatments show **inconsistent mediation**: a real mediated path cancelled by an opposing
+direct one, which is precisely why the raw correlation looks like nothing.
+
+| Path | Income (per $10k) | Race (per point % POC) |
+|---|---|---|
+| a → canopy | +0.0036 [+0.0005, +0.0057] | −0.0008 [−0.0016, −0.0002] |
+| b canopy → heat | −9.04 [−12.67, −5.68] | −8.08 [−12.56, −4.11] |
+| **a×b indirect** | **−0.0323 [−0.0545, −0.0051]** | **+0.0066 [+0.0012, +0.0155]** |
+| c′ direct | +0.0406 [+0.0066, +0.0716] | −0.0022 (n.s.) |
+| c total | +0.0083 (n.s.) | +0.0044 (n.s.) |
+
+Money buys canopy and canopy cools — but income also raises heat directly, because wealthy San
+Francisco holds its densest, most built-up ground. **A tract at 90% residents of color runs
+about 0.4 °C hotter than one at 30%, entirely through having less canopy.**
+
+**The result hinges on one arguable choice.** Adding the built-up index to the controls makes
+every path non-significant. NDBI and NDVI measure opposite sides of the same ground, so
+conditioning on one while the other is the mediator blocks the path by construction rather than
+by evidence — which is why the reported specification excludes it. Both are in
+`data/mediation_results.json`; the conclusion reverses between them, so the choice is stated
+rather than buried.
+
 **An honest negative result.** The point of adding terrain and built-up surface was to test
 whether the right covariates would dissolve the residual spatial clustering. They did not:
 +0.465 → +0.433, still p < 0.0001. Topography was not the missing variable, and the spatial

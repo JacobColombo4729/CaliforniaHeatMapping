@@ -214,11 +214,17 @@
   <p>Put the demographic variables in a regression on their own and they explain
   <strong>4%</strong> of the variation in heat across the city. Income, poverty and race
   together. Physical geography explains twenty times as much.</p>
-  <p><strong>That association disappears once fog and canopy are accounted for.</strong> In a
-  spatial error model every demographic coefficient collapses to near zero while canopy and fog
-  stay large and significant. So poverty isn’t doing the work — poorer areas simply hold less
-  canopy and sit in the fog shadow. The inequity is real, and it runs <em>through</em> the tree
-  canopy rather than around it.</p>
+  <p><strong>The flat line is two opposing forces cancelling, not an absence of one.</strong>
+  A formal mediation test — with a bootstrap that resamples blocks of geography rather than
+  individual tracts, so it doesn’t pretend neighbours are independent — separates them.</p>
+  <p>Money buys tree canopy, and canopy cools: <strong>−0.032 °C per $10,000</strong> of median
+  income, travelling through vegetation. But income <em>also</em> raises heat directly, by
+  <strong>+0.041 °C per $10,000</strong>, because wealthy San Francisco includes its densest and
+  most built-up ground. The two nearly annul each other, and the total reads as zero.</p>
+  <p>The same structure holds for race, and here nothing offsets it. Running the path from the
+  share of residents of color through canopy to heat: <strong>a tract that is 90% residents of
+  color runs about 0.4 °C hotter than one at 30%, entirely by way of having less tree
+  canopy.</strong></p>
   <div class="card">
     <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
     <p class="note" id="cap-income"></p>
