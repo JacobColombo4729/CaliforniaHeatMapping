@@ -420,41 +420,6 @@
       index can be recomputed from the table below the Explore section.</p>
     </div>
   </details>
-  <details class="spec-drop">
-    <summary><code>heat_anomaly</code> <em>°C</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per scene   LST°C   = ST_B10 · 0.00341802 + 149.0 − 273.15
-            anomaly = LST°C − mean(LST°C over cloud-free SF land, same scene)
-per pixel   median(anomaly) across scenes where that pixel was cloud-free
-            requires ≥ 5 such scenes, otherwise no value
-per nhood   mean over the neighborhood's pixels</pre>
-      <p class="note"><b>Source</b> Landsat Collection 2 Level-2, asset <code>lwir11</code> (band ST_B10). 63 summer scenes, 2019–2024.</p>
-      <p class="note" style="margin-top:10px">Normalising each scene to its own citywide mean is what stops a hot day reading as a hot neighborhood. The result is degrees relative to the city that day, not an absolute temperature.</p>
-    </div>
-  </details>
-  <details class="spec-drop">
-    <summary><code>ndvi</code> <em>−1 to 1</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per scene   reflectance = DN · 0.0000275 − 0.2
-            ndvi = (nir08 − red) / (nir08 + red), clipped to [−1, 1]
-per pixel   median(ndvi) across cloud-free scenes
-per nhood   mean over the neighborhood's pixels</pre>
-      <p class="note"><b>Source</b> Landsat Collection 2 Level-2, assets <code>nir08</code> and <code>red</code>.</p>
-      <p class="note" style="margin-top:10px">Stands in for tree canopy. The DataSF canopy layer is 289,219 polygons, and street-tree points would miss every park and back yard.</p>
-    </div>
-  </details>
-  <details class="spec-drop">
-    <summary><code>fog</code> <em>share 0–1</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per obs     cloud = QA_PIXEL bit 1 | 2 | 3 | 4
-                    (dilated cloud, cirrus, cloud, cloud shadow)
-            valid = not fill
-per pixel   fog = Σ cloud / Σ valid
-per nhood   mean over the neighborhood's pixels</pre>
-      <p class="note"><b>Source</b> Landsat Collection 2 Level-2, asset <code>qa_pixel</code>.</p>
-      <p class="note" style="margin-top:10px">Built from every observation, not only the clear ones — a scene useless for temperature is a data point for fog.</p>
-    </div>
-  </details>
 </header>
 
 <section>
