@@ -27,7 +27,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 IN_PATH = DATA / "neighborhoods_acs.parquet"
 OUT_JSON = DATA / "neighborhoods.json"
-SITE_JSON = ROOT / "site" / "neighborhoods.json"
+# "docs" rather than "site": GitHub Pages serves from the repo root or /docs on a
+# branch, and nothing else.
+SITE_JSON = ROOT / "docs" / "neighborhoods.json"
 
 # Raster -> output column. Every one is a mean over the neighborhood's pixels.
 RASTERS = {
@@ -228,8 +230,9 @@ def main() -> None:
     (SITE_JSON.parent / "data.js").write_text(
         "const NEIGHBORHOODS = " + payload + ";\n", encoding="utf-8"
     )
-    print(f"\n  wrote {OUT_JSON.name}, site/{SITE_JSON.name}, site/data.js "
-          f"({len(payload) / 1024:.0f} KB)")
+    site = SITE_JSON.parent.name
+    print(f"\n  wrote data/{OUT_JSON.name}, {site}/{SITE_JSON.name}, "
+          f"{site}/data.js ({len(payload) / 1024:.0f} KB)")
 
     # --- Report ------------------------------------------------------------
     show = ["rank", "nhood", "index", "heat_anomaly", "ndvi", "fog",

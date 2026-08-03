@@ -62,7 +62,7 @@ Three scripts, run in order. Everything upstream exists to produce one file,
 
 ```
 Landsat  ┐
-ACS      ├──►  neighborhoods.json  ──►  site/index.html
+ACS      ├──►  neighborhoods.json  ──►  docs/index.html
 Canopy   ┘     41 features                one page, no dependencies
 ```
 
@@ -159,10 +159,10 @@ python pipeline/join_export.py      # ~5 s
 See `environment.yml` for why four packages come from pip. No API keys are required.
 
 The dashboard is a single static HTML file with no build step and no dependencies — maps and
-charts are inline SVG. Open `site/index.html` directly, or serve the folder:
+charts are inline SVG. Open `docs/index.html` directly, or serve the folder:
 
 ```bash
-python -m http.server 8765 --directory site
+python -m http.server 8765 --directory docs
 ```
 
 `PROJECT_PLAN.md` carries the full decision log, including what was cut and why.

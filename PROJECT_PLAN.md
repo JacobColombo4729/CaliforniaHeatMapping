@@ -79,8 +79,9 @@ CaliforniaHeatMapping/
 ├── data/
 │   ├── raw/                     # downloads, gitignored
 │   └── neighborhoods.json       # THE artifact, committed
-├── site/
-│   ├── index.html               # the entire dashboard
+├── docs/                        # named "docs" because GitHub Pages serves only
+│   ├── index.html               #   the repo root or /docs — not /site
+│   ├── data.js                  # the artifact as a script, so file:// works
 │   └── neighborhoods.json       # copy of the artifact
 └── resources/                   # reference material, unchanged
 ```
