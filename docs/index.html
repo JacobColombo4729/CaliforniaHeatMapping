@@ -256,6 +256,7 @@
   }
   .defn-drop[open] > summary { margin-bottom: 16px; }
   .defn-body { border-top: 1px solid var(--grid); padding-top: 16px; }
+  .defn-body > :last-child { margin-bottom: 0; }
   /* A metric this project invented is specified, not described — the end user
      is a data scientist who needs the transformation and the source column, not
      an adjective. Monospace because these are literally identifiers. */
@@ -395,32 +396,6 @@ index can be recomputed from the table below the Explore section.
        — never 0, which would annihilate the product.
        Negation orients a variable so that higher ρ always means
        more vulnerable.</pre>
-
-      <p class="note" style="margin-top:12px">Every rate is summed numerator over summed
-      denominator across a neighborhood’s tracts — never an average of tract rates, which would
-      give a 400-person tract the same weight as a 6,000-person one. Each of the nine variables
-      is specified in full where it first appears.</p>
-      <p class="note" style="margin-top:14px"><strong>What it is and isn’t.</strong> A
-      <em>relative</em> position among these 38 neighborhoods, not an absolute risk — it does not
-      transfer to another city. All nine variables carry equal weight, and so do the three
-      components. The geometric mean means a neighborhood cannot fully offset extreme exposure
-      with strong adaptive capacity. Percentile ranks span (0, 1] and never reach zero, which
-      would otherwise annihilate the product. No racial or ethnic variable enters it, or exists
-      anywhere in this project.</p>
-      <p class="note"><strong>Provenance.</strong> Heat vulnerability indices are an established
-      tool — health departments use them to site cooling centres and target outreach, and San
-      Francisco’s own Department of Public Health publishes one. The exposure / sensitivity /
-      adaptive-capacity decomposition is the conventional climate-vulnerability framing. Neither
-      is original here. <strong>What is specific to this project is the choice of these nine
-      variables, weighting them all equally, weighting the three components equally, and combining
-      them geometrically.</strong> Another analyst working from the same framework would
-      reasonably choose differently and get a different ranking. Ranks a few places apart should
-      be read as ties.</p>
-      <p class="note"><strong>It has not been validated against any outcome.</strong> A working
-      index would be tested against heat-related emergency visits or mortality. This one is tested
-      against nothing — it is a defensible composite of plausible variables, not a demonstrated
-      predictor of harm. Treat it as a screening tool for where to look, not as a measurement of
-      who gets hurt.</p>
     </div>
   </details>
 </header>
