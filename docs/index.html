@@ -604,48 +604,6 @@ per nhood   Σ(B19013_001 · B25003_001) / Σ(B25003_001)
     exposure component and no racial variable enters at all.</p>
     <p id="lakeshore-note"></p>
   </aside>
-  <details class="spec-drop">
-    <summary><code>pct_65_plus</code> <em>%</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per tract   Σ B01001_020…025, B01001_044…049   (male and female 65+)
-per nhood   100 · Σ(numerator) / Σ(B01001_001)</pre>
-      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B01001</code>.</p>
-    </div>
-  </details>
-  <details class="spec-drop">
-    <summary><code>pct_under_5</code> <em>%</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per tract   B01001_003 + B01001_027   (male and female under 5)
-per nhood   100 · Σ(numerator) / Σ(B01001_001)</pre>
-      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B01001</code>.</p>
-    </div>
-  </details>
-  <details class="spec-drop">
-    <summary><code>pct_poverty</code> <em>%</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per tract   B17001_002   (income below poverty, past 12 months)
-per nhood   100 · Σ(B17001_002) / Σ(B17001_001)</pre>
-      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B17001</code>.</p>
-      <p class="note" style="margin-top:10px">The denominator is the population for whom poverty status is determined — not total population. It excludes people in institutions and college dormitories.</p>
-    </div>
-  </details>
-  <details class="spec-drop">
-    <summary><code>pct_renter</code> <em>%</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per tract   B25003_003   (renter-occupied units)
-per nhood   100 · Σ(B25003_003) / Σ(B25003_001)</pre>
-      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B25003</code>.</p>
-    </div>
-  </details>
-  <details class="spec-drop">
-    <summary><code>pct_limited_english</code> <em>%</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per tract   Σ C16002_004, 007, 010, 013
-            (limited-English households, one line per language group)
-per nhood   100 · Σ(numerator) / Σ(C16002_001)</pre>
-      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>C16002</code>.</p>
-    </div>
-  </details>
 </section>
 
 <section>
