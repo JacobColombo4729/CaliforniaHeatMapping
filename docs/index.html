@@ -265,6 +265,26 @@
     padding: 14px 16px; margin: 0 0 18px; overflow-x: auto;
     color: var(--ink); white-space: pre;
   }
+  /* Each variable specified where it first appears, rather than in one block
+     the reader has to scroll back to. */
+  .spec-drop {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 11px 16px; margin-top: 10px; background: var(--surface-1);
+  }
+  .spec-drop > summary {
+    cursor: pointer; font-size: 0.85rem; color: var(--ink-2); margin: 0;
+  }
+  .spec-drop > summary:hover { color: var(--ink); }
+  .spec-drop > summary code {
+    font: 0.94em ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--ink); font-weight: 600;
+  }
+  .spec-drop > summary em { color: var(--muted); font-style: normal; font-size: 0.9em; }
+  .spec-drop[open] > summary { margin-bottom: 13px; }
+  .spec-body { border-top: 1px solid var(--grid); padding-top: 13px; }
+  .spec-body .spec { margin-bottom: 10px; }
+  .spec-body .note b { color: var(--ink-2); font-weight: 600; }
+
   .spec-table { font-size: 0.82rem; }
   .spec-table th {
     position: static; background: none; text-align: left; cursor: default;
@@ -376,64 +396,10 @@ index can be recomputed from the table below the Explore section.
        Negation orients a variable so that higher ρ always means
        more vulnerable.</pre>
 
-      <table class="spec-table">
-        <thead><tr><th>Variable</th><th>Definition</th><th>Source</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>heat_anomaly</code></td>
-            <td>Per scene, <code>ST_B10 · 0.00341802 + 149.0 − 273.15</code> °C, minus that
-              scene’s mean over cloud-free SF land. Median across scenes, then mean over the
-              neighborhood’s pixels.</td>
-            <td>Landsat C2 L2 <code>lwir11</code></td>
-          </tr>
-          <tr>
-            <td><code>ndvi</code></td>
-            <td><code>(NIR − Red) / (NIR + Red)</code> on surface reflectance
-              (<code>·0.0000275 − 0.2</code>). Median across cloud-free scenes.</td>
-            <td>Landsat C2 L2 <code>nir08</code>, <code>red</code></td>
-          </tr>
-          <tr>
-            <td><code>fog</code></td>
-            <td>Cloud-flagged observations ÷ valid observations, per pixel. Cloud = any of
-              QA bits 1, 2, 3, 4 (dilated cloud, cirrus, cloud, cloud shadow).</td>
-            <td>Landsat C2 L2 <code>qa_pixel</code></td>
-          </tr>
-          <tr>
-            <td><code>pct_65_plus</code></td>
-            <td><code>Σ B01001_020…025, 044…049 / B01001_001</code></td>
-            <td>ACS <code>B01001</code></td>
-          </tr>
-          <tr>
-            <td><code>pct_under_5</code></td>
-            <td><code>(B01001_003 + B01001_027) / B01001_001</code></td>
-            <td>ACS <code>B01001</code></td>
-          </tr>
-          <tr>
-            <td><code>pct_poverty</code></td>
-            <td><code>B17001_002 / B17001_001</code></td>
-            <td>ACS <code>B17001</code></td>
-          </tr>
-          <tr>
-            <td><code>median_income</code></td>
-            <td>Household-weighted mean of tract <code>B19013_001</code>, weighted by
-              <code>B25003_001</code>. Medians cannot be summed, so this is an approximation.</td>
-            <td>ACS <code>B19013</code></td>
-          </tr>
-          <tr>
-            <td><code>pct_renter</code></td>
-            <td><code>B25003_003 / B25003_001</code></td>
-            <td>ACS <code>B25003</code></td>
-          </tr>
-          <tr>
-            <td><code>pct_limited_english</code></td>
-            <td><code>Σ C16002_004, 007, 010, 013 / C16002_001</code></td>
-            <td>ACS <code>C16002</code></td>
-          </tr>
-        </tbody>
-      </table>
       <p class="note" style="margin-top:12px">Every rate is summed numerator over summed
       denominator across a neighborhood’s tracts — never an average of tract rates, which would
-      give a 400-person tract the same weight as a 6,000-person one.</p>
+      give a 400-person tract the same weight as a 6,000-person one. Each of the nine variables
+      is specified in full where it first appears.</p>
       <p class="note" style="margin-top:14px"><strong>What it is and isn’t.</strong> A
       <em>relative</em> position among these 38 neighborhoods, not an absolute risk — it does not
       transfer to another city. All nine variables carry equal weight, and so do the three
@@ -474,6 +440,18 @@ index can be recomputed from the table below the Explore section.
     <p class="note">Hatching marks neighborhoods where the satellite has fewest usable
     observations, on the two layers built from cloud-free days. Fog and income aren’t affected.</p>
   </div>
+  <details class="spec-drop">
+    <summary><code>heat_anomaly</code> <em>°C</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per scene   LST°C   = ST_B10 · 0.00341802 + 149.0 − 273.15
+            anomaly = LST°C − mean(LST°C over cloud-free SF land, same scene)
+per pixel   median(anomaly) across scenes where that pixel was cloud-free
+            requires ≥ 5 such scenes, otherwise no value
+per nhood   mean over the neighborhood's pixels</pre>
+      <p class="note"><b>Source</b> Landsat Collection 2 Level-2, asset <code>lwir11</code> (band ST_B10). 63 summer scenes, 2019–2024.</p>
+      <p class="note" style="margin-top:10px">Normalising each scene to its own citywide mean is what stops a hot day reading as a hot neighborhood. The result is degrees relative to the city that day, not an absolute temperature.</p>
+    </div>
+  </details>
 </section>
 
 <section>
@@ -498,6 +476,16 @@ index can be recomputed from the table below the Explore section.
     <p>Treat the 38-neighborhood figure as underpowered on its own — it can only resolve
     |r| ≥ 0.32. The tract-level replication is what carries this.</p>
   </aside>
+  <details class="spec-drop">
+    <summary><code>median_income</code> <em>USD</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per tract   B19013_001
+per nhood   Σ(B19013_001 · B25003_001) / Σ(B25003_001)
+            i.e. a household-weighted mean of tract medians</pre>
+      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B19013</code>; weights from <code>B25003</code>.</p>
+      <p class="note" style="margin-top:10px">Medians cannot be summed or averaged honestly, so this one figure is an approximation. Every other rate on this page is exact.</p>
+    </div>
+  </details>
 </section>
 
 <section>
@@ -528,6 +516,18 @@ index can be recomputed from the table below the Explore section.
     documented in most US cities is flattened here: the dominant driver is handed out
     indifferently.</p>
   </aside>
+  <details class="spec-drop">
+    <summary><code>fog</code> <em>share 0–1</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per obs     cloud = QA_PIXEL bit 1 | 2 | 3 | 4
+                    (dilated cloud, cirrus, cloud, cloud shadow)
+            valid = not fill
+per pixel   fog = Σ cloud / Σ valid
+per nhood   mean over the neighborhood's pixels</pre>
+      <p class="note"><b>Source</b> Landsat Collection 2 Level-2, asset <code>qa_pixel</code>.</p>
+      <p class="note" style="margin-top:10px">Built from every observation, not only the clear ones — a scene useless for temperature is a data point for fog.</p>
+    </div>
+  </details>
 </section>
 
 <section>
@@ -577,6 +577,17 @@ index can be recomputed from the table below the Explore section.
     argument that canopy alone will not close that gap, and that albedo and impervious-surface
     measures likely dominate in the dense east.</p>
   </aside>
+  <details class="spec-drop">
+    <summary><code>ndvi</code> <em>−1 to 1</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per scene   reflectance = DN · 0.0000275 − 0.2
+            ndvi = (nir08 − red) / (nir08 + red), clipped to [−1, 1]
+per pixel   median(ndvi) across cloud-free scenes
+per nhood   mean over the neighborhood's pixels</pre>
+      <p class="note"><b>Source</b> Landsat Collection 2 Level-2, assets <code>nir08</code> and <code>red</code>.</p>
+      <p class="note" style="margin-top:10px">Stands in for tree canopy. The DataSF canopy layer is 289,219 polygons, and street-tree points would miss every park and back yard.</p>
+    </div>
+  </details>
 </section>
 
 <section>
@@ -633,6 +644,48 @@ index can be recomputed from the table below the Explore section.
     exposure component and no racial variable enters at all.</p>
     <p id="lakeshore-note"></p>
   </aside>
+  <details class="spec-drop">
+    <summary><code>pct_65_plus</code> <em>%</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per tract   Σ B01001_020…025, B01001_044…049   (male and female 65+)
+per nhood   100 · Σ(numerator) / Σ(B01001_001)</pre>
+      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B01001</code>.</p>
+    </div>
+  </details>
+  <details class="spec-drop">
+    <summary><code>pct_under_5</code> <em>%</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per tract   B01001_003 + B01001_027   (male and female under 5)
+per nhood   100 · Σ(numerator) / Σ(B01001_001)</pre>
+      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B01001</code>.</p>
+    </div>
+  </details>
+  <details class="spec-drop">
+    <summary><code>pct_poverty</code> <em>%</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per tract   B17001_002   (income below poverty, past 12 months)
+per nhood   100 · Σ(B17001_002) / Σ(B17001_001)</pre>
+      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B17001</code>.</p>
+      <p class="note" style="margin-top:10px">The denominator is the population for whom poverty status is determined — not total population. It excludes people in institutions and college dormitories.</p>
+    </div>
+  </details>
+  <details class="spec-drop">
+    <summary><code>pct_renter</code> <em>%</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per tract   B25003_003   (renter-occupied units)
+per nhood   100 · Σ(B25003_003) / Σ(B25003_001)</pre>
+      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B25003</code>.</p>
+    </div>
+  </details>
+  <details class="spec-drop">
+    <summary><code>pct_limited_english</code> <em>%</em> — how it is computed</summary>
+    <div class="spec-body">
+      <pre class="spec">per tract   Σ C16002_004, 007, 010, 013
+            (limited-English households, one line per language group)
+per nhood   100 · Σ(numerator) / Σ(C16002_001)</pre>
+      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>C16002</code>.</p>
+    </div>
+  </details>
 </section>
 
 <section>
