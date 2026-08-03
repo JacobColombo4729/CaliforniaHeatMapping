@@ -202,17 +202,30 @@
 
 <section>
   <h2>The pattern that isn’t there</h2>
-  <h3>Heat and income barely relate</h3>
+  <h3>Income doesn’t predict heat. Poverty does — but only indirectly.</h3>
   <p>Plot every neighborhood’s heat anomaly against its median household income and the cloud
   is flat. The correlation is <strong id="r-income">—</strong> — for practical purposes, nothing.
   Split the city into income quartiles and the poorest and richest differ by well under a degree,
   against a <strong id="span-1">—</strong> °C span across the city.</p>
+  <p>But 38 neighborhoods is a small sample — it can only resolve correlations above about 0.32.
+  Repeating the analysis across <strong>232 census tracts</strong>, where that floor drops to
+  0.13, sharpens the picture. Median income still doesn’t resolve. The <strong>poverty rate
+  does, at r = +0.20</strong>. Poorer tracts really are hotter.</p>
+  <p><strong>That association disappears once fog and canopy are accounted for.</strong> In a
+  spatial error model every demographic coefficient collapses to near zero while canopy and fog
+  stay large and significant. So poverty isn’t doing the work — poorer areas simply hold less
+  canopy and sit in the fog shadow. The inequity is real, and it runs <em>through</em> the tree
+  canopy rather than around it.</p>
   <div class="card">
     <svg id="sc-income" viewBox="0 0 720 400" role="img" aria-label="Scatter plot of heat anomaly against median household income"></svg>
     <p class="note" id="cap-income"></p>
     <p class="note">One dot per scored neighborhood. The line is a least-squares fit, drawn to
     show how little slope there is. Click any dot to open that neighborhood’s profile.</p>
     <p class="note" id="null-why"></p>
+    <p class="note">Tract-level figures come from <code>pipeline/spatial_analysis.py</code>:
+    Queen-contiguity weights, Moran’s I, and a spatial error model chosen by Lagrange Multiplier
+    diagnostics (λ = 0.68). Ordinary regression is not valid here — every variable is strongly
+    spatially clustered, which makes standard errors too small and p-values overconfident.</p>
   </div>
 </section>
 
