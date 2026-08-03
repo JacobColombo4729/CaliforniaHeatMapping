@@ -261,7 +261,6 @@
     <p class="note">One dot per neighborhood; the line is a least-squares fit. Click a dot to
     open that neighborhood. Figures beyond the chart come from 232 census tracts and a spatial
     error model — see Explore.</p>
-    <p class="note" id="null-why"></p>
   </div>
 </section>
 
@@ -339,22 +338,14 @@
   <p class="note" id="conf-note" style="margin-bottom:14px"></p>
   <p>A thermal sensor can’t see through fog, so the foggiest neighborhoods are observed almost
   only on their rare clear — and therefore <em>warm</em> — days. A hard limit of the instrument,
-  not a bug. What you can do is measure it: <strong>left</strong>, usable scenes out of 63, from
-  <strong id="obs-min">—</strong> to <strong id="obs-max">—</strong>; <strong>right</strong>, how
-  much hotter the city ran on the days each neighborhood happened to be visible.</p>
-  <div class="grid-2">
-    <div class="card">
-      <h4 style="margin:0 0 4px;font-size:0.95rem">Usable observations</h4>
-      <svg id="map-obs" viewBox="0 0 330 345" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
-      <div class="legend" id="lg-obs"></div>
+  not a bug. Usable scenes run from <strong id="obs-min">—</strong> to
+  <strong id="obs-max">—</strong> out of 63, and the thin end is the west.</p>
+  <div class="card">
+    <div class="mapbox" style="max-width:560px">
+      <svg id="map-obs" viewBox="0 0 560 580" role="img" aria-label="Map of usable clear satellite observations per neighborhood"></svg>
     </div>
-    <div class="card">
-      <h4 style="margin:0 0 4px;font-size:0.95rem">Warm-day sampling bias</h4>
-      <svg id="map-bias" viewBox="0 0 330 345" role="img" aria-label="Map of warm-day sampling bias per neighborhood"></svg>
-      <div class="legend" id="lg-bias"></div>
-    </div>
+    <div class="legend" id="lg-obs"></div>
   </div>
-  <p id="bias-summary"></p>
   <p><strong>So every temperature here understates how much cooler the west really is.</strong>
   The true fog effect exceeds the <strong id="r-fog-2">—</strong> shown earlier, making the
   canopy inequity a floor rather than a ceiling.</p>
@@ -535,7 +526,7 @@ const HUE_OF = {
   population: "amber", households: "amber",
   pct_poc: "amber", pct_white_nh: "amber", pct_asian_nh: "amber",
   pct_hispanic: "amber", pct_black_nh: "amber",
-  clear_obs: "slate", heat_bias: "slate", acs_cv: "slate",
+  clear_obs: "slate", acs_cv: "slate",
   pixel_coverage: "slate", cooling_local_r2: "slate",
 };
 
@@ -580,11 +571,6 @@ const QUALITY_METRICS = {
                     blurb: "°C bought per 0.1 NDVI, from the local regression" },
   clear_obs: { label: "Clear obs", fmt: v => v.toFixed(0), kind: "seq",
                blurb: "Usable clear looks, of 63 scenes" },
-  // Sequential, not diverging: the bias is positive everywhere, because any day
-  // clear enough to measure is warmer than the average day. There is no
-  // "unbiased" pole for a diverging scale to sit on.
-  heat_bias: { label: "Sampling bias", fmt: v => "+" + v.toFixed(2) + " °C", kind: "seq",
-               blurb: "How much hotter the city was on this place's visible days" },
 };
 Object.assign(METRICS, QUALITY_METRICS);
 
@@ -716,8 +702,8 @@ function drawMap(svgId, key, opts = {}) {
         "Income " + money(q.median_income) + "<br>" +
         "Vulnerability " + q.index.toFixed(0) + " (rank " + q.rank + " of 38)" +
         '<br><span style="opacity:.75">' +
-        q.clear_obs.toFixed(0) + " clear looks · bias +" + q.heat_bias.toFixed(2) +
-        " °C<br>satellite " + q.heat_confidence + " · census " + q.acs_confidence +
+        q.clear_obs.toFixed(0) + " of 63 scenes · satellite " + q.heat_confidence +
+        " · census " + q.acs_confidence +
         "</span></span>";
     };
     p.addEventListener("mousemove", e => showTip(e, body()));
@@ -892,8 +878,7 @@ function writeConfidenceSummary() {
   if (!node) return;
   node.textContent =
     "Of " + SCORED.length + " scored neighborhoods, " + counts.high + " are well measured, " +
-    counts.moderate + " moderately, and " + counts.low + " poorly — fewer than 20 usable " +
-    "scenes or more than 1 °C of warm-day bias. Usable scenes run from " +
+    counts.moderate + " moderately and " + counts.low + " poorly. Usable scenes run from " +
     Math.round(Math.min(...obs)) + " to " + Math.round(Math.max(...obs)) + " of 63.";
 }
 
@@ -930,10 +915,9 @@ function drawProfile() {
       " residents. Its census rates are noise, so it is mapped but never scored or ranked.</p>";
   } else {
     conf.innerHTML =
-      '<p class="note">Seen on ' + q.clear_obs.toFixed(0) + " of 63 scenes; those days ran +" +
-      q.heat_bias.toFixed(2) + " °C hotter than average, so this reading is biased warm by " +
-      "about that much. Temperatures vary " + q.heat_sd.toFixed(1) +
-      " °C within the neighborhood. Census coefficient of variation " + q.acs_cv.toFixed(2) +
+      '<p class="note">Seen on ' + q.clear_obs.toFixed(0) + " of 63 scenes. Temperature varies " +
+      q.heat_sd.toFixed(1) + " °C within the neighborhood itself. Census coefficient of " +
+      "variation " + q.acs_cv.toFixed(2) +
       (q.acs_cv >= 0.3 ? " — above the Census Bureau's reliability threshold." : ".") + "</p>";
   }
 
@@ -1008,7 +992,6 @@ function drawTable() {
     ["fog", "Fog", v => Math.round(v * 100) + "%"],
     ["ndvi", "NDVI", v => v.toFixed(2)],
     ["clear_obs", "Clear obs", v => v.toFixed(0)],
-    ["heat_bias", "Warm bias", v => "+" + v.toFixed(2)],
     ["heat_sd", "Spread °C", v => v.toFixed(1)],
     ["heat_confidence", "Satellite", v => v],
     ["acs_cv", "Census CV", v => v === null ? "—" : v.toFixed(2)],
@@ -1050,32 +1033,10 @@ function fillProse() {
   set("obs-max", Math.round(omax));
 
   // Data-quality prose, all measured rather than asserted.
-  const [bmin, bmax] = extent(SCORED, "heat_bias");
-  const biasFog = pearson(SCORED, "heat_bias", "fog");
-  const biasIncome = pearson(SCORED, "heat_bias", "median_income");
   set("r-fog-2", signed(pearson(SCORED, "heat_anomaly", "fog")));
   set("r-cooling", "r = " + signed(pearson(SCORED, "index", "canopy_cooling")));
 
-  const summary = document.getElementById("bias-summary");
-  if (summary) {
-    summary.innerHTML =
-      "Every neighborhood is biased warm — from <strong>+" + bmin.toFixed(2) +
-      " °C</strong> to <strong>+" + bmax.toFixed(2) + " °C</strong> — because any day clear " +
-      "enough to measure is warmer than the average day. The bias tracks fog at <strong>r = " +
-      signed(biasFog) + "</strong>: the foggier the place, the more its reading is " +
-      "distorted, and in the direction that hides its coolness.";
-  }
 
-  // Does the blind spot threaten the headline null result? Say so either way.
-  const why = document.getElementById("null-why");
-  if (why) {
-    why.innerHTML =
-      "The bias runs slightly <em>against</em> this finding rather than creating it: " +
-      "sampling bias correlates <strong>" + signed(biasIncome) + "</strong> with income, so " +
-      "correcting it would move the heat–income relationship " +
-      (biasIncome > 0 ? "a little more negative" : "a little less negative") +
-      " — not toward zero. The null is not an artefact of the blind spot.";
-  }
 
   const lk = SCORED.find(f => P(f).nhood === "Lakeshore");
   if (lk) {
@@ -1109,7 +1070,6 @@ function drawAll() {
     drawMap("mini-heat", "heat_anomaly", { pad: 8, hatch: true }), { hatch: true });
   drawLegend("lg-fog", "fog", drawMap("mini-fog", "fog", { pad: 8 }));
   drawLegend("lg-obs", "clear_obs", drawMap("map-obs", "clear_obs", { pad: 8 }));
-  drawLegend("lg-bias", "heat_bias", drawMap("map-bias", "heat_bias", { pad: 8 }));
   drawLegend("lg-cooling", "canopy_cooling",
     drawMap("map-cooling", "canopy_cooling", { pad: 8 }));
   drawBars();
@@ -1186,7 +1146,6 @@ const EXPLORE_VARS = [
   ["pct_hispanic", "Hispanic", "Race", pctf],
   ["pct_black_nh", "Black", "Race", pctf],
   ["clear_obs", "Usable observations", "Quality", v => v.toFixed(0)],
-  ["heat_bias", "Warm-day bias", "Quality", v => "+" + v.toFixed(2) + " °C"],
   ["acs_cv", "Census CV", "Quality", v => v.toFixed(2)],
 ];
 // Feed them into METRICS so drawMap, drawLegend and scatter all just work.
