@@ -459,16 +459,6 @@
     <p>Treat the 38-neighborhood figure as underpowered on its own — it can only resolve
     |r| ≥ 0.32. The tract-level replication is what carries this.</p>
   </aside>
-  <details class="spec-drop">
-    <summary><code>median_income</code> <em>USD</em> — how it is computed</summary>
-    <div class="spec-body">
-      <pre class="spec">per tract   B19013_001
-per nhood   Σ(B19013_001 · B25003_001) / Σ(B25003_001)
-            i.e. a household-weighted mean of tract medians</pre>
-      <p class="note"><b>Source</b> ACS 2024 5-year, table <code>B19013</code>; weights from <code>B25003</code>.</p>
-      <p class="note" style="margin-top:10px">Medians cannot be summed or averaged honestly, so this one figure is an approximation. Every other rate on this page is exact.</p>
-    </div>
-  </details>
 </section>
 
 <section>
